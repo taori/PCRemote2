@@ -8,14 +8,14 @@ namespace Amusoft.PCR.Blazor.Extensions
 		public static ValueTask<string> Prompt(this IJSRuntime jsRuntime, string message, string watermark = "Type anything here")
 		{
 			return jsRuntime.InvokeAsync<string>(
-				"amusoft.showPrompt",
+				"Amusoft.Functions.showPrompt",
 				message, watermark);
 		}
 
 		public static ValueTask<string> Alert(this IJSRuntime jsRuntime, string message)
 		{
 			return jsRuntime.InvokeAsync<string>(
-				"amusoft.alert",
+				"Amusoft.Functions.alert",
 				message);
 		}
 	}
