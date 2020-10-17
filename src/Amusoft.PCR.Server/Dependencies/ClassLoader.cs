@@ -8,7 +8,7 @@ namespace Amusoft.PCR.Server.Dependencies
 	{
 		public IEnumerable<Assembly> GetAssemblies()
 		{
-			yield return typeof(SampleComponent).Assembly;
+			yield return typeof(Tooltip).Assembly;
 		}
 	}
 }

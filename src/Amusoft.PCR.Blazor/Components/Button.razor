@@ -1,0 +1,55 @@
+﻿@using Microsoft.JSInterop
+<button @ref="Control" class="@ButtonClass" @onclick="d => OnClick.InvokeAsync(d)">@ChildContent</button>
+
+@code {
+
+	[Parameter]
+	public bool Primary { get; set; }
+
+	[Parameter]
+	public bool Enabled { get; set; } = true;
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Parameter]
+	public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+	public ElementReference Control { get; set; }
+
+	[Inject]
+	public IJSRuntime JsRuntime { get; set; }
+
+	public string ButtonClass { get; set; }
+
+	/// <inheritdoc />
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		var classThemeClass = Primary ? "btn-primary" : string.Empty;
+		var classEnabled = Enabled ? string.Empty : "disabled";
+		UpdateEnabledState();
+
+		ButtonClass = $"btn {classEnabled} {classThemeClass}";
+	}
+
+	/// <inheritdoc />
+	protected override void OnAfterRender(bool firstRender)
+	{
+		UpdateEnabledState();
+	}
+
+	private void UpdateEnabledState()
+	{
+		return;
+		if (Enabled)
+		{
+			JsRuntime.InvokeVoidAsync("Amusoft.Functions.disable", Control);
+		}
+		else
+		{
+			JsRuntime.InvokeVoidAsync("Amusoft.Functions.enable", Control);
+		}
+	}
+
+}

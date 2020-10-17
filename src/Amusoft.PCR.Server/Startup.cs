@@ -16,6 +16,10 @@ using Microsoft.Extensions.Hosting;
 using Amusoft.PCR.Server.Areas.Identity;
 using Amusoft.PCR.Server.Data;
 using Amusoft.PCR.Server.Dependencies;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Amusoft.PCR.Server
@@ -50,6 +54,13 @@ namespace Amusoft.PCR.Server
 				})
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
+			services.AddHttpContextAccessor();
+			services.AddHttpClient("local", (provider, client) =>
+			{
+				var accessor = provider.GetRequiredService<IHttpContextAccessor>();
+				client.BaseAddress = new Uri($"https://localhost:{accessor.HttpContext.Connection.LocalPort}");
+			});
+			services.AddControllers();
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
 			services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
@@ -85,6 +96,7 @@ namespace Amusoft.PCR.Server
 				endpoints.MapControllers();
 				endpoints.MapBlazorHub();
 				endpoints.MapFallbackToPage("/_Host");
+				endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 			});
 
 			using (var serviceScope = serviceScopeFactory.CreateScope())
