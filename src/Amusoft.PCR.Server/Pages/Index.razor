@@ -6,8 +6,8 @@
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
-<Button Enabled="true" Primary="true" OnClick="@(() => { TestValue = "Just a test"; JsRuntime.Alert("Hello Primary"); })">Primary Button</Button>
-<Button Enabled="true" OnClick="@(() => JsRuntime.Alert("Hello Normal"))">Normal Button</Button>
+<Button Enabled="true" Primary="true" OnClick="@(() => { TestValue = "Just a test"; JsRuntime.UI().Alert("Hello Primary"); })">Primary Button</Button>
+<Button Enabled="true" OnClick="@(() => JsRuntime.UI().Alert("Hello Normal"))">Normal Button</Button>
 
 <input type="text" @bind="TestValue"/>
 <Tooltip Text="Well hello there">Just a test.</Tooltip>

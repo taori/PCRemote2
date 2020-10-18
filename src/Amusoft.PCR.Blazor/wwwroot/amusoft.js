@@ -1,5 +1,14 @@
 var Amusoft;
 (function (Amusoft) {
+    var Page = /** @class */ (function () {
+        function Page() {
+        }
+        Page.setTitle = function (title) {
+            document.title = title;
+        };
+        return Page;
+    }());
+    Amusoft.Page = Page;
     var Functions = /** @class */ (function () {
         function Functions() {
         }

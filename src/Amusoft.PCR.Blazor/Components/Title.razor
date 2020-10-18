@@ -1,0 +1,20 @@
+﻿@using Microsoft.JSInterop
+<h3>@Headline</h3>
+
+@code {
+	[Inject]
+	public IJSRuntime JsRuntime { get; set; }
+
+	[Parameter]
+	public string Headline { get; set; }
+
+	[Parameter]
+	public string PageTitle { get; set; }
+
+	/// <inheritdoc />
+	protected override void OnParametersSet()
+	{
+		if(PageTitle != null)
+			JsRuntime.Page().SetTitle(PageTitle);
+	}
+}

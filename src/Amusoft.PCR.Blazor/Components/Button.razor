@@ -41,12 +41,12 @@
 
 	public void Enable()
 	{
-		JsRuntime.Enable(Control);
+		JsRuntime.Element(Control).Enable();
 	}
 
 	public void Disable()
 	{
-		JsRuntime.Disable(Control);
+		JsRuntime.Element(Control).Disable();
 	}
 
 	private void UpdateEnabledState()

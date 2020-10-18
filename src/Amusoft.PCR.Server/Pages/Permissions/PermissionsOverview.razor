@@ -1,0 +1,16 @@
+﻿@page "/permissions/overview"
+@using Amusoft.PCR.Blazor.Extensions
+
+<Title Headline="Permission overview" PageTitle="Permission overview"></Title>
+<Button Primary="true" OnClick="GotoNewPermissions">New Permission</Button>
+
+@code {
+	[Inject]
+	public NavigationManager NavigationManager { get; set; }
+
+	private void GotoNewPermissions()
+	{
+		NavigationManager.NavigateTo("permissions/create");
+	}
+
+}

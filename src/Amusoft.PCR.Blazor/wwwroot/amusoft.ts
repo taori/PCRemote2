@@ -1,4 +1,10 @@
 namespace Amusoft {
+	export class Page {
+		public static setTitle(title: string) {
+			document.title = title;
+		}
+	}
+
 	export class Functions {
 
 		public static Log(message: string) {

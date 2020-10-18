@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Amusoft.PCR.Model\Amusoft.PCR.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Functions\" />
+  </ItemGroup>
+
 </Project>
