@@ -63,7 +63,7 @@ else
 	{
 		_serviceValue = null;
 		var httpClient = HttpClientFactory.CreateClient("local");
-		_serviceValue = await httpClient.GetStringAsync("https://localhost:44365/Test/Index");
+		_serviceValue = await httpClient.GetStringAsync("/Test/Index");
 	}
 
 }

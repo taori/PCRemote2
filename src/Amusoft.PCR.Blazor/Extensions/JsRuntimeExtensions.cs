@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace Amusoft.PCR.Blazor.Extensions
@@ -17,6 +18,20 @@ namespace Amusoft.PCR.Blazor.Extensions
 			return jsRuntime.InvokeAsync<string>(
 				"Amusoft.Functions.alert",
 				message);
+		}
+
+		public static void Enable(this IJSRuntime jsRuntime, ElementReference elementReference)
+		{
+			jsRuntime.InvokeVoidAsync(
+				"Amusoft.Functions.enable",
+				elementReference);
+		}
+
+		public static void Disable(this IJSRuntime jsRuntime, ElementReference elementReference)
+		{
+			jsRuntime.InvokeVoidAsync(
+				"Amusoft.Functions.disable",
+				elementReference);
 		}
 	}
 }

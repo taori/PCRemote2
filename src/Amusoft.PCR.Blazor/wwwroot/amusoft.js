@@ -4,7 +4,7 @@ var Amusoft;
         function Functions() {
         }
         Functions.Log = function (message) {
-            console.log(message);
+            //			console.log(message);
         };
         Functions.showPrompt = function (message, watermark) {
             return prompt(message, watermark);

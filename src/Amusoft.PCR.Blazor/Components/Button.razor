@@ -39,6 +39,16 @@
 		UpdateEnabledState();
 	}
 
+	public void Enable()
+	{
+		JsRuntime.Enable(Control);
+	}
+
+	public void Disable()
+	{
+		JsRuntime.Disable(Control);
+	}
+
 	private void UpdateEnabledState()
 	{
 		return;

@@ -2,7 +2,7 @@ namespace Amusoft {
 	export class Functions {
 
 		public static Log(message: string) {
-			console.log(message);
+//			console.log(message);
 		}
 
 		public static showPrompt(message: string, watermark: string) : string {
