@@ -1,6 +1,24 @@
 ﻿@page "/permissions/create"
-<Title Headline="New permission" PageTitle="New permission"></Title>
-
+@using System.ComponentModel.DataAnnotations
+<EditForm Model="Model">
+	<DataAnnotationsValidator />
+	<Title Headline="New permission" PageTitle="New permission"></Title>
+	<ValidationSummary />
+	<TextBox Placeholder="Name" @bind-Value="Model.Name"></TextBox>
+	<Button Primary="true" OnClick="OnSave">Save</Button>
+</EditForm>
 @code {
 
+	public class DataModel
+	{
+		[Required]
+		public string Name { get; set; }
+	}
+
+	public DataModel Model { get; set; } = new DataModel();
+
+	private void OnSave(MouseEventArgs obj)
+	{
+		var name = Model.Name;
+	}
 }

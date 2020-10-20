@@ -46,3 +46,7 @@
 .tooltip-wrapper:hover span {
 	 visibility: visible;
 }
+
+.validation-message {
+	font-size: 0.8em;
+}
