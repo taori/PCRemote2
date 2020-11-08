@@ -2,10 +2,10 @@
 @using System.ComponentModel.DataAnnotations
 <EditForm Model="Model">
 	<DataAnnotationsValidator />
-	<Title Headline="New permission" PageTitle="New permission"></Title>
+	<Title Headline="New permission" WindowTitle="New permission"></Title>
 	<ValidationSummary />
 	<TextBox Placeholder="Name" @bind-Value="Model.Name"></TextBox>
-	<Button Primary="true" OnClick="OnSave">Save</Button>
+	<Button Enabled="@ButtonEnabled" Primary="true" OnClick="OnSave">Save</Button>
 </EditForm>
 @code {
 
@@ -14,6 +14,8 @@
 		[Required]
 		public string Name { get; set; }
 	}
+
+	public bool ButtonEnabled { get; set; } = true;
 
 	public DataModel Model { get; set; } = new DataModel();
 

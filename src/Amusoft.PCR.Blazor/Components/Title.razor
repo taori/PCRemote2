@@ -9,12 +9,12 @@
 	public string Headline { get; set; }
 
 	[Parameter]
-	public string PageTitle { get; set; }
+	public string WindowTitle { get; set; }
 
 	/// <inheritdoc />
 	protected override void OnParametersSet()
 	{
-		if(PageTitle != null)
-			JsRuntime.Page().SetTitle(PageTitle);
+		if(WindowTitle != null)
+			JsRuntime.Page().SetTitle(WindowTitle);
 	}
 }
