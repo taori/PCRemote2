@@ -1,0 +1,23 @@
+﻿@using Microsoft.JSInterop
+<div @ref="wrapper">
+	<h3>some headline</h3>
+	@ChildContent
+</div>
+
+@code {
+
+	private ElementReference wrapper;
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Inject]
+	public IJSRuntime JsRuntime { get; set; }
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+			JsRuntime.InvokeVoidAsync("Amusoft.Components.ModalDialog.initialize", wrapper);
+	}
+}

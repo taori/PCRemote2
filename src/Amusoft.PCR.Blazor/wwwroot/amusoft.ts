@@ -30,3 +30,13 @@ namespace Amusoft {
 		}
 	}
 }
+
+namespace Amusoft.Components {
+	export class ModalDialog {
+		public static initialize(element: HTMLElement): void {
+			element.style.setProperty("background-color", "red");
+			document.querySelectorAll("app")[0].appendChild(element);
+//			document.body.style.setProperty("position", "relative");
+		}
+	}
+}

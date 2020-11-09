@@ -33,4 +33,20 @@ var Amusoft;
     }());
     Amusoft.Functions = Functions;
 })(Amusoft || (Amusoft = {}));
+(function (Amusoft) {
+    var Components;
+    (function (Components) {
+        var ModalDialog = /** @class */ (function () {
+            function ModalDialog() {
+            }
+            ModalDialog.initialize = function (element) {
+                element.style.setProperty("background-color", "red");
+                document.querySelectorAll("app")[0].appendChild(element);
+                //			document.body.style.setProperty("position", "relative");
+            };
+            return ModalDialog;
+        }());
+        Components.ModalDialog = ModalDialog;
+    })(Components = Amusoft.Components || (Amusoft.Components = {}));
+})(Amusoft || (Amusoft = {}));
 //# sourceMappingURL=amusoft.js.map

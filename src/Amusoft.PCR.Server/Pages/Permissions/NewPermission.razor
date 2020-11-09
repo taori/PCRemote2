@@ -8,7 +8,13 @@
 	<ValidationSummary />
 	<TextBox Placeholder="Name" @bind-Value="Model.Name"></TextBox>
 	<Button Primary="true" OnClick="OnSave">Save</Button>
+	<ModalDialog>
+		<div>
+			hello this is just some content
+		</div>
+	</ModalDialog>
 </EditForm>
+
 @code {
 
 	public class DataModel

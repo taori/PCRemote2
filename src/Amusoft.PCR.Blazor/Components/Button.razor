@@ -1,5 +1,4 @@
-﻿@using Microsoft.JSInterop
-<button class="@ButtonClass" disabled="@(!EnabledInternal)" @onclick="d => OnClick.InvokeAsync(d)">@ChildContent</button>
+﻿<button class="@ButtonClass" disabled="@(!EnabledInternal)" @onclick="d => OnClick.InvokeAsync(d)">@ChildContent</button>
 
 @code {
 
@@ -18,9 +17,6 @@
 
 	[Parameter]
 	public EventCallback<MouseEventArgs> OnClick { get; set; }
-
-	[Inject]
-	public IJSRuntime JsRuntime { get; set; }
 
 	public string ButtonClass { get; set; }
 
