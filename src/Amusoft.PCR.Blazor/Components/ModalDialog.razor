@@ -1,7 +1,9 @@
 ﻿@using Microsoft.JSInterop
-<div @ref="wrapper">
-	<h3>some headline</h3>
-	@ChildContent
+<div @ref="wrapper" class="amu-modal-wrapper" @attributes="ComponentValues()" style="padding: @(Padding)px; display: @(VisibleInternal ? "block" : "none")">
+	<div class="amu-modal-content">
+		<h3>some headline</h3>
+		@ChildContent
+	</div>
 </div>
 
 @code {
@@ -13,6 +15,67 @@
 
 	[Inject]
 	public IJSRuntime JsRuntime { get; set; }
+
+	[Parameter]
+	public int Padding { get; set; } = 100;
+
+
+	[Parameter]
+	public bool Visible
+	{
+		get => VisibleInternal;
+		set => VisibleInternal = value;
+	}
+
+	[Parameter]
+	public EventCallback<bool> VisibleChanged { get; set; }
+
+	private bool _visibleInternal;
+
+	private bool VisibleInternal
+	{
+		get { return _visibleInternal; }
+		set
+		{
+
+			if (EqualityComparer<bool>.Default.Equals(_visibleInternal, value))
+				return;
+			_visibleInternal = value;
+			VisibleChanged.InvokeAsync(value);
+		}
+	}
+
+
+	[Parameter]
+	public bool CloseOnModalFrameClick
+	{
+		get => CloseOnModalFrameClickInternal;
+		set => CloseOnModalFrameClickInternal = value;
+	}
+
+	private Dictionary<string, object> ComponentValues(
+		)
+	{
+		var values = new Dictionary<string, object>();
+		if(CloseOnModalFrameClickInternal)
+			values.Add("onclick", "Amusoft.Components.ModalDialog.closeEvent(this, event)");
+
+		return values;
+	}
+
+	private bool CloseOnModalFrameClickInternal { get; set; } = true;
+
+	public void Hide()
+	{
+		VisibleInternal = false;
+		StateHasChanged();
+	}
+
+	public void Show()
+	{
+		VisibleInternal = true;
+		StateHasChanged();
+	}
 
 	protected override void OnAfterRender(bool firstRender)
 	{

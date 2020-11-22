@@ -34,9 +34,18 @@ namespace Amusoft {
 namespace Amusoft.Components {
 	export class ModalDialog {
 		public static initialize(element: HTMLElement): void {
-			element.style.setProperty("background-color", "red");
+			element.classList.add("amu-modal-wrapper");
 			document.querySelectorAll("app")[0].appendChild(element);
-//			document.body.style.setProperty("position", "relative");
+		}
+		
+		public static closeEvent(element: HTMLElement, event: MouseEvent): void {
+			console.log(event);
+			console.log(element);
+			
+			let target = event.target as HTMLElement;
+			if(target != null && target?.classList?.contains("amu-modal-wrapper")){
+				element.style.setProperty("display", "none");
+			}
 		}
 	}
 }

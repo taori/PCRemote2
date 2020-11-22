@@ -8,11 +8,17 @@
 	<ValidationSummary />
 	<TextBox Placeholder="Name" @bind-Value="Model.Name"></TextBox>
 	<Button Primary="true" OnClick="OnSave">Save</Button>
-	<ModalDialog>
+	<ModalDialog @ref="Test" @bind-Visible="@ModalVisible" CloseOnModalFrameClick="HideOnWrapperClick">
 		<div>
 			hello this is just some content
+			<input type="checkbox" @bind="ModalVisible" />
 		</div>
 	</ModalDialog>
+	<Button Primary="true" OnClick="() => Test.Show()">Display Dialog</Button>
+
+	<label> Modal Visible: <input type="checkbox" @bind="ModalVisible" /></label>
+	<label> HideOnWrapperClick Visible: <input type="checkbox" @bind="HideOnWrapperClick" /></label>
+
 </EditForm>
 
 @code {
@@ -22,6 +28,12 @@
 		[Required]
 		public string Name { get; set; }
 	}
+
+	public bool ModalVisible { get; set; }
+
+	public bool HideOnWrapperClick { get; set; }
+
+	public ModalDialog Test { get; set; }
 
 	[Inject]
 	public NavigationManager NavigationManager { get; set; }

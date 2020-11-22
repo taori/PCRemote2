@@ -40,9 +40,17 @@ var Amusoft;
             function ModalDialog() {
             }
             ModalDialog.initialize = function (element) {
-                element.style.setProperty("background-color", "red");
+                element.classList.add("amu-modal-wrapper");
                 document.querySelectorAll("app")[0].appendChild(element);
-                //			document.body.style.setProperty("position", "relative");
+            };
+            ModalDialog.closeEvent = function (element, event) {
+                var _a;
+                console.log(event);
+                console.log(element);
+                var target = event.target;
+                if (target != null && ((_a = target === null || target === void 0 ? void 0 : target.classList) === null || _a === void 0 ? void 0 : _a.contains("amu-modal-wrapper"))) {
+                    element.style.setProperty("display", "none");
+                }
             };
             return ModalDialog;
         }());
