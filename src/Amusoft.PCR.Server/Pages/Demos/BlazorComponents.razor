@@ -1,0 +1,38 @@
+﻿@page "/demos/blazorComponents"
+@using Amusoft.PCR.Blazor.Extensions
+@inject IJSRuntime JsRuntime
+
+<EditForm Model="this">
+	<DataAnnotationsValidator />
+	<Title Headline="Blazor component demos" WindowTitle="Blazor component demos"></Title>
+	<ValidationSummary />
+	<div>
+		<TextBox @ref="TextBoxValueVerifier" Value="TextBoxValue" Placeholder="value changed model verification"></TextBox>
+		<Button OnClick="@(() => { JsRuntime.UI().Alert(TextBoxValueVerifier.Value);})">Verify</Button>
+	</div>
+	
+	<div>
+		<h2>Modal dialog test with outside close</h2>
+		<LabeledCheckbox @bind-Checked="ModalWithOpenFlag">Modal open</LabeledCheckbox>
+		<ModalDialog CloseOnModalFrameClick="true" @bind-Visible="ModalWithOpenFlag">
+			<LabeledCheckbox @bind-Checked="ModalWithOpenFlag">Modal open</LabeledCheckbox>
+		</ModalDialog>
+	</div>
+
+	<div>
+		<h2>Modal dialog test without outside close</h2>
+		<LabeledCheckbox @bind-Checked="ModalWithoutOpenFlag">Modal open</LabeledCheckbox>
+		<ModalDialog CloseOnModalFrameClick="false" @bind-Visible="ModalWithoutOpenFlag">
+			<LabeledCheckbox @bind-Checked="ModalWithoutOpenFlag">Modal open</LabeledCheckbox>
+		</ModalDialog>
+	</div>
+</EditForm>
+
+@code
+{
+	public TextBox TextBoxValueVerifier;
+
+	public bool ModalWithOpenFlag { get; set; }
+
+	public bool ModalWithoutOpenFlag { get; set; }
+}

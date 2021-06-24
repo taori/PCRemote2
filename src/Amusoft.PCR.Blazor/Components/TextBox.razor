@@ -1,26 +1,34 @@
 ﻿<div class="form-group">
 	<input type="text" class="form-control" 
-	       @bind-value="@InternalValue" 
+	       @bind-value="@ValueInternal" 
 	       @bind-value:event="oninput" placeholder="@Placeholder"/>
 </div>
 
 @code {
 
-	public string InternalValue
+	[Parameter]
+	public string Value
 	{
-		get => Value;
-		set
-		{
-			if (Value != value)
-				ValueChanged.InvokeAsync(value);
-		}
+		get => ValueInternal;
+		set => ValueInternal = value;
 	}
 
 	[Parameter]
-	public string Value { get; set; }
-
-	[Parameter]
 	public EventCallback<string> ValueChanged { get; set; }
+
+	private string _valueInternal;
+
+	private string ValueInternal
+	{
+		get { return _valueInternal; }
+		set
+		{
+			if (EqualityComparer<string>.Default.Equals(_valueInternal, value))
+				return;
+			_valueInternal = value;
+			ValueChanged.InvokeAsync(value);
+		}
+	}
 
 	[Parameter]
 	public string Placeholder { get; set; }

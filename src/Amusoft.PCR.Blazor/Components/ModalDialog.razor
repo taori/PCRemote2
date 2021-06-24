@@ -1,7 +1,9 @@
 ﻿@using Microsoft.JSInterop
-<div @ref="wrapper" class="amu-modal-wrapper" @attributes="ComponentValues()" style="padding: @(Padding)px; display: @(VisibleInternal ? "block" : "none")">
-	<div class="amu-modal-content">
-		<h3>some headline</h3>
+@implements IDisposable
+
+<div @ref="wrapper" class="amu-modal-wrapper" @onclick="WrapperClicked" style="padding: @(Padding)px; display: @(VisibleInternal ? "block" : "none")">
+	<div class="amu-modal-content" @onclick:stopPropagation="true">
+		<h3>@Headline</h3>
 		@ChildContent
 	</div>
 </div>
@@ -9,6 +11,31 @@
 @code {
 
 	private ElementReference wrapper;
+	private DotNetObjectReference<ModalDialog> _self;
+
+	[Parameter]
+	public string Headline
+	{
+		get => HeadlineInternal;
+		set => HeadlineInternal = value;
+	}
+
+	[Parameter]
+	public EventCallback<string> HeadlineChanged { get; set; }
+
+	private string _headlineInternal;
+
+	private string HeadlineInternal
+	{
+		get { return _headlineInternal; }
+		set
+		{
+			if (EqualityComparer<string>.Default.Equals(_headlineInternal, value))
+				return;
+			_headlineInternal = value;
+			HeadlineChanged.InvokeAsync(value);
+		}
+	}
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
@@ -45,22 +72,11 @@
 		}
 	}
 
-
 	[Parameter]
 	public bool CloseOnModalFrameClick
 	{
 		get => CloseOnModalFrameClickInternal;
 		set => CloseOnModalFrameClickInternal = value;
-	}
-
-	private Dictionary<string, object> ComponentValues(
-		)
-	{
-		var values = new Dictionary<string, object>();
-		if(CloseOnModalFrameClickInternal)
-			values.Add("onclick", "Amusoft.Components.ModalDialog.closeEvent(this, event)");
-
-		return values;
 	}
 
 	private bool CloseOnModalFrameClickInternal { get; set; } = true;
@@ -77,10 +93,26 @@
 		StateHasChanged();
 	}
 
+	protected override void OnInitialized()
+	{
+		_self = DotNetObjectReference.Create(this);
+		base.OnInitialized();
+	}
+
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 			JsRuntime.InvokeVoidAsync("Amusoft.Components.ModalDialog.initialize", wrapper);
+	}
+
+	public void Dispose()
+	{
+		_self?.Dispose();
+	}
+
+	private void WrapperClicked()
+	{
+		Visible = false;
 	}
 }

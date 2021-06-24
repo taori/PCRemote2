@@ -13,10 +13,21 @@
 	[Parameter]
 	public bool Visible { get; set; } = true;
 
+	private void UpdateStyle()
+	{
+		Style = Visible ? string.Empty : "display: none;";
+	}
+
 	/// <inheritdoc />
 	protected override void OnInitialized()
 	{
-		Style = Visible ? string.Empty : "display: none;";
+		UpdateStyle();
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		UpdateStyle();
 	}
 
 }
