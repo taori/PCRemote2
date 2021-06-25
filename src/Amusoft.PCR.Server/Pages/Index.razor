@@ -1,9 +1,11 @@
 ﻿@page "/"
+@inject NavigationManager navigationManager
 @using Amusoft.PCR.Blazor.Extensions
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+<h1>PC Remote Controller 2</h1>
+<Button OnClick="@(() => navigationManager.NavigateTo("functions"))">Go to functions</Button>
+
 
 @code
 {

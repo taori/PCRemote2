@@ -14,10 +14,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="GrpcDotNetNamedPipes" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Amusoft.PCR.Blazor\Amusoft.PCR.Blazor.csproj" />
+    <ProjectReference Include="..\Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj" />
     <ProjectReference Include="..\Amusoft.PCR.Model\Amusoft.PCR.Model.csproj" />
   </ItemGroup>
 

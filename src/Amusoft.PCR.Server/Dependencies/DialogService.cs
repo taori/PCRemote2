@@ -8,6 +8,7 @@ namespace Amusoft.PCR.Server.Dependencies
 	public interface IDialogService
 	{
 		ValueTask<string> Error(string message);
+		ValueTask<string> Message(string message);
 	}
 
 	public class DialogService : IDialogService
@@ -20,6 +21,11 @@ namespace Amusoft.PCR.Server.Dependencies
 		}
 
 		public ValueTask<string> Error(string message)
+		{
+			return _runtime.UI().Alert(message);
+		}
+
+		public ValueTask<string> Message(string message)
 		{
 			return _runtime.UI().Alert(message);
 		}

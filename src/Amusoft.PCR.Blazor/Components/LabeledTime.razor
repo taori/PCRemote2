@@ -1,0 +1,37 @@
+﻿
+<label class="form-label" for="@LabelId">
+	@ChildContent
+</label>
+<input id="@LabelId" type="time" value="@ValueInternal.ToString("hh\\:mm")" step="60" @onchange="InternalValueChanged"/>
+
+@code {
+
+	private long LabelId = DateTime.Now.Ticks;
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Parameter]
+	public TimeSpan Value { get; set; }
+
+	[Parameter]
+	public EventCallback<TimeSpan> ValueChanged { get; set; }
+
+	private TimeSpan ValueInternal { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		ValueInternal = Value;
+		base.OnParametersSet();
+	}
+
+	private void InternalValueChanged(ChangeEventArgs obj)
+	{
+		if (!TimeSpan.TryParseExact(obj.Value.ToString(), "hh\\:mm\\:ss", null, out var result))
+			return;
+
+		ValueInternal = result;
+		Value = result;
+		ValueChanged.InvokeAsync(result);
+	}
+}

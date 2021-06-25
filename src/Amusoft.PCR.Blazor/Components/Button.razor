@@ -1,4 +1,4 @@
-﻿<button class="@ButtonClass" disabled="@(!EnabledInternal)" @onclick="d => OnClick.InvokeAsync(d)">@ChildContent</button>
+﻿<button class="@ButtonClass @CssClass" disabled="@(!EnabledInternal)" @onclick="d => OnClick.InvokeAsync(d)">@ChildContent</button>
 
 @code {
 
@@ -11,6 +11,9 @@
 		get => EnabledInternal;
 		set => EnabledInternal = value;
 	}
+
+	[Parameter]
+	public string CssClass { get; set; }
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }

@@ -1,0 +1,113 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Amusoft.PCR.Grpc.Common";
+package Amusoft.PCR.Grpc.Common;
+
+service WindowsInteropService {
+	rpc ToggleMute (ToggleMuteRequest) returns (ToggleMuteReply) {}
+	rpc MonitorOn (MonitorOnRequest) returns (MonitorOnReply) {}
+	rpc MonitorOff (MonitorOffRequest) returns (MonitorOffReply) {}
+	rpc AbortShutDown (.Amusoft.PCR.Grpc.Common.AbortShutdownRequest) returns (.Amusoft.PCR.Grpc.Common.AbortShutdownReply) {}
+	rpc ShutDownDelayed (.Amusoft.PCR.Grpc.Common.ShutdownDelayedRequest) returns (.Amusoft.PCR.Grpc.Common.ShutdownDelayedReply) {}
+	rpc Restart (.Amusoft.PCR.Grpc.Common.RestartRequest) returns (.Amusoft.PCR.Grpc.Common.RestartReply) {}
+	rpc Hibernate (.Amusoft.PCR.Grpc.Common.HibernateRequest) returns (.Amusoft.PCR.Grpc.Common.HibernateReply) {}
+	rpc SetMasterVolume (.Amusoft.PCR.Grpc.Common.SetMasterVolumeRequest) returns (.Amusoft.PCR.Grpc.Common.SetMasterVolumeReply) {}
+	rpc GetMasterVolume (.Amusoft.PCR.Grpc.Common.GetMasterVolumeRequest) returns (.Amusoft.PCR.Grpc.Common.GetMasterVolumeReply) {}
+	rpc SendKeys (.Amusoft.PCR.Grpc.Common.SendKeysRequest) returns (.Amusoft.PCR.Grpc.Common.SendKeysReply) {}
+	rpc LockWorkStation (.Amusoft.PCR.Grpc.Common.LockWorkStationRequest) returns (.Amusoft.PCR.Grpc.Common.LockWorkStationReply) {}
+	rpc GetProcessList (.Amusoft.PCR.Grpc.Common.ProcessListRequest) returns (.Amusoft.PCR.Grpc.Common.ProcessListResponse) {}
+	rpc KillProcessById (.Amusoft.PCR.Grpc.Common.KillProcessRequest) returns (.Amusoft.PCR.Grpc.Common.KillProcessResponse) {}
+	rpc FocusWindow (.Amusoft.PCR.Grpc.Common.FocusWindowRequest) returns (.Amusoft.PCR.Grpc.Common.FocusWindowResponse) {}
+	rpc ExecuteCommandAsCurrentUser (.Amusoft.PCR.Grpc.Common.ExecuteCommandAsCurrentUserRequest) returns (.Amusoft.PCR.Grpc.Common.ExecuteCommandAsCurrentUserResponse) {}
+}
+
+message ToggleMuteRequest {}
+message ToggleMuteReply {
+	bool muted = 1;
+}
+
+message MonitorOnRequest {}
+message MonitorOnReply {}
+
+message MonitorOffRequest {}
+message MonitorOffReply {}
+
+message LockWorkStationRequest {}
+message LockWorkStationReply {}
+
+message SendKeysRequest {
+	string message = 1;
+}
+message SendKeysReply {
+}
+
+message SetMasterVolumeRequest {
+	int32 value = 1;	
+}
+message SetMasterVolumeReply {
+	int32 value = 1;
+}
+
+message GetMasterVolumeRequest {
+}
+message GetMasterVolumeReply {
+	int32 value = 1;
+}
+
+message ShutdownDelayedRequest {
+	int32 seconds = 1;
+	bool force = 2;
+}
+message ShutdownDelayedReply {
+	bool success = 1;
+}
+
+message AbortShutdownRequest {}
+message AbortShutdownReply {
+	bool success = 1;
+}
+
+message HibernateRequest {}
+message HibernateReply {
+	bool success = 1;
+}
+
+message RestartRequest {
+	int32 delay = 1;
+	bool force = 2;
+}
+message RestartReply {
+	bool success = 1;
+}
+
+message ProcessListRequest {}
+message ProcessListResponse {
+	repeated .Amusoft.PCR.Grpc.Common.ProcessListResponseItem results = 1;
+}
+message ProcessListResponseItem {
+	int32 processId = 1;
+	string processName = 2;
+	string mainWindowTitle = 3;
+	float cpuUsage = 4;
+}
+
+message KillProcessRequest {
+	int32 processId = 1;
+}
+message KillProcessResponse {
+	bool success = 1;
+}
+
+message FocusWindowRequest {
+	int32 processId = 1;
+}
+message FocusWindowResponse {
+	bool success = 1;
+}
+
+message ExecuteCommandAsCurrentUserRequest {
+	string command = 1;
+}
+message ExecuteCommandAsCurrentUserResponse {
+	bool success = 1;
+}
