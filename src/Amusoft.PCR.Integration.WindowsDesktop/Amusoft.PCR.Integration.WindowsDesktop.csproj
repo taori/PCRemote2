@@ -2,8 +2,10 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net471</TargetFramework>
+		<TargetFramework>net5-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -12,15 +14,22 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GrpcDotNetNamedPipes" Version="1.1.0" />
-		<PackageReference Include="NLog" Version="4.7.10" />
-		<PackageReference Include="NLog.Config" Version="4.7.10" />
-		<PackageReference Include="NLog.Schema" Version="4.7.10" />
-		<ProjectReference Include="..\Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj" />
+	  <None Remove="nlog.config" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="System.Windows.Forms" />
+	  <Content Include="nlog.config">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="GrpcDotNetNamedPipes" Version="1.1.0" />
+		<PackageReference Include="NLog" Version="4.7.10" />
+		<PackageReference Include="NLog.Schema" Version="4.7.10" />
+		<ProjectReference Include="..\Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj" />
 	</ItemGroup>
 
 </Project>

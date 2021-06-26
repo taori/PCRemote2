@@ -41,4 +41,27 @@ private $Type$ $Name$Internal&#xD;
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0B9C4159296AC9438CC050CC5244274F/Field/=Type/@KeyIndexDefined">True</s:Boolean>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0B9C4159296AC9438CC050CC5244274F/Field/=Type/Order/@EntryValue">0</s:Int64>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0B9C4159296AC9438CC050CC5244274F/Field/=Name/@KeyIndexDefined">True</s:Boolean>
-	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0B9C4159296AC9438CC050CC5244274F/Field/=Name/Order/@EntryValue">1</s:Int64></wpf:ResourceDictionary>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=0B9C4159296AC9438CC050CC5244274F/Field/=Name/Order/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/Applicability/=Surround/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/Description/@EntryValue">log exception using _logger</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/IsBlessed/@EntryValue">True</s:Boolean>
+	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/Reformat/@EntryValue">True</s:Boolean>
+	
+	
+	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/Scope/=E6E678D4B937A84D8C4585DDD2F27DB0/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/Scope/=E6E678D4B937A84D8C4585DDD2F27DB0/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/Scope/=E6E678D4B937A84D8C4585DDD2F27DB0/Type/@EntryValue">InCSharpExpression</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/Shortcut/@EntryValue">logException</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=8A7B2AABE810AA49871CFDC5480B6C5E/Text/@EntryValue">try&#xD;
+{&#xD;
+	$SELECTION$&#xD;
+}&#xD;
+catch (Exception e)&#xD;
+{&#xD;
+	_logger.LogError(e, "Exception occured.");&#xD;
+	$SELSTART$return false;$SELEND$&#xD;
+}</s:String></wpf:ResourceDictionary>

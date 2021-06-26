@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Google.Protobuf.Collections;
 using GrpcDotNetNamedPipes;
+using Microsoft.Extensions.Logging;
 
 namespace Amusoft.PCR.Server.Dependencies
 {
@@ -35,98 +36,218 @@ namespace Amusoft.PCR.Server.Dependencies
 	public class InteropService : IInteropService
 	{
 		private readonly NamedPipeChannel _channel;
+		private readonly ILogger<InteropService> _logger;
 		private readonly WindowsInteropService.WindowsInteropServiceClient _service;
 
-		public InteropService(NamedPipeChannel channel)
+		public InteropService(NamedPipeChannel channel, ILogger<InteropService> logger)
 		{
 			_channel = channel;
+			_logger = logger;
 			_service = new WindowsInteropService.WindowsInteropServiceClient(_channel);
 		}
 
 		public async Task<bool> ToggleMute()
 		{
-			var reply = await _service.ToggleMuteAsync(new ToggleMuteRequest());
-			return reply.Muted;
+			try
+			{
+				var reply = await _service.ToggleMuteAsync(new ToggleMuteRequest());
+				return reply.Muted;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling \"ToggleMute\".");
+				return false;
+			}
 		}
 
 		public async Task MonitorOn()
 		{
-			await _service.MonitorOnAsync(new MonitorOnRequest());
+			try
+			{
+				await _service.MonitorOnAsync(new MonitorOnRequest());
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling \"MonitorOn\".");
+			}
 		}
 
 		public async Task MonitorOff()
 		{
-			await _service.MonitorOffAsync(new MonitorOffRequest());
+			try
+			{
+				await _service.MonitorOffAsync(new MonitorOffRequest());
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling \"MonitorOff\".");
+			}
 		}
 
 		public async Task LockWorkStation()
 		{
-			await _service.LockWorkStationAsync(new LockWorkStationRequest());
+			try
+			{
+				await _service.LockWorkStationAsync(new LockWorkStationRequest());
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling \"LockWorkStation\".");
+			}
 		}
 
 		public async Task SendKeys(string keys)
 		{
-			await _service.SendKeysAsync(new SendKeysRequest(){Message = keys});
+			try
+			{
+				await _service.SendKeysAsync(new SendKeysRequest(){Message = keys});
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling \"SendKeys\".");
+			}
 		}
 
 		public async Task<int> SetMasterVolume(int value)
 		{
-			var reply = await _service.SetMasterVolumeAsync(new SetMasterVolumeRequest() {Value = value});
-			return reply.Value;
+			try
+			{
+				var reply = await _service.SetMasterVolumeAsync(new SetMasterVolumeRequest() {Value = value});
+				return reply.Value;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling \"SetMasterVolume\".");
+				return -1;
+			}
 		}
 
 		public async Task<int> GetMasterVolume()
 		{
-			var reply = await _service.GetMasterVolumeAsync(new GetMasterVolumeRequest());
-			return reply.Value;
+			try
+			{
+				var reply = await _service.GetMasterVolumeAsync(new GetMasterVolumeRequest());
+				return reply.Value;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Exception occured while calling \"GetMasterVolume\".");
+				return -1;
+			}
 		}
 
 		public async Task<bool> Shutdown(TimeSpan delay, bool force)
 		{
-			var reply = await _service.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = (int)delay.TotalSeconds, Force = force});
-			return reply.Success;
+			try
+			{
+				var reply = await _service.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = (int)delay.TotalSeconds, Force = force});
+				return reply.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Exception occured while calling \"Shutdown\".");
+				return false;
+			}
 		}
 
 		public async Task<bool> AbortShutdown()
 		{
-			var reply = await _service.AbortShutDownAsync(new AbortShutdownRequest());
-			return reply.Success;
+			try
+			{
+				var reply = await _service.AbortShutDownAsync(new AbortShutdownRequest());
+				return reply.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Exception occured while calling \"AbortShutdown\".");
+				return false;
+			}
 		}
 
 		public async Task<bool> Hibernate()
 		{
-			var reply = await _service.HibernateAsync(new HibernateRequest());
-			return reply.Success;
+			try
+			{
+				var reply = await _service.HibernateAsync(new HibernateRequest());
+				return reply.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Exception occured while calling \"Hibernate\".");
+				return false;
+			}
 		}
 
 		public async Task<bool> Restart(TimeSpan delay, bool force)
 		{
-			var reply = await _service.RestartAsync(new RestartRequest(){ Delay = (int)delay.TotalSeconds, Force = force});
-			return reply.Success;
+			try
+			{
+				var reply = await _service.RestartAsync(new RestartRequest(){ Delay = (int)delay.TotalSeconds, Force = force});
+				return reply.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Exception occured while calling \"Restart\".");
+				return false;
+			}
 		}
+
+		private List<ProcessListResponseItem> EmptyProcessList = new();
 
 		public async Task<IList<ProcessListResponseItem>> GetProcessList()
 		{
-			var reply = await _service.GetProcessListAsync(new ProcessListRequest());
-			return reply.Results;
+			try
+			{
+				var reply = await _service.GetProcessListAsync(new ProcessListRequest());
+				return reply.Results;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Exception occured while calling \"GetProcessList\".");
+				return EmptyProcessList;
+			}
 		}
 
 		public async Task<bool> KillProcessById(int processId)
 		{
-			var reply = await _service.KillProcessByIdAsync(new KillProcessRequest(){ProcessId = processId});
-			return reply.Success;
+			try
+			{
+				var reply = await _service.KillProcessByIdAsync(new KillProcessRequest(){ProcessId = processId});
+				return reply.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Exception occured while calling \"KillProcessById\".");
+				return false;
+			}
 		}
 
 		public async Task<bool> FocusProcessWindow(int processId)
 		{
-			var reply = await _service.FocusWindowAsync(new FocusWindowRequest(){ ProcessId = processId });
-			return reply.Success;
+			try
+			{
+				var reply = await _service.FocusWindowAsync(new FocusWindowRequest(){ ProcessId = processId });
+				return reply.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Exception occured while calling \"FocusProcessWindow\".");
+				return false;
+			}
 		}
 
 		public async Task<bool> ExecuteCommandAsCurrentUser(string command)
 		{
-			var reply = await _service.ExecuteCommandAsCurrentUserAsync(new ExecuteCommandAsCurrentUserRequest(){ Command = command});
-			return reply.Success;
+			try
+			{
+				var reply = await _service.ExecuteCommandAsCurrentUserAsync(new ExecuteCommandAsCurrentUserRequest(){ Command = command});
+				return reply.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Exception occured while calling \"ExecuteCommandAsCurrentUser\".");
+				return false;
+			}
 		}
 	}
 }
