@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Amusoft.PCR.Integration.WindowsDesktop.Interop.Impersonation
+namespace Amusoft.Toolkit.Impersonation
 {
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct ProcessInformation

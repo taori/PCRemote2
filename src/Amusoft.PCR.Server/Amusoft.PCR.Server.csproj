@@ -35,6 +35,7 @@
 		<ProjectReference Include="..\Amusoft.PCR.Blazor\Amusoft.PCR.Blazor.csproj" />
 		<ProjectReference Include="..\Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj" />
 		<ProjectReference Include="..\Amusoft.PCR.Model\Amusoft.PCR.Model.csproj" />
+		<ProjectReference Include="..\Amusoft.Toolkit.Impersonation\Amusoft.Toolkit.Impersonation.csproj" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">

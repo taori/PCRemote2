@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploymentScripts", "deploy
 		..\deploy\installService.ps1 = ..\deploy\installService.ps1
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.Toolkit.Impersonation", "Amusoft.Toolkit.Impersonation\Amusoft.Toolkit.Impersonation.csproj", "{FE76750C-4A2A-44BE-9C10-2AB952B543A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,18 @@ Global
 		{EBF797BF-5AAA-4741-8B31-54D3B74811BC}.Release|x64.Build.0 = Release|Any CPU
 		{EBF797BF-5AAA-4741-8B31-54D3B74811BC}.Release|x86.ActiveCfg = Release|Any CPU
 		{EBF797BF-5AAA-4741-8B31-54D3B74811BC}.Release|x86.Build.0 = Release|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Debug|x64.Build.0 = Debug|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Debug|x86.Build.0 = Debug|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Release|x64.ActiveCfg = Release|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Release|x64.Build.0 = Release|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Release|x86.ActiveCfg = Release|Any CPU
+		{FE76750C-4A2A-44BE-9C10-2AB952B543A4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

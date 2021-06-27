@@ -27,6 +27,7 @@
 		<PackageReference Include="NLog" Version="4.7.10" />
 		<PackageReference Include="NLog.Schema" Version="4.7.10" />
 		<ProjectReference Include="..\Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj" />
+		<ProjectReference Include="..\Amusoft.Toolkit.Impersonation\Amusoft.Toolkit.Impersonation.csproj" />
 	</ItemGroup>
 
 </Project>

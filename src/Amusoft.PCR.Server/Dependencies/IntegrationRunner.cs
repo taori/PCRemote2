@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Amusoft.Toolkit.Impersonation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -108,23 +109,52 @@ namespace Amusoft.PCR.Server.Dependencies
 			var processExePaths = GetProcessExePaths();
 			var result = _settings.Value.PathCheck switch
 			{
-				IntegrationRunnerSettings.PathCheckMode.FileCheckOnly => processExePaths.Any(d => d.EndsWith(_exeFileName)),
-				IntegrationRunnerSettings.PathCheckMode.Exact => processExePaths.Any(d => d != null && Path.GetFullPath(d).Equals(Path.GetFullPath(_exeAbsolutePath))),
+				IntegrationRunnerSettings.PathCheckMode.FileCheckOnly => processExePaths.Any(d => d.fullPath.EndsWith(_exeFileName)),
+				IntegrationRunnerSettings.PathCheckMode.Exact => processExePaths.Any(d => Path.GetFullPath(d.fullPath).Equals(Path.GetFullPath(_exeAbsolutePath))),
 				
 			};
 			return result;
 		}
 
-		private IReadOnlyList<string> GetProcessExePaths()
+		public override Task StopAsync(CancellationToken cancellationToken)
 		{
-			var results = new List<string>();
+			if (_canOperate)
+			{
+				_logger.LogInformation("Terminating current integration instances");
+
+				var allProcesses = GetProcessExePaths();
+				var matches = allProcesses
+					.Where(d => Path.GetFullPath(d.fullPath).Equals(_exeAbsolutePath))
+					.ToArray();
+
+				if (matches.Length > 0)
+				{
+					_logger.LogDebug("Terminating {Count} instances", matches.Length);
+					foreach (var match in matches)
+					{
+						_logger.LogDebug("Killing process {Id}", match.processId);
+						Process.GetProcessById(match.processId).Kill();
+					}
+				}
+				else
+				{
+					_logger.LogWarning("No integration instances found. It must have crashed?");
+				}
+			}
+
+			return base.StopAsync(cancellationToken);
+		}
+
+		private IReadOnlyList<(int processId, string fullPath)> GetProcessExePaths()
+		{
+			var results = new List<(int processId, string fullPath)>();
 			foreach (var process in Process.GetProcesses())
 			{
 				try
 				{
 					if (process.MainModule?.FileName != null)
 					{
-						results.Add(process.MainModule.FileName);
+						results.Add((process.Id, process.MainModule.FileName));
 					}
 				}
 				catch (Exception)
@@ -148,10 +178,8 @@ namespace Amusoft.PCR.Server.Dependencies
 
 				_logger.LogInformation("Launching application at {Path}", _exeAbsolutePath);
 
-				
-				var process = new Process();
-				process.StartInfo = new ProcessStartInfo(_exeAbsolutePath);
-				process.Start();
+
+				ProcessImpersonation.Launch(_exeAbsolutePath);
 
 				return true;
 			}

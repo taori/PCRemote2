@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace Amusoft.PCR.Integration.WindowsDesktop.Interop.Impersonation
+namespace Amusoft.Toolkit.Impersonation
 {
     // https://social.msdn.microsoft.com/Forums/vstudio/en-US/0c0ca087-5e7b-4046-93cb-c7b3e48d0dfb/how-run-client-application-as-a-windows-service-in-c?forum=csharpgeneral
 

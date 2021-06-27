@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Integration.WindowsDesktop.Interop;
-using Amusoft.PCR.Integration.WindowsDesktop.Interop.Impersonation;
 using Google.Protobuf.Collections;
 using Grpc.Core;
 using NLog;
@@ -129,7 +128,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 		public override Task<ExecuteCommandAsCurrentUserResponse> ExecuteCommandAsCurrentUser(ExecuteCommandAsCurrentUserRequest request, ServerCallContext context)
 		{
 			Log.Info("Executing [{Name}]", nameof(ExecuteCommandAsCurrentUser));
-			var result = ProcessImpersonation.Launch(request.Command);
+			var result = ProcessHelper.TryLaunchProgram(request.Command);
 			return Task.FromResult(new ExecuteCommandAsCurrentUserResponse() { Success = result });
 		}
 	}

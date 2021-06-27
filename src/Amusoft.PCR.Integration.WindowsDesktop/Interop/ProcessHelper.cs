@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Amusoft.PCR.Grpc.Common;
+using NLog;
 
 namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 {
 	public static class ProcessHelper
 	{
+		private static readonly Logger Log = LogManager.GetLogger(nameof(ProcessHelper));
+
 		public static bool TryKillProcess(int processId)
 		{
 			// Logger.Info($"Killing process [{concrete.ProcessId}].");
 			var process = Process.GetProcesses().FirstOrDefault(d => d.Id == processId);
 			if (process == null)
 			{
-				// Logger.Warn($"Process id [{concrete.ProcessId}] not found.");
+				Log.Warn($"Process id [{processId}] not found.");
 				return false;
 			}
 
@@ -25,9 +28,8 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 			}
 			catch (Exception e)
 			{
-				Debug.WriteLine(e);
+				Log.Error(e);
 				return false;
-				// Logger.Error(e);
 			}
 		}
 
@@ -51,6 +53,25 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 			catch (Exception e)
 			{
 				Debug.WriteLine(e);
+				return false;
+			}
+		}
+
+		public static bool TryLaunchProgram(string program, string arguments = null)
+		{
+			try
+			{
+				var process = new Process();
+				process.StartInfo = arguments == null
+					? new ProcessStartInfo(program)
+					: new ProcessStartInfo(program, arguments);
+
+				process.Start();
+				return true;
+			}
+			catch (Exception e)
+			{
+				Log.Error(e, $"Exception occured while calling \"TryLaunchProgram\".");
 				return false;
 			}
 		}

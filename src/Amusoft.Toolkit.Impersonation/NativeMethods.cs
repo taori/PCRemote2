@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using NLog;
 
-namespace Amusoft.PCR.Integration.WindowsDesktop.Interop.Impersonation
+namespace Amusoft.Toolkit.Impersonation
 {
     internal static class NativeMethods
     {

@@ -36,7 +36,7 @@ if($browser.ShowDialog() -eq "OK"){
 
     Write-Host "Has permission: $hasPermission"
     Write-Host "Copying files to $folder from ..\artifacts\"
-    Remove-Item "$folder\*" -Recurse -ErrorAction Stop -Force -Recurse
+    Remove-Item "$folder\*" -Recurse -ErrorAction Stop -Force
     Copy-Item ..\artifacts\* -Recurse -ErrorAction Stop -Destination $folder
     Write-Host "Copy done."
 
