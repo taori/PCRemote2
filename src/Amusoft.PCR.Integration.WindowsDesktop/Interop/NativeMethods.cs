@@ -6,11 +6,14 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using NLog;
 
 namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 {
 	internal class NativeMethods
 	{
+		private static readonly Logger Log = LogManager.GetLogger(nameof(NativeMethods));
+
 		[DllImport("user32.dll")]
 		static extern bool SetForegroundWindow(IntPtr hWnd);
 
@@ -35,13 +38,34 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 
 		public static bool SetForegroundWindow(int processId)
 		{
-			var matchProcess = Process.GetProcesses().FirstOrDefault(d => d.Id == processId);
-			if (matchProcess != null)
+			try
 			{
+				var matchProcess = Process.GetProcessById(processId);
 				return SetForegroundWindow(matchProcess.MainWindowHandle);
 			}
+			catch (Exception e)
+			{
+				Log.Error(e, "An error occured while calling {Method}", nameof(SetForegroundWindow));
+				return false;
+			}
+		}
 
-			return false;
+		public enum MediaKeyCode : byte
+		{
+			NextTrack = 0xb0,
+			PreviousTrack = 0xb3,
+			PlayPause = 0xb1
+		}
+
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, IntPtr extraInfo);
+		public const int KEYEVENTF_EXTENDEDKEY = 0x0001; //Key down flag
+		public const int KEYEVENTF_KEYUP = 0x0002; //Key up flag
+
+		public static void PressMediaKey(MediaKeyCode code)
+		{
+			keybd_event((byte)code, 0, KEYEVENTF_EXTENDEDKEY, IntPtr.Zero);
+			keybd_event((byte)code, 0, KEYEVENTF_KEYUP, IntPtr.Zero);
 		}
 
 		public static class Monitor
