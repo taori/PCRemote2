@@ -7,35 +7,21 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Amusoft.Toolkit.Impersonation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Amusoft.PCR.Server.Dependencies
+namespace Amusoft.PCR.Server.BackgroundServices
 {
-	public class IntegrationRunnerSettings
+	internal class DesktopIntegrationService : BackgroundService
 	{
-		public enum PathCheckMode
-		{
-			Exact,
-			FileCheckOnly
-		}
-
-		public string ExePath { get; set; }
-
-		public PathCheckMode PathCheck { get; set; }
-	}
-
-	public class IntegrationRunner : BackgroundService
-	{
-		private readonly ILogger<IntegrationRunner> _logger;
+		private readonly ILogger<DesktopIntegrationService> _logger;
+		private readonly IOptions<DesktopIntegrationSettings> _settings;
 		private bool _canOperate;
-		private readonly IOptions<IntegrationRunnerSettings> _settings;
 		private string _exeFileName;
 		private string _exeAbsolutePath;
 
-		public IntegrationRunner(ILogger<IntegrationRunner> logger, IOptions<IntegrationRunnerSettings> settings)
+		public DesktopIntegrationService(ILogger<DesktopIntegrationService> logger, IOptions<DesktopIntegrationSettings> settings)
 		{
 			_logger = logger;
 			_settings = settings;
@@ -43,7 +29,7 @@ namespace Amusoft.PCR.Server.Dependencies
 
 		public override Task StartAsync(CancellationToken cancellationToken)
 		{
-			_logger.LogDebug("{Name} starting", nameof(IntegrationRunner));
+			_logger.LogDebug("{Name} starting", nameof(DesktopIntegrationService));
 			_canOperate = IsConfigurationOperational();
 			if (_canOperate)
 			{
@@ -57,7 +43,7 @@ namespace Amusoft.PCR.Server.Dependencies
 				}
 			}
 
-			_logger.LogDebug("{Name} is in operational state {State}", nameof(IntegrationRunner), _canOperate);
+			_logger.LogDebug("{Name} is in operational state {State}", nameof(DesktopIntegrationService), _canOperate);
 			return base.StartAsync(cancellationToken);
 		}
 
@@ -109,8 +95,8 @@ namespace Amusoft.PCR.Server.Dependencies
 			var processExePaths = GetProcessExePaths();
 			var result = _settings.Value.PathCheck switch
 			{
-				IntegrationRunnerSettings.PathCheckMode.FileCheckOnly => processExePaths.Any(d => d.fullPath.EndsWith(_exeFileName)),
-				IntegrationRunnerSettings.PathCheckMode.Exact => processExePaths.Any(d => Path.GetFullPath(d.fullPath).Equals(Path.GetFullPath(_exeAbsolutePath))),
+				DesktopIntegrationSettings.PathCheckMode.FileCheckOnly => processExePaths.Any(d => d.fullPath.EndsWith(_exeFileName)),
+				DesktopIntegrationSettings.PathCheckMode.Exact => processExePaths.Any(d => Path.GetFullPath(d.fullPath).Equals(Path.GetFullPath(_exeAbsolutePath))),
 				
 			};
 			return result;

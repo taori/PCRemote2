@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Amusoft.PCR.Server.BackgroundServices;
 using Amusoft.PCR.Server.Dependencies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -43,18 +44,6 @@ namespace Amusoft.PCR.Server
 				var host = builder.Build();
 
 				host.Run();
-				// if (isService)
-				// {
-				// 	// To run the app without the CustomWebHostService change the
-				// 	// next line to host.RunAsService();
-				// 	host.RunAsCustomService();
-				// }
-				// else
-				// {
-				// 	host.Run();
-				// }
-
-				// CreateHostBuilder(args).Build().Run();
 			}
 			catch (Exception exception)
 			{
@@ -81,7 +70,8 @@ namespace Amusoft.PCR.Server
 				.UseWindowsService()
 				.ConfigureServices(services =>
 				{
-					services.AddHostedService<IntegrationRunner>();
+					services.AddHostedService<DesktopIntegrationService>();
+					services.AddHostedService<LanAddressBroadcastService>();
 				})
 				.ConfigureAppConfiguration(configuration =>
 				{

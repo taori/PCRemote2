@@ -64,4 +64,5 @@ catch (Exception e)&#xD;
 {&#xD;
 	_logger.LogError(e, "Exception occured.");&#xD;
 	$SELSTART$return false;$SELEND$&#xD;
-}</s:String></wpf:ResourceDictionary>
+}</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Amusoft/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

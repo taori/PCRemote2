@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Amusoft.PCR.Server.Areas.Identity;
+using Amusoft.PCR.Server.BackgroundServices;
 using Amusoft.PCR.Server.Data;
 using Amusoft.PCR.Server.Dependencies;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -55,7 +56,8 @@ namespace Amusoft.PCR.Server
 				})
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
-			services.Configure<IntegrationRunnerSettings>(Configuration.GetSection("BackendIntegration"));
+			services.Configure<DesktopIntegrationSettings>(Configuration.GetSection("DesktopIntegration"));
+			services.Configure<LanAddressBroadcastSettings>(Configuration.GetSection("ServerUrlTransmitter"));
 
 			services.AddHttpContextAccessor();
 			services.AddHttpClient("local", (provider, client) =>
@@ -108,13 +110,13 @@ namespace Amusoft.PCR.Server
 				{
 					if (context.Database.GetPendingMigrations().Any())
 					{
-						logger.LogInformation("Applying database migration.");
+						logger.LogInformation("Applying database migration");
 						context.Database.Migrate();
-						logger.LogInformation("Applying database migration done.");
+						logger.LogInformation("Applying database migration done");
 					}
 					else
 					{
-						logger.LogDebug("No pending migrations found.");
+						logger.LogDebug("No pending migrations found");
 					}
 				}
 			}

@@ -27,11 +27,13 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 		{
 			base.OnStartup(e);
 
+#if !DEBUG
 			_runOnceMutex = new Mutex(true, Globals.InteropMutexName, out var mutexNew);
 			if (!mutexNew)
 			{
 				Shutdown();
 			}
+#endif
 
 			if (!TryLaunchInteropChannel())
 			{
@@ -41,7 +43,10 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 
 		protected override void OnExit(ExitEventArgs e)
 		{
+#if !DEBUG
 			_runOnceMutex.ReleaseMutex();
+#endif
+
 			_namedPipeServer.Kill();
 			_namedPipeServer?.Dispose();
 			base.OnExit(e);
