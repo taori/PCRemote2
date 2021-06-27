@@ -37,6 +37,7 @@ namespace Amusoft.PCR.Server
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddOptions();
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
 					Configuration.GetConnectionString("DefaultConnection")));
@@ -53,6 +54,8 @@ namespace Amusoft.PCR.Server
 					options.SignIn.RequireConfirmedAccount = true;
 				})
 				.AddEntityFrameworkStores<ApplicationDbContext>();
+
+			services.Configure<IntegrationRunnerSettings>(Configuration.GetSection("BackendIntegration"));
 
 			services.AddHttpContextAccessor();
 			services.AddHttpClient("local", (provider, client) =>

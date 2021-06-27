@@ -53,6 +53,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 			}
 			catch (Exception e)
 			{
+				Log.Error(e, "ToggleMute failed.");
 				AudioManager.SetMasterVolumeMute(!muteState);
 				return Task.FromResult(new ToggleMuteReply() { Muted = muteState });
 			}

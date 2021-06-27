@@ -13,6 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Integration.Win
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Grpc.Common", "Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj", "{EBF797BF-5AAA-4741-8B31-54D3B74811BC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploymentScripts", "deploymentScripts", "{DD935416-C8CA-41E9-A95F-6ED449B5198A}"
+	ProjectSection(SolutionItems) = preProject
+		..\deploy\buildAndCopy.ps1 = ..\deploy\buildAndCopy.ps1
+		..\deploy\createSelfSignedCertificate.ps1 = ..\deploy\createSelfSignedCertificate.ps1
+		..\deploy\installService.ps1 = ..\deploy\installService.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

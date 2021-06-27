@@ -9,6 +9,7 @@ using System.Windows;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Integration.WindowsDesktop.Services;
 using GrpcDotNetNamedPipes;
+using NLog;
 
 namespace Amusoft.PCR.Integration.WindowsDesktop
 {
@@ -17,9 +18,10 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 	/// </summary>
 	public partial class App : Application
 	{
+		private static readonly Logger Log = LogManager.GetLogger(nameof(App));
+
 		private NamedPipeServer _namedPipeServer;
 		private Mutex _runOnceMutex;
-		private Thread _namedPipeThread;
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -42,7 +44,6 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 			_runOnceMutex.ReleaseMutex();
 			_namedPipeServer.Kill();
 			_namedPipeServer?.Dispose();
-			_namedPipeThread.Abort();
 			base.OnExit(e);
 		}
 
@@ -53,23 +54,21 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 
 			try
 			{
-				_namedPipeThread = new Thread(NamedPipeThreadWork);
-				_namedPipeThread.Start();
+				Log.Info("Starting service.");
+				_namedPipeServer.Start();
+
+				Log.Info("Service running.");
 				return true;
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex);
+				Log.Error(ex);
 				return false;
 			}
 		}
 
 		private void NamedPipeThreadWork()
 		{
-			Console.WriteLine("Starting service.");
-			_namedPipeServer.Start();
-
-			Console.WriteLine("Service running.");
 		}
 	}
 }
