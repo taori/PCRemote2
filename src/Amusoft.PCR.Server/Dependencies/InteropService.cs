@@ -30,7 +30,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		Task<IList<ProcessListResponseItem>> GetProcessList();
 		Task<bool> KillProcessById(int processId);
 		Task<bool> FocusProcessWindow(int processId);
-		Task<bool> ExecuteCommandAsCurrentUser(string command);
+		Task<bool> StartImpersonatedProcess(string programName, int impersonatedProcessId = 0);
 	}
 
 	public class InteropService : IInteropService
@@ -55,7 +55,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling \"ToggleMute\".");
+				_logger.LogError(e, "Exception occured while calling [ToggleMute]");
 				return false;
 			}
 		}
@@ -68,7 +68,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling \"MonitorOn\".");
+				_logger.LogError(e, "Exception occured while calling [MonitorOn]");
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling \"MonitorOff\".");
+				_logger.LogError(e, "Exception occured while calling [MonitorOff]");
 			}
 		}
 
@@ -92,7 +92,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling \"LockWorkStation\".");
+				_logger.LogError(e, "Exception occured while calling [LockWorkStation]");
 			}
 		}
 
@@ -104,7 +104,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling \"SendKeys\".");
+				_logger.LogError(e, "Exception occured while calling [SendKeys] with [{Keys}]", keys);
 			}
 		}
 
@@ -117,7 +117,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling \"SetMasterVolume\".");
+				_logger.LogError(e, "Exception occured while calling [SetMasterVolume] to [{Value}]", value);
 				return -1;
 			}
 		}
@@ -131,7 +131,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Exception occured while calling \"GetMasterVolume\".");
+				_logger.LogError(e, "Exception occured while calling [GetMasterVolume]");
 				return -1;
 			}
 		}
@@ -145,7 +145,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Exception occured while calling \"Shutdown\".");
+				_logger.LogError(e, "Exception occured while calling [Shutdown] with delay [{Delay}] and force close [{Force}]", delay, force);
 				return false;
 			}
 		}
@@ -159,7 +159,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Exception occured while calling \"AbortShutdown\".");
+				_logger.LogError(e, "Exception occured while calling [AbortShutdown]");
 				return false;
 			}
 		}
@@ -173,7 +173,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Exception occured while calling \"Hibernate\".");
+				_logger.LogError(e, "Exception occured while calling [Hibernate]");
 				return false;
 			}
 		}
@@ -187,7 +187,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Exception occured while calling \"Restart\".");
+				_logger.LogError(e, "Exception occured while calling [Restart] with delay [{Delay}] and force close [{Force}]", delay, force);
 				return false;
 			}
 		}
@@ -203,7 +203,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Exception occured while calling \"GetProcessList\".");
+				_logger.LogError(e, "Exception occured while calling [GetProcessList]");
 				return EmptyProcessList;
 			}
 		}
@@ -217,7 +217,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Exception occured while calling \"KillProcessById\".");
+				_logger.LogError(e, "Exception occured while calling [KillProcessById] with id [{Id}]", processId);
 				return false;
 			}
 		}
@@ -231,21 +231,21 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Exception occured while calling \"FocusProcessWindow\".");
+				_logger.LogError(e, "Exception occured while calling [FocusProcessWindow] with id [{Id}]", processId);
 				return false;
 			}
 		}
 
-		public async Task<bool> ExecuteCommandAsCurrentUser(string command)
+		public async Task<bool> StartImpersonatedProcess(string programName, int impersonatedProcessId = 0)
 		{
 			try
 			{
-				var reply = await _service.ExecuteCommandAsCurrentUserAsync(new ExecuteCommandAsCurrentUserRequest(){ Command = command});
+				var reply = await _service.StartImpersonatedProcessAsync(new StartImpersonatedProcessRequest(){ ProgramName = programName, ImpersonatedProcessId = impersonatedProcessId });
 				return reply.Success;
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Exception occured while calling \"ExecuteCommandAsCurrentUser\".");
+				_logger.LogError(e, "Exception occured while calling [StartImpersonatedProcess] [{ProgramName}] as user similar to process [{ProcessId}]", programName, impersonatedProcessId);
 				return false;
 			}
 		}

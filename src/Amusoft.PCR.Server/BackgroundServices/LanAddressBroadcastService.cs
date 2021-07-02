@@ -22,7 +22,7 @@ namespace Amusoft.PCR.Server.BackgroundServices
 
 	internal class LanAddressBroadcastService : BackgroundService
 	{
-		public ILogger<LanAddressBroadcastService> _logger;
+		public readonly ILogger<LanAddressBroadcastService> _logger;
 		private readonly IOptions<LanAddressBroadcastSettings> _settings;
 
 		public LanAddressBroadcastService(ILogger<LanAddressBroadcastService> logger, IOptions<LanAddressBroadcastSettings> settings)

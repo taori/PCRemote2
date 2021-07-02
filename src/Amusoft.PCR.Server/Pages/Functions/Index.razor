@@ -20,7 +20,7 @@
 
 	<h4 class="mt-3">Process control</h4>
 	<Button OnClick="(() => processListOpen = true)">Running processes</Button>
-	<Button OnClick="@(() => InteropService.ExecuteCommandAsCurrentUser("spotify"))">Launch spotify</Button>
+	<Button OnClick="@(() => InteropService.StartImpersonatedProcess("spotify"))">Launch spotify</Button>
 
 	<h4 class="mt-3">Screen control</h4>
 	<Button OnClick="(() => InteropService.LockWorkStation())">Lock Screen</Button>

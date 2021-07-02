@@ -102,7 +102,7 @@ namespace Amusoft.Toolkit.Impersonation
 
             if (!result)
             {
-                Log.Error("Failed to create process as user {{error}}", Marshal.GetLastWin32Error());
+                Log.Error("Failed to create process as user {Error}", Marshal.GetLastWin32Error());
             }
 
             return result;
@@ -128,7 +128,7 @@ namespace Amusoft.Toolkit.Impersonation
             //Gets impersonation token
             if (!OpenProcessToken(p.Handle, TOKEN_DUPLICATE, ref token))
             {
-                Log.Error($"{nameof(OpenProcessToken)} {{error}}", Marshal.GetLastWin32Error());
+                Log.Error("{Name} {Error}", nameof(OpenProcessToken), Marshal.GetLastWin32Error());
                 return primaryToken;
             }
 
@@ -148,7 +148,7 @@ namespace Amusoft.Toolkit.Impersonation
             CloseHandle(token);
             if (retVal == false)
             {
-                Log.Error($"{nameof(DuplicateTokenEx)} {{error}}", Marshal.GetLastWin32Error());
+	            Log.Error("{Name} {Error}", nameof(DuplicateTokenEx), Marshal.GetLastWin32Error());
             }
 
             //We'll Close this token after it is used.
@@ -165,7 +165,7 @@ namespace Amusoft.Toolkit.Impersonation
                 //Will not be created if "false"
                 //It should not adversley affect CreateProcessAsUser.
 
-                Log.Error("Failed to create environment block {{error}}", Marshal.GetLastWin32Error());
+                Log.Error("Failed to create environment block {Error}", Marshal.GetLastWin32Error());
             }
 
             return envBlock;

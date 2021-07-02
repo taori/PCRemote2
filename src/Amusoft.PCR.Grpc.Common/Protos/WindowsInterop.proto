@@ -14,11 +14,12 @@ service WindowsInteropService {
 	rpc SetMasterVolume (.Amusoft.PCR.Grpc.Common.SetMasterVolumeRequest) returns (.Amusoft.PCR.Grpc.Common.SetMasterVolumeReply) {}
 	rpc GetMasterVolume (.Amusoft.PCR.Grpc.Common.GetMasterVolumeRequest) returns (.Amusoft.PCR.Grpc.Common.GetMasterVolumeReply) {}
 	rpc SendKeys (.Amusoft.PCR.Grpc.Common.SendKeysRequest) returns (.Amusoft.PCR.Grpc.Common.SendKeysReply) {}
+	rpc SendMediaKeys (.Amusoft.PCR.Grpc.Common.SendMediaKeysRequest) returns (.Amusoft.PCR.Grpc.Common.SendMediaKeysReply) {}
 	rpc LockWorkStation (.Amusoft.PCR.Grpc.Common.LockWorkStationRequest) returns (.Amusoft.PCR.Grpc.Common.LockWorkStationReply) {}
 	rpc GetProcessList (.Amusoft.PCR.Grpc.Common.ProcessListRequest) returns (.Amusoft.PCR.Grpc.Common.ProcessListResponse) {}
 	rpc KillProcessById (.Amusoft.PCR.Grpc.Common.KillProcessRequest) returns (.Amusoft.PCR.Grpc.Common.KillProcessResponse) {}
 	rpc FocusWindow (.Amusoft.PCR.Grpc.Common.FocusWindowRequest) returns (.Amusoft.PCR.Grpc.Common.FocusWindowResponse) {}
-	rpc ExecuteCommandAsCurrentUser (.Amusoft.PCR.Grpc.Common.ExecuteCommandAsCurrentUserRequest) returns (.Amusoft.PCR.Grpc.Common.ExecuteCommandAsCurrentUserResponse) {}
+	rpc StartImpersonatedProcess (.Amusoft.PCR.Grpc.Common.StartImpersonatedProcessRequest) returns (.Amusoft.PCR.Grpc.Common.StartImpersonatedProcessResponse) {}
 }
 
 message ToggleMuteRequest {}
@@ -27,18 +28,37 @@ message ToggleMuteReply {
 }
 
 message MonitorOnRequest {}
-message MonitorOnReply {}
+message MonitorOnReply {
+	bool success = 1;
+}
 
 message MonitorOffRequest {}
-message MonitorOffReply {}
+message MonitorOffReply {
+	bool success = 1;
+}
 
 message LockWorkStationRequest {}
-message LockWorkStationReply {}
+message LockWorkStationReply {
+	bool success = 1;
+}
 
 message SendKeysRequest {
 	string message = 1;
 }
 message SendKeysReply {
+	bool success = 1;
+}
+
+message SendMediaKeysRequest {
+	enum MediaKeyCode {
+		NextTrack = 0;
+		PreviousTrack = 1;
+		PlayPause = 2;
+	};
+	MediaKeyCode keyCode = 1;
+}
+message SendMediaKeysReply {
+	bool success = 1;
 }
 
 message SetMasterVolumeRequest {
@@ -105,9 +125,10 @@ message FocusWindowResponse {
 	bool success = 1;
 }
 
-message ExecuteCommandAsCurrentUserRequest {
-	string command = 1;
+message StartImpersonatedProcessRequest {
+	string programName = 1;
+	int32 impersonatedProcessId = 2;
 }
-message ExecuteCommandAsCurrentUserResponse {
+message StartImpersonatedProcessResponse {
 	bool success = 1;
 }

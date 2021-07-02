@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Integration.WindowsDesktop.Helpers;
 using Amusoft.PCR.Integration.WindowsDesktop.Interop;
+using Amusoft.Toolkit.Impersonation;
 using Google.Protobuf.Collections;
 using Grpc.Core;
 using NLog;
@@ -29,14 +31,14 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 
 		public override Task<ShutdownDelayedReply> ShutDownDelayed(ShutdownDelayedRequest request, ServerCallContext context)
 		{
-			Log.Info("Executing [{Name}]", nameof(ShutDownDelayed));
+			Log.Info("Executing [{Name}] [{Delay}s] [{Force}]", nameof(ShutDownDelayed), request.Seconds, request.Force);
 			var success = MachineStateHelper.TryShutDownDelayed(TimeSpan.FromSeconds(request.Seconds), request.Force);
 			return Task.FromResult(new ShutdownDelayedReply() { Success = success });
 		}
 
 		public override Task<RestartReply> Restart(RestartRequest request, ServerCallContext context)
 		{
-			Log.Info("Executing [{Name}]", nameof(Restart));
+			Log.Info("Executing [{Name}] [{Delay}s] [{Force}]", nameof(Restart), request.Delay, request.Force);
 			var success = MachineStateHelper.TryRestart(TimeSpan.FromSeconds(request.Delay), request.Force);
 			return Task.FromResult(new RestartReply() { Success = success });
 		}
@@ -60,10 +62,19 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 
 		public override Task<SetMasterVolumeReply> SetMasterVolume(SetMasterVolumeRequest request, ServerCallContext context)
 		{
-			Log.Info("Executing [{Name}]", nameof(SetMasterVolume));
-			AudioManager.SetMasterVolume(Math.Max(Math.Min(100, request.Value), 0));
-			var masterVolume = AudioManager.GetMasterVolume();
-			return Task.FromResult(new SetMasterVolumeReply() { Value = (int)masterVolume });
+			Log.Info("Executing [{Name}] [{NewValue}]", nameof(SetMasterVolume), request.Value);
+			var previousVolume = AudioManager.GetMasterVolume();
+			var newVolume = Math.Max(Math.Min(100, request.Value), 0);
+			if (MathHelper.IsEqual(newVolume, previousVolume))
+			{
+				return Task.FromResult(new SetMasterVolumeReply() { Value = (int)previousVolume });
+			}
+			else
+			{
+				AudioManager.SetMasterVolume(newVolume);
+				var masterVolume = AudioManager.GetMasterVolume();
+				return Task.FromResult(new SetMasterVolumeReply() { Value = (int)masterVolume });
+			}
 		}
 
 		public override Task<GetMasterVolumeReply> GetMasterVolume(GetMasterVolumeRequest request, ServerCallContext context)
@@ -74,7 +85,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 
 		public override Task<SendKeysReply> SendKeys(SendKeysRequest request, ServerCallContext context)
 		{
-			Log.Info("Executing [{Name}]", nameof(SendKeys));
+			Log.Info("Executing [{Name}] {Message}", nameof(SendKeys), request.Message);
 			NativeMethods.SendKeys(request.Message);
 			return Task.FromResult(new SendKeysReply());
 		}
@@ -113,23 +124,48 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 
 		public override Task<FocusWindowResponse> FocusWindow(FocusWindowRequest request, ServerCallContext context)
 		{
-			Log.Info("Executing [{Name}]", nameof(FocusWindow));
+			Log.Info("Executing [{Name}] [{ProcessId}]", nameof(FocusWindow), request.ProcessId);
 			var result = NativeMethods.SetForegroundWindow(request.ProcessId);
 			return Task.FromResult(new FocusWindowResponse() {Success = result});
 		}
 
 		public override Task<KillProcessResponse> KillProcessById(KillProcessRequest request, ServerCallContext context)
 		{
-			Log.Info("Executing [{Name}]", nameof(KillProcessById));
+			Log.Info("Executing [{Name}] [{ProcessId}]", nameof(KillProcessById), request.ProcessId);
 			var result = ProcessHelper.TryKillProcess(request.ProcessId);
 			return Task.FromResult(new KillProcessResponse() {Success = result});
 		}
 
-		public override Task<ExecuteCommandAsCurrentUserResponse> ExecuteCommandAsCurrentUser(ExecuteCommandAsCurrentUserRequest request, ServerCallContext context)
+		public override Task<StartImpersonatedProcessResponse> StartImpersonatedProcess(StartImpersonatedProcessRequest request, ServerCallContext context)
 		{
-			Log.Info("Executing [{Name}]", nameof(ExecuteCommandAsCurrentUser));
-			var result = ProcessHelper.TryLaunchProgram(request.Command);
-			return Task.FromResult(new ExecuteCommandAsCurrentUserResponse() { Success = result });
+			Log.Info("Executing [{Name}] [{Program}] [{ImpersonationProcessId}]", nameof(StartImpersonatedProcess), request.ProgramName, request.ImpersonatedProcessId);
+			var result = request.ImpersonatedProcessId <= 0
+				? ProcessImpersonation.Launch(request.ProgramName)
+				: ProcessImpersonation.Launch(request.ProgramName, request.ImpersonatedProcessId);
+
+			return Task.FromResult(new StartImpersonatedProcessResponse() { Success = result });
+		}
+
+		public override Task<SendMediaKeysReply> SendMediaKeys(SendMediaKeysRequest request, ServerCallContext context)
+		{
+			Log.Info("Executing [{Name}] [{MediaKey}]", nameof(SendMediaKeys), request.KeyCode);
+
+			switch (request.KeyCode)
+			{
+				case SendMediaKeysRequest.Types.MediaKeyCode.NextTrack:
+					NativeMethods.PressMediaKey(NativeMethods.MediaKeyCode.NextTrack);
+					break;
+				case SendMediaKeysRequest.Types.MediaKeyCode.PreviousTrack:
+					NativeMethods.PressMediaKey(NativeMethods.MediaKeyCode.PreviousTrack);
+					break;
+				case SendMediaKeysRequest.Types.MediaKeyCode.PlayPause:
+					NativeMethods.PressMediaKey(NativeMethods.MediaKeyCode.PlayPause);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			return Task.FromResult(new SendMediaKeysReply());
 		}
 	}
 }

@@ -56,8 +56,8 @@ namespace Amusoft.PCR.Server
 				})
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
-			services.Configure<DesktopIntegrationSettings>(Configuration.GetSection("DesktopIntegration"));
-			services.Configure<LanAddressBroadcastSettings>(Configuration.GetSection("ServerUrlTransmitter"));
+			services.Configure<DesktopIntegrationSettings>(Configuration.GetSection("ApplicationSettings:DesktopIntegration"));
+			services.Configure<LanAddressBroadcastSettings>(Configuration.GetSection("ApplicationSettings:ServerUrlTransmitter"));
 
 			services.AddHttpContextAccessor();
 			services.AddHttpClient("local", (provider, client) =>
@@ -120,6 +120,8 @@ namespace Amusoft.PCR.Server
 					}
 				}
 			}
+
+			logger.LogInformation("Configuration done");
 		}
 	}
 }

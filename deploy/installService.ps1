@@ -40,8 +40,16 @@ if($browser.ShowDialog() -eq "OK"){
     Copy-Item ..\artifacts\* -Recurse -ErrorAction Stop -Destination $folder
     Write-Host "Copy done."
 
+    New-Item -ItemType Directory -Path "$folder\logs" -ErrorAction Stop
+    
+    $allUser = New-Object System.Security.Principal.SecurityIdentifier([System.Security.Principal.WellKnownSidType]::WorldSid, $null)
+    $acl = Get-Acl -Path "$folder\logs" 
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule($allUser,"FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
+    $acl.SetAccessRule($rule)
+    Set-Acl "$folder\logs" $acl
+
     #powershell -Command "New-LocalUser -Name $serviceName"
-    New-Service -Name "$serviceName" -BinaryPathName "$folder\web\Amusoft.PCR.Server.exe" -Description "Amusoft PC Remote 2 Website" -DisplayName "Amusoft PC Remote 2 Service" -StartupType Automatic
+    New-Service -Name "$serviceName" -BinaryPathName "$folder\web\Amusoft.PCR.Server.exe" -Description "PC Remote 2 Website" -DisplayName "Amusoft PC Remote 2 Service" -StartupType Automatic
     Start-Service -Name "$serviceName"
 }
 
