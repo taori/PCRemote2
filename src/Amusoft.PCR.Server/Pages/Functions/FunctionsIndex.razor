@@ -1,0 +1,42 @@
+﻿@page "/functions"
+@using Amusoft.PCR.Server.Dependencies
+@using Amusoft.PCR.Grpc.Common
+@inject NavigationManager _navigationManager
+@inject IDialogService _dialogService
+@inject IInteropService _interopService
+	<Title Headline="Functions" WindowTitle="Functions"></Title>
+
+	<div class="container">
+		
+		<div class="row mb-3 mb-xl-2">
+			<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/activeWindowMenu"))">Active window control</Button>
+		</div>
+		<div class="row mb-3 mb-xl-2">
+			<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/processMenu"))">Process control</Button>
+		</div>
+		<div class="row mb-3 mb-xl-2">
+			<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/audioMenu"))">Audio control</Button>
+		</div>
+		<div class="row mb-3 mb-xl-2">
+			<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/computerMenu"))">Computer control</Button>
+		</div>
+	</div>
+	@*
+
+		<div class="mt-3">
+			<h1>Windows</h1>		
+		
+
+			<h4 class="mt-3">Active window key press</h4>
+			<div>
+				<h6>Keyboard keys</h6>
+			</div>
+			<div class="mt-2">
+				<h6>Media keys</h6>
+				<Button CssClass="mr-3" OnClick="@(() => _interopService.SendMediaKey(SendMediaKeysRequest.Types.MediaKeyCode.PreviousTrack))">←</Button>
+				<Button CssClass="mr-3" OnClick="@(() => _interopService.SendMediaKey(SendMediaKeysRequest.Types.MediaKeyCode.NextTrack))">→</Button>
+				<Button CssClass="mr-3" OnClick="@(() => _interopService.SendMediaKey(SendMediaKeysRequest.Types.MediaKeyCode.PlayPause))">Play/Pause</Button>
+			</div>
+		</div>
+		
+	*@

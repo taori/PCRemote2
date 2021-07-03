@@ -20,13 +20,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploymentScripts", "deploy
 		..\deploy\installService.ps1 = ..\deploy\installService.ps1
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.Toolkit.Impersonation", "Amusoft.Toolkit.Impersonation\Amusoft.Toolkit.Impersonation.csproj", "{FE76750C-4A2A-44BE-9C10-2AB952B543A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.Toolkit.Impersonation", "Amusoft.Toolkit.Impersonation\Amusoft.Toolkit.Impersonation.csproj", "{FE76750C-4A2A-44BE-9C10-2AB952B543A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.PCR.Mobile.Android", "Amusoft.PCR.Mobile\Amusoft.PCR.Mobile.Android\Amusoft.PCR.Mobile.Android.csproj", "{4D8D4BEF-B293-4D8C-A57D-92E12B9D1823}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.PCR.Mobile.iOS", "Amusoft.PCR.Mobile\Amusoft.PCR.Mobile.iOS\Amusoft.PCR.Mobile.iOS.csproj", "{EBE101D1-678C-4C32-A828-82C0ECAEC121}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.PCR.Mobile", "Amusoft.PCR.Mobile\Amusoft.PCR.Mobile\Amusoft.PCR.Mobile.csproj", "{991BEA02-E86E-4C52-A7B0-3ED24CA76529}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Mobile", "Amusoft.PCR.Mobile\Amusoft.PCR.Mobile\Amusoft.PCR.Mobile.csproj", "{991BEA02-E86E-4C52-A7B0-3ED24CA76529}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.Toolkit.UI", "Amusoft.Toolkit.UI\Amusoft.Toolkit.UI.csproj", "{45728065-D70D-4400-947C-A69171652ED9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -226,6 +228,26 @@ Global
 		{991BEA02-E86E-4C52-A7B0-3ED24CA76529}.Release|x64.Build.0 = Release|Any CPU
 		{991BEA02-E86E-4C52-A7B0-3ED24CA76529}.Release|x86.ActiveCfg = Release|Any CPU
 		{991BEA02-E86E-4C52-A7B0-3ED24CA76529}.Release|x86.Build.0 = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|x64.Build.0 = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Debug|x86.Build.0 = Debug|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|iPhone.Build.0 = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|x64.ActiveCfg = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|x64.Build.0 = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|x86.ActiveCfg = Release|Any CPU
+		{45728065-D70D-4400-947C-A69171652ED9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

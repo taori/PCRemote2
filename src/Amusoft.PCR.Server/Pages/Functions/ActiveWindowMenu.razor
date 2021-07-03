@@ -1,0 +1,10 @@
+﻿@page "/functions/activeWindowMenu"
+@inject NavigationManager _navigationManager
+
+<Title Headline="Active window" WindowTitle="Active window"></Title>
+
+<div class="container">
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/activeWindow/browserVideoPlayer"))">Browser video player</Button>
+	</div>
+</div>

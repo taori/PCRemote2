@@ -2,8 +2,49 @@
 
 @code {
 
+	private string TranslateButtonThemeKind(ButtonThemeKind kind)
+	{
+		switch (kind)
+		{
+			case ButtonThemeKind.Primary:
+				return "btn-primary";
+			case ButtonThemeKind.Secondary:
+				return "btn-secondary";
+			case ButtonThemeKind.Success:
+				return "btn-success";
+			case ButtonThemeKind.Danger:
+				return "btn-danger";
+			case ButtonThemeKind.Warning:
+				return "btn-warning";
+			case ButtonThemeKind.Info:
+				return "btn-info";
+			case ButtonThemeKind.Light:
+				return "btn-light";
+			case ButtonThemeKind.Dark:
+				return "btn-dark";
+			case ButtonThemeKind.Link:
+				return "btn-link";
+			default:
+				throw new ArgumentOutOfRangeException(nameof(kind), kind, null);
+		}
+	}
+
+	public enum ButtonThemeKind
+	{
+		Primary,
+		Secondary,
+		Success,
+		Danger,
+		Warning,
+		Info,
+		Light,
+		Dark,
+		Link
+
+	}
+
 	[Parameter]
-	public bool Primary { get; set; } = true;
+	public ButtonThemeKind ButtonTheme { get; set; } = ButtonThemeKind.Dark;
 
 	[Parameter]
 	public bool Enabled
@@ -29,7 +70,7 @@
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		var classThemeClass = Primary ? "btn-primary" : string.Empty;
+		var classThemeClass = TranslateButtonThemeKind(ButtonTheme);
 		var classEnabled = Enabled ? string.Empty : "disabled";
 
 		ButtonClass = $"btn {classEnabled} {classThemeClass}";

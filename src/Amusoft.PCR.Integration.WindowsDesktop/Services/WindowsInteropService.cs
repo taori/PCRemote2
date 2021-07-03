@@ -137,13 +137,13 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 			return Task.FromResult(new KillProcessResponse() {Success = result});
 		}
 
-		public override Task<StartImpersonatedProcessResponse> StartImpersonatedProcess(StartImpersonatedProcessRequest request, ServerCallContext context)
+		public override Task<LaunchProgramResponse> LaunchProgram(LaunchProgramRequest request, ServerCallContext context)
 		{
-			Log.Info("Executing [{Name}] [{Program}] [{ImpersonationProcessId}]", nameof(StartImpersonatedProcess), request.ProgramName, request.ImpersonatedProcessId);
+			Log.Info("Executing [{Name}] [{Program}] [{Arguments}]", nameof(LaunchProgram), request.ProgramName, request.Arguments);
 			// integration exe is already executed in user context, therefore no further impersonation is required.
-			var result = ProcessHelper.TryLaunchProgram(request.ProgramName);
+			var result = ProcessHelper.TryLaunchProgram(request.ProgramName, request.Arguments);
 
-			return Task.FromResult(new StartImpersonatedProcessResponse() { Success = result });
+			return Task.FromResult(new LaunchProgramResponse() {Success = result});
 		}
 
 		public override Task<SendMediaKeysReply> SendMediaKeys(SendMediaKeysRequest request, ServerCallContext context)

@@ -1,0 +1,15 @@
+﻿@page "/functions/audioMenu"
+@using Amusoft.PCR.Server.Dependencies
+@inject NavigationManager _navigationManager
+@inject IInteropService _interopService
+
+<Title WindowTitle="Audio options" Headline="Audio options"></Title>
+
+<div class="container">
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.ToggleMute())">Toggle Mute</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/audioMenu/volumeControl"))">Change volume</Button>
+	</div>
+</div>

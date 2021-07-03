@@ -3,9 +3,8 @@
 @using Amusoft.PCR.Blazor.Extensions
 
 
-<h1>PC Remote Controller 2</h1>
-<Button OnClick="@(() => navigationManager.NavigateTo("functions"))">Go to functions</Button>
-
+<Title WindowTitle="PC Remote Controller 2" Headline="PC Remote Controller 2"></Title>
+<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => navigationManager.NavigateTo("functions"))">Go to functions</Button>
 
 @code
 {

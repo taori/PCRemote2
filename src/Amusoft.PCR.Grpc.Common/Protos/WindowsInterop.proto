@@ -19,7 +19,7 @@ service WindowsInteropService {
 	rpc GetProcessList (.Amusoft.PCR.Grpc.Common.ProcessListRequest) returns (.Amusoft.PCR.Grpc.Common.ProcessListResponse) {}
 	rpc KillProcessById (.Amusoft.PCR.Grpc.Common.KillProcessRequest) returns (.Amusoft.PCR.Grpc.Common.KillProcessResponse) {}
 	rpc FocusWindow (.Amusoft.PCR.Grpc.Common.FocusWindowRequest) returns (.Amusoft.PCR.Grpc.Common.FocusWindowResponse) {}
-	rpc StartImpersonatedProcess (.Amusoft.PCR.Grpc.Common.StartImpersonatedProcessRequest) returns (.Amusoft.PCR.Grpc.Common.StartImpersonatedProcessResponse) {}
+	rpc LaunchProgram (.Amusoft.PCR.Grpc.Common.LaunchProgramRequest) returns (.Amusoft.PCR.Grpc.Common.LaunchProgramResponse) {}
 }
 
 message ToggleMuteRequest {}
@@ -125,10 +125,10 @@ message FocusWindowResponse {
 	bool success = 1;
 }
 
-message StartImpersonatedProcessRequest {
+message LaunchProgramRequest {
 	string programName = 1;
-	int32 impersonatedProcessId = 2;
+	string arguments = 2;
 }
-message StartImpersonatedProcessResponse {
+message LaunchProgramResponse {
 	bool success = 1;
 }

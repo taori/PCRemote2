@@ -14,7 +14,7 @@
 }
 else
 {
-	<Button Enabled="@(_serviceValue != null)" Primary="true" OnClick="async () => await LoadTestControllerValue()">Reload</Button>
+	<Button Enabled="@(_serviceValue != null)" OnClick="async () => await LoadTestControllerValue()">Reload</Button>
 
 	@if (_serviceValue == null)
 	{

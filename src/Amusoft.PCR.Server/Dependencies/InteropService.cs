@@ -30,7 +30,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		Task<IList<ProcessListResponseItem>> GetProcessList();
 		Task<bool> KillProcessById(int processId);
 		Task<bool> FocusProcessWindow(int processId);
-		Task<bool> StartImpersonatedProcess(string programName, int impersonatedProcessId = 0);
+		Task<bool> LaunchProgram(string programName, string arguments = default);
 		Task<bool> SendMediaKey(SendMediaKeysRequest.Types.MediaKeyCode code);
 	}
 
@@ -235,16 +235,20 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 		}
 
-		public async Task<bool> StartImpersonatedProcess(string programName, int impersonatedProcessId = 0)
+		public async Task<bool> LaunchProgram(string programName, string arguments = null)
 		{
 			try
 			{
-				var reply = await _service.StartImpersonatedProcessAsync(new StartImpersonatedProcessRequest(){ ProgramName = programName, ImpersonatedProcessId = impersonatedProcessId });
+				var request = string.IsNullOrEmpty(arguments)
+					? new LaunchProgramRequest() { ProgramName = programName }
+					: new LaunchProgramRequest() { ProgramName = programName, Arguments = arguments };
+
+				var reply = await _service.LaunchProgramAsync(request);
 				return reply.Success;
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [{Name}] [{ProgramName}] as user similar to process [{ProcessId}]", nameof(StartImpersonatedProcess), programName, impersonatedProcessId);
+				_logger.LogError(e, "Exception occured while calling [{Name}] [{ProgramName}] with arguments [{Arguments}]", nameof(LaunchProgram), programName, arguments);
 				return false;
 			}
 		}

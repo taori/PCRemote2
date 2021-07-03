@@ -1,0 +1,33 @@
+﻿@page "/functions/activeWindow/browserVideoPlayer"
+@using Amusoft.PCR.Server.Dependencies
+@inject IInteropService _interopService
+
+<Title Headline="Browser video player" WindowTitle="Browser video player"></Title>
+
+<div class="container">
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.SendKeys(" {m}"))">Mute</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.SendKeys(" {f}"))">Toggle fullscreen</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.SendKeys(" "))">Toggle pause</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.SendKeys(" {LEFT}"))">←</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.SendKeys(" {RIGHT}"))">→</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.SendKeys(" {UP}"))">↑</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.SendKeys(" {DOWN}"))">↓</Button>
+	</div>
+</div>
+
+@code {
+
+}

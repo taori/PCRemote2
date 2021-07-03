@@ -1,0 +1,15 @@
+﻿@page "/functions/computerMenu"
+@using Amusoft.PCR.Server.Dependencies
+@inject NavigationManager _navigationManager
+@inject IInteropService _interopService
+
+<Title WindowTitle="Computer controls" Headline="Computer controls"></Title>
+
+<div class="container">
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/computer/monitor"))">Monitor</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/computer/systemState"))">System state</Button>
+	</div>
+</div>

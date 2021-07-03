@@ -5,6 +5,12 @@ namespace Amusoft {
 		}
 	}
 
+	export class History {
+		public static back() {
+			window.history.back();
+		}
+	}
+
 	export class Functions {
 
 		public static Log(message: string) {

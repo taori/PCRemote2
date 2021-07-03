@@ -10,5 +10,7 @@ namespace Amusoft.PCR.Blazor.Extensions
 		public static PageExtensions Page(this IJSRuntime jsRuntime) => new PageExtensions(jsRuntime);
 
 		public static UIExtensions UI(this IJSRuntime jsRuntime) => new UIExtensions(jsRuntime);
+
+		public static HistoryExtensions History(this IJSRuntime jsRuntime) => new HistoryExtensions(jsRuntime);
 	}
 }

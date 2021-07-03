@@ -1,0 +1,51 @@
+﻿@page "/functions/computer/systemState"
+@using Amusoft.PCR.Server.Dependencies
+@inject IInteropService _interopService
+
+<Title Headline="System state" WindowTitle="System state"></Title>
+
+<LabeledCheckbox CssClass="mt-2 mb-2" LabelStyle="color: red;" @bind-Checked="@_closeApplications">Close applications</LabeledCheckbox>
+
+<h6>Immediate controls</h6>
+<div class="container">
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.LockWorkStation())">Lock Screen</Button>
+	</div>
+
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.AbortShutdown())" ButtonTheme="@Button.ButtonThemeKind.Primary">Abort Shutdown</Button>
+	</div>
+
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Shutdown(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@Button.ButtonThemeKind.Danger">Shutdown</Button>
+	</div>
+
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Restart(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@Button.ButtonThemeKind.Danger">Restart</Button>
+	</div>
+
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Hibernate())">Hibernate</Button>
+	</div>
+</div>
+
+<h6 class="mt-2">Delayed controls</h6>
+
+<div class="container">
+	<div class="row mb-3 mb-xl-2">
+		<LabeledTime @bind-Value="_shutdownDelay"></LabeledTime>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Shutdown(_shutdownDelay, _closeApplications))">Shutdown with @_shutdownDelay delay</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Restart(_shutdownDelay, _closeApplications))">Restart with @_shutdownDelay delay</Button>
+	</div>
+</div>
+
+@code {
+
+	private TimeSpan _shutdownDelay = TimeSpan.FromHours(2);
+
+	private bool _closeApplications = false;
+}

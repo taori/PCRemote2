@@ -1,0 +1,66 @@
+﻿@page "/functions/processMenu/processByNameOverview"
+@using Amusoft.PCR.Server.Dependencies
+@using Amusoft.PCR.Grpc.Common
+@using Amusoft.Toolkit.UI
+@using Microsoft.Extensions.Logging
+@inject IInteropService _interopService
+@inject ILogger<ProcessByNameOverview> _logger
+@inject NavigationManager _navigationManager
+
+<Title WindowTitle="Processes by name" Headline="Processes by name"></Title>
+@if (_processList == null)
+{
+	<div class="alert alert-info"> Loading process list ...</div>
+}
+else
+{
+	<div class="container">
+		<div class="row mb-xl-2 mb-3">
+			
+			<Button OnClick="() => ReloadAsync()">Reload</Button>
+		</div>
+	</div>
+
+	<div class="container overflow-auto">
+
+		@foreach (var item in _processList)
+		{
+			<div class="row mb-xl-2 mb-3">
+				<Button OnClick="@(() => _navigationManager.NavigateTo("/functions/processMenu/processByName/" + item.ProcessName))"
+				        CssClass="d-inline-block col-xl-4" 
+				        ButtonTheme="@Button.ButtonThemeKind.Info">@item.ProcessName</Button>
+			</div>
+		}
+
+	</div>
+}
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		await ReloadAsync();
+		await base.OnInitializedAsync();
+	}
+
+	private async Task ReloadAsync()
+	{
+		_logger.LogDebug("Reloading list");
+
+		_processList = null;
+		var processes = await _interopService.GetProcessList();
+		_processList = processes.GroupBy(d => d.ProcessName).Select(grouping => grouping.First()).OrderBy(d => d.ProcessName).ToList();
+	}
+
+	[Parameter]
+	public EventCallback<int> KillRequested { get; set; }
+
+	private IList<ProcessListResponseItem> _processList;
+
+	private async Task ExecuteKillProcess(ProcessListResponseItem item)
+	{
+		await _interopService.KillProcessById(item.ProcessId);
+		await ReloadAsync();
+		await KillRequested.InvokeAsync(item.ProcessId);
+	}
+}

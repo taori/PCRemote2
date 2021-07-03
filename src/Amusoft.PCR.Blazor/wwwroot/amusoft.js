@@ -9,6 +9,15 @@ var Amusoft;
         return Page;
     }());
     Amusoft.Page = Page;
+    var History = /** @class */ (function () {
+        function History() {
+        }
+        History.back = function () {
+            window.history.back();
+        };
+        return History;
+    }());
+    Amusoft.History = History;
     var Functions = /** @class */ (function () {
         function Functions() {
         }

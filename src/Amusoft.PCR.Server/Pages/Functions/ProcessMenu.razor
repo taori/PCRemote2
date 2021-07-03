@@ -1,0 +1,13 @@
+﻿@page "/functions/processMenu"
+@inject NavigationManager _navigationManager
+
+<Title WindowTitle="Process control options" Headline="Process control options"></Title>
+
+<div class="container">
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/processMenu/programLauncher"))">Launch program</Button>
+	</div>
+	<div class="row mb-3 mb-xl-2">
+		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/processMenu/processByNameOverview"))">Kill process</Button>
+	</div>
+</div>

@@ -62,7 +62,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 			try
 			{
 				var process = new Process();
-				process.StartInfo = arguments == null
+				process.StartInfo = string.IsNullOrEmpty(arguments)
 					? new ProcessStartInfo(program)
 					: new ProcessStartInfo(program, arguments);
 
@@ -71,7 +71,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 			}
 			catch (Exception e)
 			{
-				Log.Error(e, $"Exception occured while calling \"TryLaunchProgram\".");
+				Log.Error(e, "Exception occured while calling [{Name}] [{Program}] with arguments [{Arguments}]", nameof(TryLaunchProgram), program, arguments);
 				return false;
 			}
 		}
