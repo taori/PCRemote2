@@ -122,7 +122,7 @@ namespace Amusoft.PCR.Server.Dependencies
 						results.Add((process.Id, process.MainModule.FileName));
 					}
 				}
-				catch (Win32Exception)
+				catch (Exception)
 				{
 					// ignored
 				}

@@ -33,7 +33,7 @@ namespace Amusoft.PCR.Server.BackgroundServices
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			var waitDuration = TimeSpan.FromSeconds(10);
+			var waitDuration = TimeSpan.FromSeconds(60);
 			while (!stoppingToken.IsCancellationRequested && _canOperate)
 			{
 				if(!_integrationApplicationLocator.IsRunning())

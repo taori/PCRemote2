@@ -31,19 +31,18 @@ namespace Amusoft.PCR.Server.Dependencies
 		Task<bool> KillProcessById(int processId);
 		Task<bool> FocusProcessWindow(int processId);
 		Task<bool> StartImpersonatedProcess(string programName, int impersonatedProcessId = 0);
+		Task<bool> SendMediaKey(SendMediaKeysRequest.Types.MediaKeyCode code);
 	}
 
 	public class InteropService : IInteropService
 	{
-		private readonly NamedPipeChannel _channel;
 		private readonly ILogger<InteropService> _logger;
 		private readonly WindowsInteropService.WindowsInteropServiceClient _service;
 
 		public InteropService(NamedPipeChannel channel, ILogger<InteropService> logger)
 		{
-			_channel = channel;
 			_logger = logger;
-			_service = new WindowsInteropService.WindowsInteropServiceClient(_channel);
+			_service = new WindowsInteropService.WindowsInteropServiceClient(channel);
 		}
 
 		public async Task<bool> ToggleMute()
@@ -55,7 +54,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [ToggleMute]");
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(ToggleMute));
 				return false;
 			}
 		}
@@ -68,7 +67,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [MonitorOn]");
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(MonitorOn));
 			}
 		}
 
@@ -80,7 +79,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [MonitorOff]");
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(MonitorOff));
 			}
 		}
 
@@ -92,7 +91,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [LockWorkStation]");
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(LockWorkStation));
 			}
 		}
 
@@ -104,7 +103,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [SendKeys] with [{Keys}]", keys);
+				_logger.LogError(e, "Exception occured while calling [{Name}] with [{Keys}]", nameof(SendKeys), keys);
 			}
 		}
 
@@ -117,7 +116,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [SetMasterVolume] to [{Value}]", value);
+				_logger.LogError(e, "Exception occured while calling [{Name}] to [{Value}]", nameof(SetMasterVolume), value);
 				return -1;
 			}
 		}
@@ -131,7 +130,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [GetMasterVolume]");
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(GetMasterVolume));
 				return -1;
 			}
 		}
@@ -145,7 +144,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [Shutdown] with delay [{Delay}] and force close [{Force}]", delay, force);
+				_logger.LogError(e, "Exception occured while calling [{Name}] with delay [{Delay}] and force close [{Force}]", nameof(Shutdown), delay, force);
 				return false;
 			}
 		}
@@ -159,7 +158,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [AbortShutdown]");
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(AbortShutdown));
 				return false;
 			}
 		}
@@ -173,7 +172,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [Hibernate]");
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(Hibernate));
 				return false;
 			}
 		}
@@ -187,7 +186,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [Restart] with delay [{Delay}] and force close [{Force}]", delay, force);
+				_logger.LogError(e, "Exception occured while calling [{Name}] with delay [{Delay}] and force close [{Force}]", nameof(Restart), delay, force);
 				return false;
 			}
 		}
@@ -203,7 +202,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [GetProcessList]");
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(GetProcessList));
 				return EmptyProcessList;
 			}
 		}
@@ -217,7 +216,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [KillProcessById] with id [{Id}]", processId);
+				_logger.LogError(e, "Exception occured while calling [{Name}] with id [{Id}]", nameof(KillProcessById), processId);
 				return false;
 			}
 		}
@@ -231,7 +230,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [FocusProcessWindow] with id [{Id}]", processId);
+				_logger.LogError(e, "Exception occured while calling [{Name}] with id [{Id}]", nameof(FocusProcessWindow), processId);
 				return false;
 			}
 		}
@@ -245,7 +244,24 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling [StartImpersonatedProcess] [{ProgramName}] as user similar to process [{ProcessId}]", programName, impersonatedProcessId);
+				_logger.LogError(e, "Exception occured while calling [{Name}] [{ProgramName}] as user similar to process [{ProcessId}]", nameof(StartImpersonatedProcess), programName, impersonatedProcessId);
+				return false;
+			}
+		}
+
+		public async Task<bool> SendMediaKey(SendMediaKeysRequest.Types.MediaKeyCode code)
+		{
+			try
+			{
+				var reply = await _service.SendMediaKeysAsync(new SendMediaKeysRequest()
+				{
+					KeyCode = code
+				});
+				return reply.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling [{Name}] with code [{Code}]", nameof(SendMediaKey), code);
 				return false;
 			}
 		}

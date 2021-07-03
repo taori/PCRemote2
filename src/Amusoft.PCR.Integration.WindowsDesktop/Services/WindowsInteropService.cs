@@ -65,12 +65,13 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 			Log.Info("Executing [{Name}] [{NewValue}]", nameof(SetMasterVolume), request.Value);
 			var previousVolume = AudioManager.GetMasterVolume();
 			var newVolume = Math.Max(Math.Min(100, request.Value), 0);
-			if (MathHelper.IsEqual(newVolume, previousVolume))
+			if (MathHelper.IsEqual(newVolume, previousVolume, 1.01f))
 			{
 				return Task.FromResult(new SetMasterVolumeReply() { Value = (int)previousVolume });
 			}
 			else
 			{
+				Log.Debug("Changing volume from [{From}] to [{To}]", previousVolume, newVolume);
 				AudioManager.SetMasterVolume(newVolume);
 				var masterVolume = AudioManager.GetMasterVolume();
 				return Task.FromResult(new SetMasterVolumeReply() { Value = (int)masterVolume });
@@ -139,9 +140,8 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 		public override Task<StartImpersonatedProcessResponse> StartImpersonatedProcess(StartImpersonatedProcessRequest request, ServerCallContext context)
 		{
 			Log.Info("Executing [{Name}] [{Program}] [{ImpersonationProcessId}]", nameof(StartImpersonatedProcess), request.ProgramName, request.ImpersonatedProcessId);
-			var result = request.ImpersonatedProcessId <= 0
-				? ProcessImpersonation.Launch(request.ProgramName)
-				: ProcessImpersonation.Launch(request.ProgramName, request.ImpersonatedProcessId);
+			// integration exe is already executed in user context, therefore no further impersonation is required.
+			var result = ProcessHelper.TryLaunchProgram(request.ProgramName);
 
 			return Task.FromResult(new StartImpersonatedProcessResponse() { Success = result });
 		}
