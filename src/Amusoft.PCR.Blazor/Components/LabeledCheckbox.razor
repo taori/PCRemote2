@@ -16,6 +16,8 @@
 		var values = new Dictionary<string, object>();
 		if (Checked)
 			values.Add("checked", "checked");
+		if(IsReadonlyInternal)
+			values.Add("disabled", "disabled");
 
 		return values;
 	}
@@ -82,5 +84,29 @@
 
 	[Parameter]
 	public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+	[Parameter]
+	public bool IsReadonly
+	{
+		get => IsReadonlyInternal;
+		set => IsReadonlyInternal = value;
+	}
+
+	[Parameter]
+	public EventCallback<bool> IsReadonlyChanged { get; set; }
+
+	private bool _isReadonlyInternal;
+
+	private bool IsReadonlyInternal
+	{
+		get { return _isReadonlyInternal; }
+		set
+		{
+			if (EqualityComparer<bool>.Default.Equals(_isReadonlyInternal, value))
+				return;
+			_isReadonlyInternal = value;
+			IsReadonlyChanged.InvokeAsync(value);
+		}
+	}
 
 }

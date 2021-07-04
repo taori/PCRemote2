@@ -44,6 +44,7 @@ namespace Amusoft.PCR.Server.Authorization
 			{
 				using var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
+				await EnsureRoleExistsAsync("administrator", roleManager);
 				await EnsureRoleExistsAsync("functions", roleManager);
 				await EnsureRoleExistsAsync("processes", roleManager);
 				await EnsureRoleExistsAsync("computer", roleManager);
@@ -53,9 +54,10 @@ namespace Amusoft.PCR.Server.Authorization
 				_logger.LogTrace("Adding additional roles from appsettings.json");
 				if (_authorizationSettings.Value.AdditionalRoles != null)
 				{
-					foreach (var role in _authorizationSettings.Value.AdditionalRoles)
+					foreach (var roleName in _authorizationSettings.Value.AdditionalRoles)
 					{
-						await EnsureRoleExistsAsync(role, roleManager);
+						if (!string.IsNullOrEmpty(roleName))
+							await EnsureRoleExistsAsync(roleName, roleManager);
 					}
 				}
 			}

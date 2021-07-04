@@ -1,15 +1,45 @@
 ﻿@page "/permissions/overview"
 @using Amusoft.PCR.Blazor.Extensions
+@using Amusoft.PCR.Model.Entities
+@using Microsoft.AspNetCore.Identity
+@attribute [Authorize(Roles = "permissions")]
+@inject UserManager<ApplicationUser> _userManager
 
 <Title Headline="Permission overview" WindowTitle="Permission overview"></Title>
-<Button ButtonTheme="@Button.ButtonThemeKind.Primary" OnClick="GotoNewPermissions">New Permission</Button>
+<div class="container">
+</div>
+@foreach (var user in _applicationUsers)
+{
+	<div class="row mb-3 mb-xl-2">
+		
+		<Button CssClass="d-inline-block col-xl-4"
+		        ButtonTheme="@Button.ButtonThemeKind.Primary"
+		        OnClick="@(() => ChangeUserPermissions(@user))">
+			@user.UserName
+		</Button>
+	</div>
+}
 
 @code {
 	[Inject]
 	public NavigationManager NavigationManager { get; set; }
 
+	protected override async Task OnInitializedAsync()
+	{
+		_applicationUsers = _userManager.Users.ToList();
+		await base.OnInitializedAsync();
+	}
+
 	private void GotoNewPermissions()
 	{
 		NavigationManager.NavigateTo("permissions/create");
 	}
+
+	private List<ApplicationUser> _applicationUsers;
+
+	private void ChangeUserPermissions(ApplicationUser user)
+	{
+		NavigationManager.NavigateTo($"permissions/userRoles/{user.Id}");
+	}
+
 }

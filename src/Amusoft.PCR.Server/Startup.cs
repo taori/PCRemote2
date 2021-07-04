@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Amusoft.PCR.Model;
 using Amusoft.PCR.Model.Entities;
 using Microsoft.AspNetCore.Builder;
@@ -42,13 +41,16 @@ namespace Amusoft.PCR.Server
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddSingleton<IAuthorizationHandler, RoleOrAdminAuthorizationHandler>();
+			services.AddDatabaseDeveloperPageExceptionFilter();
 			services.AddSingleton<ApplicationStateTransmitter>();
 			services.AddOptions();
 			services.AddAuthorization(options =>
 			{
 				var builder = new AuthorizationPolicyBuilder();
 				builder.RequireAuthenticatedUser();
-
+				// builder.AddRequirements(new RoleOrAdminRequirement());
+				
 				options.FallbackPolicy = builder.Build();
 			});
 			services.AddDbContext<ApplicationDbContext>(options =>
@@ -66,6 +68,7 @@ namespace Amusoft.PCR.Server
 
 					options.SignIn.RequireConfirmedAccount = true;
 				})
+				.AddUserManager<UserManager<ApplicationUser>>()
 				.AddRoles<IdentityRole>()
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 			
@@ -93,7 +96,7 @@ namespace Amusoft.PCR.Server
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				app.UseDatabaseErrorPage();
+				app.UseMigrationsEndPoint();
 			}
 			else
 			{
