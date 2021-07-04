@@ -1,5 +1,6 @@
 ﻿@page "/functions/processMenu"
 @inject NavigationManager _navigationManager
+@attribute [Authorize(Roles = "processes")]
 
 <Title WindowTitle="Process control options" Headline="Process control options"></Title>
 

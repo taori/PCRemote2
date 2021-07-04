@@ -4,10 +4,12 @@
 @inject NavigationManager _navigationManager
 @inject IDialogService _dialogService
 @inject IInteropService _interopService
+@attribute [Authorize(Roles = "functions")]
+
 <Title Headline="Functions" WindowTitle="Functions"></Title>
 
 <div class="container">
-	
+
 	<div class="row mb-3 mb-xl-2">
 		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _navigationManager.NavigateTo("/functions/activeWindowMenu"))">Active window control</Button>
 	</div>

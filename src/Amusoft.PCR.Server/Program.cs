@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Amusoft.PCR.Server.Authorization;
 using Amusoft.PCR.Server.BackgroundServices;
 using Amusoft.PCR.Server.Dependencies;
 using Microsoft.AspNetCore.Hosting;
@@ -72,10 +73,7 @@ namespace Amusoft.PCR.Server
 				{
 					services.AddHostedService<DesktopIntegrationService>();
 					services.AddHostedService<LanAddressBroadcastService>();
-				})
-				.ConfigureAppConfiguration(configuration =>
-				{
-					configuration.AddJsonFile("appsettings.json");
+					services.AddHostedService<PermissionSeedService>();
 				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{

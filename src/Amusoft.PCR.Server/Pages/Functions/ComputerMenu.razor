@@ -2,6 +2,7 @@
 @using Amusoft.PCR.Server.Dependencies
 @inject NavigationManager _navigationManager
 @inject IInteropService _interopService
+@attribute [Authorize(Roles = "computer")]
 
 <Title WindowTitle="Computer controls" Headline="Computer controls"></Title>
 

@@ -2,6 +2,7 @@
 @using Amusoft.PCR.Server.Dependencies
 @inject NavigationManager _navigationManager
 @inject IInteropService _interopService
+@attribute [Authorize(Roles = "audio")]
 
 <Title WindowTitle="Audio options" Headline="Audio options"></Title>
 

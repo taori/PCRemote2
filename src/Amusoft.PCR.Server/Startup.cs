@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amusoft.PCR.Model;
+using Amusoft.PCR.Model.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -14,9 +16,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Amusoft.PCR.Server.Areas.Identity;
+using Amusoft.PCR.Server.Authorization;
 using Amusoft.PCR.Server.BackgroundServices;
 using Amusoft.PCR.Server.Data;
 using Amusoft.PCR.Server.Dependencies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -38,12 +42,20 @@ namespace Amusoft.PCR.Server
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddSingleton<ApplicationStateTransmitter>();
 			services.AddOptions();
+			services.AddAuthorization(options =>
+			{
+				var builder = new AuthorizationPolicyBuilder();
+				builder.RequireAuthenticatedUser();
+
+				options.FallbackPolicy = builder.Build();
+			});
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
 					Configuration.GetConnectionString("DefaultConnection")));
 
-			services.AddDefaultIdentity<IdentityUser>(options =>
+			services.AddDefaultIdentity<ApplicationUser>(options =>
 				{
 					options.Password.RequireDigit = false;
 					options.Password.RequireLowercase = false;
@@ -54,10 +66,12 @@ namespace Amusoft.PCR.Server
 
 					options.SignIn.RequireConfirmedAccount = true;
 				})
+				.AddRoles<IdentityRole>()
 				.AddEntityFrameworkStores<ApplicationDbContext>();
-
+			
 			services.Configure<DesktopIntegrationSettings>(Configuration.GetSection("ApplicationSettings:DesktopIntegration"));
 			services.Configure<LanAddressBroadcastSettings>(Configuration.GetSection("ApplicationSettings:ServerUrlTransmitter"));
+			services.Configure<AuthorizationSettings>(Configuration.GetSection("ApplicationSettings:AuthorizationSettings"));
 
 			services.AddHttpContextAccessor();
 			services.AddHttpClient("local", (provider, client) =>
@@ -68,13 +82,13 @@ namespace Amusoft.PCR.Server
 			services.AddControllers();
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
-			services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+			services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 
 			ServiceRegistrar.Register(services);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceScopeFactory serviceScopeFactory, ILogger<Startup> logger)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceScopeFactory serviceScopeFactory, ILogger<Startup> logger, ApplicationStateTransmitter applicationStateTransmitter)
 		{
 			if (env.IsDevelopment())
 			{
@@ -103,23 +117,33 @@ namespace Amusoft.PCR.Server
 				endpoints.MapFallbackToPage("/_Host");
 				endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 			});
-
+			
 			using (var serviceScope = serviceScopeFactory.CreateScope())
 			{
 				using (var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
 				{
-					if (context.Database.GetPendingMigrations().Any())
+					if (!context.Database.CanConnect())
 					{
-						logger.LogInformation("Applying database migration");
+						logger.LogInformation("Database does not exist yet - Creating database through migrations");
 						context.Database.Migrate();
-						logger.LogInformation("Applying database migration done");
 					}
 					else
 					{
-						logger.LogDebug("No pending migrations found");
+						if (context.Database.GetPendingMigrations().Any())
+						{
+							logger.LogInformation("Applying database migration");
+							context.Database.Migrate();
+							logger.LogInformation("Applying database migration done");
+						}
+						else
+						{
+							logger.LogDebug("No pending migrations found");
+						}
 					}
 				}
 			}
+
+			applicationStateTransmitter.NotifyConfigurationDone();
 
 			logger.LogInformation("Configuration done");
 		}

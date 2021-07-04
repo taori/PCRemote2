@@ -1,5 +1,6 @@
 ﻿@page "/functions/activeWindowMenu"
 @inject NavigationManager _navigationManager
+@attribute [Authorize(Roles = "activeWindow")]
 
 <Title Headline="Active window" WindowTitle="Active window"></Title>
 
