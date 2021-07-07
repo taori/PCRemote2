@@ -3,4 +3,4 @@
 & "$PSScriptRoot\installService.ps1"
 
 Write-Host "Script complete"
-Start-Sleep -Seconds 3
+#Start-Sleep -Seconds 3

@@ -38,7 +38,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			var combinedUri = new Uri(originUri, relativePortion);
 
 			var resultPath = combinedUri.LocalPath;
-			_logger.LogDebug("Combined Uri {Path} from {OriginPath} and {RelativePath}", resultPath, executingAssemblyDirectory, exePath);
+			_logger.LogTrace("Combined Uri {Path} from {OriginPath} and {RelativePath}", resultPath, executingAssemblyDirectory, exePath);
 
 			return resultPath;
 		}

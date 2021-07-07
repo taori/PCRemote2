@@ -48,43 +48,19 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Networking
 				{
 					try
 					{
+						Log.Trace("Waiting for UDP message on port [{Port}]", _port);
 						var result = await udpClient.ReceiveAsync();
-						Log.Trace("Received message from {Ip}", result.RemoteEndPoint.ToString());
+						Log.Trace("Received message from [{Ip}]", result.RemoteEndPoint.ToString());
 						_messageReceived.OnNext(result);
 					}
 					catch (Exception e)
 					{
+						Log.Error(e, "Unexpected error occured - Terminating receiver");
 						_messageReceived.OnError(e);
 						_messageReceived.OnCompleted();
 						IsReceiverDead = true;
 					}
 				}
-				// _udpClient.BeginReceive(OnUdpDataReceived, _udpClient);
-
-				// var socket = new DatagramSocket(beaconPort, InetAddress.GetByAddress(Encoding.UTF8.GetBytes("0.0.0.0")));
-				// socket.Broadcast = true;
-				// var bytes = new byte[128];
-				// while (!_cts.Token.IsCancellationRequested)
-				// {
-				// 	var packet = new DatagramPacket(bytes, 128);
-				// 	await socket.ReceiveAsync(packet);
-				// }
-				//
-				// using (var broadcaster = new UdpClient())
-				// {
-				// 	var ep = new IPEndPoint(IPAddress.Any, beaconPort);
-				// 	broadcaster.ExclusiveAddressUse = false;
-				// 	// broadcaster.AllowNatTraversal(true);
-				// 	broadcaster.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-				// 	broadcaster.Client.Bind(ep);
-				// 	Log.Info($"Binding ({nameof(UdpReceiver)}) on [{ep}]");
-				//
-				// 	while (!_cts.Token.IsCancellationRequested)
-				// 	{
-				// 		var receive = await broadcaster.ReceiveAsync();
-				// 		Log.Debug($"<--- [{receive.RemoteEndPoint.Prettify()}] {Encoding.UTF8.GetString(receive.Buffer)}");
-				// 	}
-				// }
 
 				Log.Info("Beacon receiver terminating.");
 			}
@@ -93,22 +69,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Networking
 				Log.Error(e);
 			}
 		}
-
-		// private static void OnUdpDataReceived(IAsyncResult result)
-		// {
-		// 	// Debug.WriteLine($">>> in receive");
-		//
-		// 	var udpClient = result.AsyncState as UdpClient;
-		// 	if (udpClient == null)
-		// 		return;
-		//
-		// 	IPEndPoint remoteAddr = null;
-		// 	var recvBuffer = udpClient.EndReceive(result, ref remoteAddr);
-		//
-		// 	// Debug.WriteLine($"MESSAGE FROM: {remoteAddr.Address}:{remoteAddr.Port}, MESSAGE SIZE: {recvBuffer?.Length ?? 0}");
-		//
-		// 	udpClient.BeginReceive(OnUdpDataReceived, udpClient);
-		// }
 
 		public void Dispose()
 		{

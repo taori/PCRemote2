@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Amusoft.PCR.Mobile.Droid.Domain.Networking;
@@ -6,19 +7,24 @@ using Android.App;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
+using Android.Widget;
 using AndroidX.AppCompat.App;
-using AndroidX.AppCompat.Widget;
 using AndroidX.Core.View;
 using AndroidX.DrawerLayout.Widget;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
+using NLog;
+using NLog.Config;
+using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
 namespace Amusoft.PCR.Mobile.Droid
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
+	    private static readonly Logger Log = LogManager.GetLogger(nameof(MainActivity));
+
 	    private UdpBroadcastReceiver _broadcastReceiver;
 
 	    private UdpReceiveResult _lastMessage;
@@ -26,10 +32,11 @@ namespace Amusoft.PCR.Mobile.Droid
 	    protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            NLog.LogManager.Configuration = new XmlLoggingConfiguration("assets/nlog.config");
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
             _broadcastReceiver = new UdpBroadcastReceiver(55863);
-            _broadcastReceiver.MessageReceived.Subscribe(d => _lastMessage = d);
+            _broadcastReceiver.MessageReceived.Subscribe(UdpMessageReceived);
             _broadcastReceiver.Start();
 
             Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
@@ -47,7 +54,14 @@ namespace Amusoft.PCR.Mobile.Droid
             navigationView.SetNavigationItemSelectedListener(this);
         }
 
-        public override void OnBackPressed()
+	    private void UdpMessageReceived(UdpReceiveResult obj)
+	    {
+            Log.Trace("Received UDP message");
+		    var textView = FindViewById<TextView>(Resource.Id.textView);
+		    textView.Text = obj.RemoteEndPoint.ToString();
+	    }
+
+	    public override void OnBackPressed()
         {
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             if(drawer.IsDrawerOpen(GravityCompat.Start))
