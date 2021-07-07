@@ -1,10 +1,11 @@
 ﻿@page "/functions"
 @using Amusoft.PCR.Server.Dependencies
 @using Amusoft.PCR.Grpc.Common
+@using Amusoft.PCR.Model.Statics
 @inject NavigationManager _navigationManager
 @inject IDialogService _dialogService
 @inject IInteropService _interopService
-@attribute [Authorize(Roles = "functions")]
+@attribute [Authorize(Roles = RoleNames.Functions)]
 
 <Title Headline="Functions" WindowTitle="Functions"></Title>
 

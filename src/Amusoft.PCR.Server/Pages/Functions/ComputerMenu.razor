@@ -1,8 +1,9 @@
 ﻿@page "/functions/computerMenu"
 @using Amusoft.PCR.Server.Dependencies
+@using Amusoft.PCR.Model.Statics
 @inject NavigationManager _navigationManager
 @inject IInteropService _interopService
-@attribute [Authorize(Roles = "computer")]
+@attribute [Authorize(Roles = RoleNames.Computer)]
 
 <Title WindowTitle="Computer controls" Headline="Computer controls"></Title>
 

@@ -75,7 +75,7 @@ namespace Amusoft.PCR.Server.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-	            var anyUserExists = _userManager.Users.FirstOrDefault() != null;
+	            var anyUserExists = _userManager.Users.Any();
 	            var userType = anyUserExists ? UserType.User : UserType.Administrator;
                 var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, UserType = userType };
                 var result = await _userManager.CreateAsync(user, Input.Password);

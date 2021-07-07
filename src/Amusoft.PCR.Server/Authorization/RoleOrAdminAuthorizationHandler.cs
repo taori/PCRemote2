@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Amusoft.PCR.Model.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
@@ -16,7 +17,7 @@ namespace Amusoft.PCR.Server.Authorization
 
 			if (rolesAuthorizationRequirement != null)
 			{
-				if (context.User.IsInRole("Administrator"))
+				if (context.User.IsInRole(RoleNames.Administrator))
 					context.Succeed(rolesAuthorizationRequirement);
 			}
 

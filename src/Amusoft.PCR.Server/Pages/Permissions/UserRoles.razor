@@ -4,8 +4,9 @@
 @using Amusoft.PCR.Server.Areas.Identity.Pages.Account.Manage
 @using System.Diagnostics
 @using Amusoft.PCR.Blazor.Extensions
+@using Amusoft.PCR.Model.Statics
 @using Microsoft.Extensions.Logging
-@attribute [Authorize(Roles = "permissions")]
+@attribute [Authorize(Roles = RoleNames.Permissions)]
 @inject UserManager<ApplicationUser> _userManager
 @inject RoleManager<IdentityRole> _roleManager
 
@@ -99,6 +100,15 @@ else
 
 	private async Task Save()
 	{
+		var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var signedInUserName = state.User?.Identity?.Name ?? "Unknown";
+		var actor = await _userManager.GetUserAsync(state.User);
+		if (!await _userManager.IsInRoleAsync(actor, RoleNames.Administrator))
+		{
+			Logger.LogWarning("User {Name} without admin privileges attempted to change permissions", signedInUserName);
+			return;
+		}
+
 		var targetUser = await GetUserByCurrentIdAsync();
 		var allGranted = _currentRoles
 			.Where(d => d.Checked)
@@ -108,8 +118,6 @@ else
 		var removalRoles = _allRoles.Select(d => d.Name).ToArray();
 		var allGrantedHash = new HashSet<string>(allGranted, StringComparer.OrdinalIgnoreCase);
 
-		var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		var signedInUserName = state.User?.Identity?.Name ?? "Unknown";
 
 		foreach (var role in removalRoles)
 		{

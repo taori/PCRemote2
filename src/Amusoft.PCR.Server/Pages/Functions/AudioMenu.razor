@@ -1,8 +1,9 @@
 ﻿@page "/functions/audioMenu"
 @using Amusoft.PCR.Server.Dependencies
+@using Amusoft.PCR.Model.Statics
 @inject NavigationManager _navigationManager
 @inject IInteropService _interopService
-@attribute [Authorize(Roles = "audio")]
+@attribute [Authorize(Roles = RoleNames.Audio)]
 
 <Title WindowTitle="Audio options" Headline="Audio options"></Title>
 

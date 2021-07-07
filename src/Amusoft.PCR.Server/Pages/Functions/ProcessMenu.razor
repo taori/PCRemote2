@@ -1,6 +1,7 @@
 ﻿@page "/functions/processMenu"
+@using Amusoft.PCR.Model.Statics
 @inject NavigationManager _navigationManager
-@attribute [Authorize(Roles = "processes")]
+@attribute [Authorize(Roles = RoleNames.Processes)]
 
 <Title WindowTitle="Process control options" Headline="Process control options"></Title>
 

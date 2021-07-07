@@ -2,10 +2,16 @@
 @inject NavigationManager navigationManager
 @using Amusoft.PCR.Blazor.Extensions
 
-
 <Title WindowTitle="PC Remote Controller 2" Headline="PC Remote Controller 2"></Title>
-<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => navigationManager.NavigateTo("functions"))">Go to functions</Button>
-
-@code
-{
-}
+<ul class="nav flex-column">
+	<li class="nav-item px-3">
+		<NavLink class="nav-link" href="functions">
+			<span class="oi oi-calculator" aria-hidden="true"></span> Functions
+		</NavLink>
+	</li>
+	<li class="nav-item px-3">
+		<NavLink class="nav-link" href="downloads">
+			<span class="oi oi-data-transfer-download" aria-hidden="true"></span> Downloads
+		</NavLink>
+	</li>
+</ul>

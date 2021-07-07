@@ -15,12 +15,14 @@ namespace Amusoft.PCR.Server.BackgroundServices
 	{
 		private readonly ILogger<DesktopIntegrationService> _logger;
 		private readonly IIntegrationApplicationLocator _integrationApplicationLocator;
+		private readonly ApplicationStateTransmitter _applicationStateTransmitter;
 		private bool _canOperate;
 
-		public DesktopIntegrationService(ILogger<DesktopIntegrationService> logger, IIntegrationApplicationLocator integrationApplicationLocator)
+		public DesktopIntegrationService(ILogger<DesktopIntegrationService> logger, IIntegrationApplicationLocator integrationApplicationLocator, ApplicationStateTransmitter applicationStateTransmitter)
 		{
 			_logger = logger;
 			_integrationApplicationLocator = integrationApplicationLocator;
+			_applicationStateTransmitter = applicationStateTransmitter;
 		}
 
 		public override Task StartAsync(CancellationToken cancellationToken)
@@ -37,7 +39,7 @@ namespace Amusoft.PCR.Server.BackgroundServices
 			while (!stoppingToken.IsCancellationRequested && _canOperate)
 			{
 				if(!_integrationApplicationLocator.IsRunning())
-					TryLaunchIntegration();
+					await TryLaunchIntegrationAsync();
 
 				_logger.LogTrace("Waiting for next turn to check if integration backend is working ({Time}ms)", waitDuration.TotalMilliseconds);
 				await Task.Delay(waitDuration, stoppingToken);
@@ -69,10 +71,13 @@ namespace Amusoft.PCR.Server.BackgroundServices
 			return base.StopAsync(cancellationToken);
 		}
 
-		private bool TryLaunchIntegration()
+		private async Task<bool> TryLaunchIntegrationAsync()
 		{
 			try
 			{
+				_logger.LogDebug("Waiting for application to be ready");
+				await _applicationStateTransmitter.ConfigurationDone;
+
 				var fullPath = _integrationApplicationLocator.GetAbsolutePath();
 				if (!File.Exists(fullPath))
 				{
@@ -88,7 +93,7 @@ namespace Amusoft.PCR.Server.BackgroundServices
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Exception occured while calling {Name}", nameof(TryLaunchIntegration));
+				_logger.LogError(e, "Exception occured while calling {Name}", nameof(TryLaunchIntegrationAsync));
 				return false;
 			}
 		}

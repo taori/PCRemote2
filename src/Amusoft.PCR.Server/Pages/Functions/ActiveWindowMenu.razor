@@ -1,6 +1,7 @@
 ﻿@page "/functions/activeWindowMenu"
+@using Amusoft.PCR.Model.Statics
 @inject NavigationManager _navigationManager
-@attribute [Authorize(Roles = "activeWindow")]
+@attribute [Authorize(Roles = RoleNames.ActiveWindow)]
 
 <Title Headline="Active window" WindowTitle="Active window"></Title>
 

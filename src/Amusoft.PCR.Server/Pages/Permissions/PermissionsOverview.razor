@@ -1,8 +1,9 @@
 ﻿@page "/permissions/overview"
 @using Amusoft.PCR.Blazor.Extensions
 @using Amusoft.PCR.Model.Entities
+@using Amusoft.PCR.Model.Statics
 @using Microsoft.AspNetCore.Identity
-@attribute [Authorize(Roles = "permissions")]
+@attribute [Authorize(Roles = RoleNames.Permissions)]
 @inject UserManager<ApplicationUser> _userManager
 
 <Title Headline="Permission overview" WindowTitle="Permission overview"></Title>
@@ -28,11 +29,6 @@
 	{
 		_applicationUsers = _userManager.Users.ToList();
 		await base.OnInitializedAsync();
-	}
-
-	private void GotoNewPermissions()
-	{
-		NavigationManager.NavigateTo("permissions/create");
 	}
 
 	private List<ApplicationUser> _applicationUsers;
