@@ -43,7 +43,9 @@ namespace Amusoft.PCR.Server.BackgroundServices
 				_logger.LogInformation("Broadcasting address on port [{Port}]", beaconPort);
 
 				if (_settings.Value.IsBroadcastDiagnosticsEnabled)
+#pragma warning disable 4014
 					Task.Run(() => ReceiveLoop(stoppingToken), stoppingToken);
+#pragma warning restore 4014
 
 				var targetEndpoint = new IPEndPoint(IPAddress.Broadcast, beaconPort);
 				var datagram = Encoding.UTF8.GetBytes($"PCRemote 2 looking for clients.");

@@ -19,4 +19,4 @@ Copy-Item ..\mobile-artifacts\android\ ..\artifacts\web\wwwroot\downloads\ -Recu
 #Copy-Item ..\src\Amusoft.PCR.Server\bin\Debug\net5.0-windows\win7-x64\* -Recurse -Destination .\artifacts\web
 
 Write-Host "Script complete"
-Start-Sleep -Seconds 3
+#Start-Sleep -Seconds 3

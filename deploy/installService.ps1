@@ -52,4 +52,4 @@ if($browser.ShowDialog() -eq "OK"){
 }
 
 Write-Host "Script complete"
-Start-Sleep -Seconds 3
+#Start-Sleep -Seconds 3

@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Amusoft.PCR.Model;
 using Amusoft.PCR.Model.Entities;
+using Amusoft.PCR.Model.Statics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -19,6 +23,9 @@ using Amusoft.PCR.Server.Authorization;
 using Amusoft.PCR.Server.BackgroundServices;
 using Amusoft.PCR.Server.Data;
 using Amusoft.PCR.Server.Dependencies;
+using Amusoft.PCR.Server.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
@@ -28,26 +35,11 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace Amusoft.PCR.Server
 {
-	class DelegatedContentTypeProvider : IContentTypeProvider
-	{
-		private IContentTypeProvider _baseImplementation = new FileExtensionContentTypeProvider();
-
-		public readonly Dictionary<string, string> AdditionalDeclarations = new();
-
-		public bool TryGetContentType(string subpath, out string contentType)
-		{
-			if (_baseImplementation.TryGetContentType(subpath, out contentType))
-				return true;
-
-			if (AdditionalDeclarations.TryGetValue(subpath, out contentType))
-				return true;
-
-			return false;
-		}
-	}
 	public class Startup
 	{
 		public Startup(IConfiguration configuration)
@@ -61,27 +53,74 @@ namespace Amusoft.PCR.Server
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddSingleton<IAuthorizationHandler, RoleOrAdminAuthorizationHandler>();
+			services.Configure<JwtSettings>(Configuration.GetSection("ApplicationSettings:Jwt"));
+			services.Configure<DesktopIntegrationSettings>(Configuration.GetSection("ApplicationSettings:DesktopIntegration"));
+			services.Configure<LanAddressBroadcastSettings>(Configuration.GetSection("ApplicationSettings:ServerUrlTransmitter"));
+			services.Configure<AuthorizationSettings>(Configuration.GetSection("ApplicationSettings:AuthorizationSettings"));
+			services.Configure<StaticFileOptions>(options =>
+			{
+				var contentTypeProvider = new FileExtensionContentTypeProvider();
+				contentTypeProvider.Mappings[".apk"] = "application/vnd.android.package-archive";
+				options.ContentTypeProvider = contentTypeProvider;
+			});
+
+			services.AddSwaggerGen(options =>
+			{
+				options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+			});
+			services.AddGrpc();
 			services.AddDatabaseDeveloperPageExceptionFilter();
-			services.AddSingleton<ApplicationStateTransmitter>();
 			services.AddOptions();
 			services.AddAuthorization(options =>
 			{
-				var builder = new AuthorizationPolicyBuilder();
-				builder.RequireAuthenticatedUser();
-				
-				options.FallbackPolicy = builder.Build();
+				options.AddPolicy(PolicyNames.ApiPolicy, policyBuilder =>
+				{
+					policyBuilder.AddAuthenticationSchemes(
+							CookieAuthenticationDefaults.AuthenticationScheme,
+							JwtBearerDefaults.AuthenticationScheme)
+						.RequireAuthenticatedUser()
+						.Build();
+				});
 			});
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
 					Configuration.GetConnectionString("DefaultConnection")));
 
-			services.PostConfigure<StaticFileOptions>(options =>
-			{
-				var contentTypeProvider = new DelegatedContentTypeProvider();
-				contentTypeProvider.AdditionalDeclarations.Add(".apk", "application/vnd.android.package-archive");
-				options.ContentTypeProvider = contentTypeProvider;
-			});
+			var tokenValidationParameters = new TokenValidationParameters();
+			tokenValidationParameters.ValidateIssuer = true;
+			tokenValidationParameters.ValidateAudience = true;
+			tokenValidationParameters.ValidateLifetime = true;
+			tokenValidationParameters.ValidateIssuerSigningKey = true;
+			tokenValidationParameters.ValidIssuer = Configuration["ApplicationSettings:Jwt:Issuer"];
+			tokenValidationParameters.ValidAudience = Configuration["ApplicationSettings:Jwt:Issuer"];
+			tokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Jwt:Key"]));
+			services.AddSingleton(tokenValidationParameters);
+
+			services
+				.AddAuthentication();
+
+			services				  
+				.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+				.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+				.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+				{				   
+					options.SaveToken = true;
+					options.RefreshInterval = TimeSpan.FromHours(1);
+					options.TokenValidationParameters = tokenValidationParameters;
+
+					options.Events = new JwtBearerEvents
+					{
+						OnAuthenticationFailed = context =>
+						{
+							if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+							{
+								context.Response.Headers.Add("Token-Expired", "true");
+							}
+
+							return Task.CompletedTask;
+						}
+					};
+				});
 
 			services.AddDefaultIdentity<ApplicationUser>(options =>
 				{
@@ -94,14 +133,11 @@ namespace Amusoft.PCR.Server
 
 					options.SignIn.RequireConfirmedAccount = true;
 				})
+				.AddDefaultTokenProviders()
 				.AddUserManager<UserManager<ApplicationUser>>()
 				.AddRoles<IdentityRole>()
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 			
-			services.Configure<DesktopIntegrationSettings>(Configuration.GetSection("ApplicationSettings:DesktopIntegration"));
-			services.Configure<LanAddressBroadcastSettings>(Configuration.GetSection("ApplicationSettings:ServerUrlTransmitter"));
-			services.Configure<AuthorizationSettings>(Configuration.GetSection("ApplicationSettings:AuthorizationSettings"));
-
 			services.AddHttpContextAccessor();
 			services.AddHttpClient("local", (provider, client) =>
 			{
@@ -111,7 +147,6 @@ namespace Amusoft.PCR.Server
 			services.AddControllers();
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
-			services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 
 			ServiceRegistrar.Register(services);
 		}
@@ -123,6 +158,12 @@ namespace Amusoft.PCR.Server
 			{
 				app.UseDeveloperExceptionPage();
 				app.UseMigrationsEndPoint();
+
+				app.UseSwagger();
+				app.UseSwaggerUI(options =>
+				{
+					options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+				});
 			}
 			else
 			{
@@ -134,7 +175,7 @@ namespace Amusoft.PCR.Server
 			app.UseHttpsRedirection();
 			var contentTypeProvider = new FileExtensionContentTypeProvider();
 			contentTypeProvider.Mappings[".apk"] = "application/vnd.android.package-archive";
-			app.UseStaticFiles(new StaticFileOptions(){ ContentTypeProvider = contentTypeProvider, HttpsCompression = HttpsCompressionMode.Compress});
+			// app.UseStaticFiles(new StaticFileOptions(){ ContentTypeProvider = contentTypeProvider, HttpsCompression = HttpsCompressionMode.Compress});
 			app.UseStaticFiles();
 
 			app.UseRouting();
@@ -144,6 +185,7 @@ namespace Amusoft.PCR.Server
 
 			app.UseEndpoints(endpoints =>
 			{
+				endpoints.MapGrpcService<IntegrationBackendService>();
 				endpoints.MapControllers();
 				endpoints.MapBlazorHub();
 				endpoints.MapFallbackToPage("/_Host");

@@ -1,0 +1,60 @@
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Net.Mime;
+using System.Threading.Tasks;
+using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Model.Statics;
+using Amusoft.PCR.Server.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Net.Http.Headers;
+
+namespace Amusoft.PCR.Server.Controllers
+{
+	[Route("[controller]")]
+	public class JwtController : Controller
+	{
+		private readonly IJwtTokenService _jwtTokenService;
+
+		public JwtController(IJwtTokenService jwtTokenService)
+		{
+			_jwtTokenService = jwtTokenService;
+		}
+
+		[Route("[action]")]
+		[HttpPost]
+		public async Task<ActionResult<JwtAuthenticationResult>> Authenticate([FromBody] JwtLoginCredentials model)
+		{
+			var authentication = await _jwtTokenService.CreateAuthenticationAsync(model.User, model.Password);
+			if (authentication == null)
+				return StatusCode((int) HttpStatusCode.Forbidden);
+
+			return Json(authentication);
+		}
+
+		[Route("[action]")]
+		[HttpPost]
+		public async Task<ActionResult<JwtAuthenticationResult>> RefreshToken([FromBody] JwtAuthenticationResult model)
+		{
+			var authentication = await _jwtTokenService.RefreshAsync(model.AccessToken, model.RefreshToken);
+			if (authentication == null)
+				return StatusCode((int) HttpStatusCode.Forbidden);
+
+			return Json(authentication);
+		}
+
+		[Route("[action]")]
+		[Authorize(Policy = PolicyNames.ApiPolicy)]
+		[HttpPost]
+		public IActionResult TokenVerify([FromServices] IHttpContextAccessor contextAccessor)
+		{
+			var state = contextAccessor.HttpContext.User;
+			return Content("OK", MediaTypeNames.Text.Plain);
+		}
+	}
+}

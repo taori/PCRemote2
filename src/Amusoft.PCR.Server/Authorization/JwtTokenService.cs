@@ -1,0 +1,114 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Model.Entities;
+using Amusoft.PCR.Model.Statics;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+
+namespace Amusoft.PCR.Server.Authorization
+{
+	public interface IJwtTokenService
+	{
+		Task<JwtAuthenticationResult> CreateAuthenticationAsync(string userName, string password);
+		Task<JwtAuthenticationResult> RefreshAsync(string expiredAccessToken, string refreshToken);
+		ClaimsPrincipal GetClaimsPrincipal(string token);
+	}
+
+	public class JwtTokenService : IJwtTokenService
+	{
+		private readonly TokenValidationParameters _tokenValidationParameters;
+		private readonly ILogger<JwtTokenService> _logger;
+		private readonly IOptions<JwtSettings> _options;
+		private readonly UserManager<ApplicationUser> _userManager;
+
+		public JwtTokenService(
+			TokenValidationParameters tokenValidationParameters,
+			ILogger<JwtTokenService> logger,
+			IOptions<JwtSettings> options, 
+			UserManager<ApplicationUser> userManager)
+		{
+			_tokenValidationParameters = tokenValidationParameters;
+			_logger = logger;
+			_options = options;
+			_userManager = userManager;
+		}
+
+		public async Task<JwtAuthenticationResult> CreateAuthenticationAsync(string userName, string password)
+		{
+			_logger.LogInformation("Authenticating user {User}", userName);
+			var user = await _userManager.FindByNameAsync(userName);
+			if (!await _userManager.CheckPasswordAsync(user, password))
+			{
+				_logger.LogWarning("Failed login attempt for {User}", userName);
+				return null;
+			}
+
+			var roles = await _userManager.GetRolesAsync(user);
+			var handler = new JwtSecurityTokenHandler();
+			var claims = new List<Claim>();
+			claims.Add(new Claim(ClaimTypes.Name, userName));
+			claims.Add(new Claim(JwtRegisteredClaimNames.Aud, _tokenValidationParameters.ValidAudience));
+			claims.AddRange(roles.Select(d => new Claim(ClaimTypes.Role, d)));
+			
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.Key));
+			var securityToken = new JwtSecurityToken(
+				_options.Value.Issuer,
+				claims: claims,
+				signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512),
+				expires: DateTime.UtcNow.AddHours(1));
+			
+			var outputToken = handler.WriteToken(securityToken);
+			var refreshToken = GenerateRefreshToken();
+
+			await _userManager.RemoveAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "RefreshToken");
+			await _userManager.SetAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "RefreshToken", refreshToken);
+
+			return new JwtAuthenticationResult()
+			{
+				AccessToken = outputToken,
+				RefreshToken = refreshToken
+			};
+		}
+
+		public Task<JwtAuthenticationResult> RefreshAsync(string expiredAccessToken, string refreshToken)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string GenerateRefreshToken(int length = 32)
+		{
+			var randomNumber = new byte[length];
+			using (var generator = RandomNumberGenerator.Create())
+			{
+				generator.GetBytes(randomNumber);
+				return Convert.ToBase64String(randomNumber);
+			}
+		}
+
+		public ClaimsPrincipal GetClaimsPrincipal(string token)
+		{
+			var tokenHandler = new JwtSecurityTokenHandler();
+			var tokenValidationParameters = new TokenValidationParameters();
+			tokenValidationParameters.ValidateIssuer = true;
+			tokenValidationParameters.ValidateAudience = true;
+			tokenValidationParameters.ValidateLifetime = false;
+			tokenValidationParameters.ValidateIssuerSigningKey = true;
+			tokenValidationParameters.ValidIssuer = _options.Value.Issuer;
+			tokenValidationParameters.ValidAudience = _options.Value.Issuer;
+			tokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.Key));
+			var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var validatedToken);
+
+			return principal;
+		}
+	}
+}

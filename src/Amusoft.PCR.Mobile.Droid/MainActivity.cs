@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Mobile.Droid.Domain.Communication;
 using Amusoft.PCR.Mobile.Droid.Domain.Networking;
 using Android.App;
 using Android.OS;
@@ -9,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using AndroidX.AppCompat.Widget;
 using AndroidX.Core.View;
 using AndroidX.DrawerLayout.Widget;
 using Google.Android.Material.FloatingActionButton;
@@ -45,6 +48,11 @@ namespace Amusoft.PCR.Mobile.Droid
             FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
             fab.Click += FabOnClick;
 
+            var shutdownButton = FindViewById<AppCompatButton>(Resource.Id.btnShutdown);
+            shutdownButton.Click += ShutdownButtonOnClick;
+            var abortShutdownButton = FindViewById<AppCompatButton>(Resource.Id.btnAbortShutdown);
+            abortShutdownButton.Click += AbortShutdownButtonOnClick;
+
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.AddDrawerListener(toggle);
@@ -52,6 +60,50 @@ namespace Amusoft.PCR.Mobile.Droid
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
+        }
+
+	    private void AbortShutdownButtonOnClick(object sender, EventArgs e)
+	    {
+		    try
+		    {
+			    SendBroadcastMessage();
+			    using (var host = new GrpcApplicationHost(new Uri("https://192.168.0.135:5001")))
+			    {
+                    Log.Debug("Sending Abort Shutdown");
+				    host.InteropClient.AbortShutDownAsync(new AbortShutdownRequest(), deadline: DateTime.UtcNow.AddSeconds(5));
+				    Log.Debug("Sent Abort Shutdown");
+                }
+		    }
+		    catch (Exception exception)
+		    {
+                Log.Error(exception);
+		    }
+	    }
+
+	    private static void SendBroadcastMessage()
+	    {
+		    using var client = new UdpClient();
+		    client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+		    client.ExclusiveAddressUse = false;
+		    var bytes = Encoding.UTF8.GetBytes("test");
+		    client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 55863));
+	    }
+
+	    private void ShutdownButtonOnClick(object sender, EventArgs e)
+	    {
+		    try
+		    {
+			    using (var host = new GrpcApplicationHost(new Uri("https://192.168.0.135:5001")))
+			    {
+				    Log.Debug("Sending Shutdown");
+                    host.InteropClient.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = 60 }, deadline: DateTime.UtcNow.AddSeconds(5));
+                    Log.Debug("Sent Shutdown");
+                }
+            }
+		    catch (Exception exception)
+		    {
+			    Log.Error(exception);
+		    }
         }
 
 	    private void UdpMessageReceived(UdpReceiveResult obj)
