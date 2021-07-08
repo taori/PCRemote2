@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -72,6 +73,11 @@ namespace Amusoft.PCR.Grpc.Client
 						response = await base.SendAsync(request, cancellationToken);
 					}
 				}
+				catch (Exception e)
+				{
+					Log.Error(e);
+					throw;
+				}
 				finally
 				{
 					Semaphore.Release();
@@ -87,7 +93,8 @@ namespace Amusoft.PCR.Grpc.Client
 			{
 				await Semaphore.WaitAsync(cancellationToken);
 
-				var authRequest = new HttpRequestMessage(HttpMethod.Post, AuthenticationSurface.GetAuthenticationUri()) { Content = await AuthenticationSurface.CreateAuthenticationRequestContentAsync() };
+				var authRequest = new HttpRequestMessage(HttpMethod.Post, AuthenticationSurface.GetAuthenticationUri())
+					{Content = await AuthenticationSurface.CreateAuthenticationRequestContentAsync()};
 
 				Log.Debug("Requesting authentication response");
 				using (var authResponse = await base.SendAsync(authRequest, cancellationToken))
@@ -105,6 +112,11 @@ namespace Amusoft.PCR.Grpc.Client
 					Log.Trace("Executing original request");
 					return await base.SendAsync(request, cancellationToken);
 				}
+			}
+			catch (Exception e)
+			{
+				Log.Error(e);
+				throw;
 			}
 			finally
 			{

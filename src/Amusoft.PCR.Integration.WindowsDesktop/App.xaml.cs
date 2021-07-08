@@ -55,7 +55,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 		private bool TryLaunchInteropChannel()
 		{
 			_namedPipeServer = new NamedPipeServer(Globals.NamedPipeChannel);
-			WindowsInteropService.BindService(_namedPipeServer.ServiceBinder, new WindowsInteropServiceImplementation());
+			DesktopIntegrationService.BindService(_namedPipeServer.ServiceBinder, new WindowsInteropServiceImplementation());
 
 			try
 			{

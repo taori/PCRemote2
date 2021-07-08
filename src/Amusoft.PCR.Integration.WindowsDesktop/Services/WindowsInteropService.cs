@@ -11,7 +11,7 @@ using NativeMethods = Amusoft.PCR.Integration.WindowsDesktop.Interop.NativeMetho
 
 namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 {
-	public class WindowsInteropServiceImplementation : WindowsInteropService.WindowsInteropServiceBase
+	public class WindowsInteropServiceImplementation : DesktopIntegrationService.DesktopIntegrationServiceBase
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(WindowsInteropServiceImplementation));
 

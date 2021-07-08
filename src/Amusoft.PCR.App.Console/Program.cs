@@ -48,7 +48,7 @@ namespace grpcclient
                 // Console.WriteLine($"{(int)testResponse.StatusCode} => {testReply}");
                 //
                 // return;
-                var client = new WindowsInteropService.WindowsInteropServiceClient(channel);
+                var client = new DesktopIntegrationService.DesktopIntegrationServiceClient(channel);
 
                 Log.Info("Executing shutdown");
                 await client.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = 60 });

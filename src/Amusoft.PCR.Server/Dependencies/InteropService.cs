@@ -11,15 +11,15 @@ namespace Amusoft.PCR.Server.Dependencies
 	public interface IInteropService
 	{
 		Task<bool> ToggleMute();
-		Task MonitorOn();
-		Task MonitorOff();
-		Task LockWorkStation();
+		Task<bool> MonitorOn();
+		Task<bool> MonitorOff();
+		Task<bool> LockWorkStation();
 
 		/// <summary>
 		/// See https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.sendkeys?redirectedfrom=MSDN&view=net-5.0
 		/// </summary>
 		/// <param name="keys"></param>
-		Task SendKeys(string keys);
+		Task<bool> SendKeys(string keys);
 
 		Task<int> SetMasterVolume(int value);
 		Task<int> GetMasterVolume();
@@ -37,18 +37,19 @@ namespace Amusoft.PCR.Server.Dependencies
 	public class InteropService : IInteropService
 	{
 		private readonly ILogger<InteropService> _logger;
-		private readonly WindowsInteropService.WindowsInteropServiceClient _service;
+		private readonly DesktopIntegrationService.DesktopIntegrationServiceClient _service;
 
 		public InteropService(NamedPipeChannel channel, ILogger<InteropService> logger)
 		{
 			_logger = logger;
-			_service = new WindowsInteropService.WindowsInteropServiceClient(channel);
+			_service = new DesktopIntegrationService.DesktopIntegrationServiceClient(channel);
 		}
 
 		public async Task<bool> ToggleMute()
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(ToggleMute));
 				var reply = await _service.ToggleMuteAsync(new ToggleMuteRequest());
 				return reply.Muted;
 			}
@@ -59,51 +60,63 @@ namespace Amusoft.PCR.Server.Dependencies
 			}
 		}
 
-		public async Task MonitorOn()
+		public async Task<bool> MonitorOn()
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(MonitorOn));
 				await _service.MonitorOnAsync(new MonitorOnRequest());
+				return true;
 			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(MonitorOn));
+				return false;
 			}
 		}
 
-		public async Task MonitorOff()
+		public async Task<bool> MonitorOff()
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(MonitorOff));
 				await _service.MonitorOffAsync(new MonitorOffRequest());
+				return true;
 			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(MonitorOff));
+				return false;
 			}
 		}
 
-		public async Task LockWorkStation()
+		public async Task<bool> LockWorkStation()
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(LockWorkStation));
 				await _service.LockWorkStationAsync(new LockWorkStationRequest());
+				return true;
 			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(LockWorkStation));
+				return false;
 			}
 		}
 
-		public async Task SendKeys(string keys)
+		public async Task<bool> SendKeys(string keys)
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(SendKeys));
 				await _service.SendKeysAsync(new SendKeysRequest(){Message = keys});
+				return true;
 			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "Exception occured while calling [{Name}] with [{Keys}]", nameof(SendKeys), keys);
+				return false;
 			}
 		}
 
@@ -111,6 +124,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(SetMasterVolume));
 				var reply = await _service.SetMasterVolumeAsync(new SetMasterVolumeRequest() {Value = value});
 				return reply.Value;
 			}
@@ -125,6 +139,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(GetMasterVolume));
 				var reply = await _service.GetMasterVolumeAsync(new GetMasterVolumeRequest());
 				return reply.Value;
 			}
@@ -139,6 +154,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(Shutdown));
 				var reply = await _service.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = (int)delay.TotalSeconds, Force = force});
 				return reply.Success;
 			}
@@ -153,6 +169,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(AbortShutdown));
 				var reply = await _service.AbortShutDownAsync(new AbortShutdownRequest());
 				return reply.Success;
 			}
@@ -167,6 +184,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(Hibernate));
 				var reply = await _service.HibernateAsync(new HibernateRequest());
 				return reply.Success;
 			}
@@ -181,6 +199,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(Restart));
 				var reply = await _service.RestartAsync(new RestartRequest(){ Delay = (int)delay.TotalSeconds, Force = force});
 				return reply.Success;
 			}
@@ -197,6 +216,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(GetProcessList));
 				var reply = await _service.GetProcessListAsync(new ProcessListRequest());
 				return reply.Results;
 			}
@@ -211,6 +231,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(KillProcessById));
 				var reply = await _service.KillProcessByIdAsync(new KillProcessRequest(){ProcessId = processId});
 				return reply.Success;
 			}
@@ -225,6 +246,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(FocusProcessWindow));
 				var reply = await _service.FocusWindowAsync(new FocusWindowRequest(){ ProcessId = processId });
 				return reply.Success;
 			}
@@ -239,6 +261,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(LaunchProgram));
 				var request = string.IsNullOrEmpty(arguments)
 					? new LaunchProgramRequest() { ProgramName = programName }
 					: new LaunchProgramRequest() { ProgramName = programName, Arguments = arguments };
@@ -257,6 +280,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		{
 			try
 			{
+				_logger.LogInformation("Calling method {Method}", nameof(SendMediaKey));
 				var reply = await _service.SendMediaKeysAsync(new SendMediaKeysRequest()
 				{
 					KeyCode = code

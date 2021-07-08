@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model;
 using Amusoft.PCR.Model.Entities;
 using Amusoft.PCR.Model.Statics;
@@ -24,6 +25,7 @@ using Amusoft.PCR.Server.BackgroundServices;
 using Amusoft.PCR.Server.Data;
 using Amusoft.PCR.Server.Dependencies;
 using Amusoft.PCR.Server.Services;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -173,9 +175,6 @@ namespace Amusoft.PCR.Server
 			}
 
 			app.UseHttpsRedirection();
-			var contentTypeProvider = new FileExtensionContentTypeProvider();
-			contentTypeProvider.Mappings[".apk"] = "application/vnd.android.package-archive";
-			// app.UseStaticFiles(new StaticFileOptions(){ ContentTypeProvider = contentTypeProvider, HttpsCompression = HttpsCompressionMode.Compress});
 			app.UseStaticFiles();
 
 			app.UseRouting();
@@ -185,7 +184,7 @@ namespace Amusoft.PCR.Server
 
 			app.UseEndpoints(endpoints =>
 			{
-				endpoints.MapGrpcService<IntegrationBackendService>();
+				endpoints.MapGrpcService<BackendIntegrationService>();
 				endpoints.MapControllers();
 				endpoints.MapBlazorHub();
 				endpoints.MapFallbackToPage("/_Host");

@@ -1,6 +1,8 @@
 ﻿@page "/functions/audioMenu"
 @using Amusoft.PCR.Server.Dependencies
 @using Amusoft.PCR.Model.Statics
+@using Amusoft.PCR.Server.Services
+@using Amusoft.PCR.Grpc.Common
 @inject NavigationManager _navigationManager
 @inject IInteropService _interopService
 @attribute [Authorize(Roles = RoleNames.Audio)]

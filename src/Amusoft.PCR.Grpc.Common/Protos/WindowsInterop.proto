@@ -3,7 +3,7 @@
 option csharp_namespace = "Amusoft.PCR.Grpc.Common";
 package Amusoft.PCR.Grpc.Common;
 
-service WindowsInteropService {
+service DesktopIntegrationService {
 	rpc ToggleMute (ToggleMuteRequest) returns (ToggleMuteReply) {}
 	rpc MonitorOn (MonitorOnRequest) returns (MonitorOnReply) {}
 	rpc MonitorOff (MonitorOffRequest) returns (MonitorOffReply) {}

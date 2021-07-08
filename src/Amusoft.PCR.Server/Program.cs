@@ -71,7 +71,7 @@ namespace Amusoft.PCR.Server
 				.UseWindowsService()
 				.ConfigureServices(services =>
 				{
-					services.AddHostedService<DesktopIntegrationService>();
+					services.AddHostedService<DesktopIntegrationLauncherService>();
 					services.AddHostedService<LanAddressBroadcastService>();
 					services.AddHostedService<PermissionSeedService>();
 				})
