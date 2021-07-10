@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Client;
 using Amusoft.PCR.Grpc.Common;
 using Newtonsoft.Json;
+using NLog;
 using Xamarin.Essentials;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 {
 	public class AuthenticationSurface : IAuthenticationSurface
 	{
+		private static readonly Logger Log = LogManager.GetLogger(nameof(AuthenticationSurface));
+
 		private readonly string _uriString;
 
 		public AuthenticationSurface(string uriString)
@@ -23,7 +26,10 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 		{
 			if (authenticationResult == null || authenticationResult.AuthenticationRequired)
 			{
+				Log.Debug("Removing {Key} from {Place}", $"{_uriString}.AccessToken", nameof(SecureStorage));
 				SecureStorage.Remove($"{_uriString}.AccessToken");
+
+				Log.Debug("Removing {Key} from {Place}", $"{_uriString}.RefreshToken", nameof(SecureStorage));
 				SecureStorage.Remove($"{_uriString}.RefreshToken");
 			}
 			else

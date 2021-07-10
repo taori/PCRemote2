@@ -26,7 +26,7 @@ namespace grpcclient
                 // var targetIp = "https://localhost:44365";
                 var targetIp = "https://192.168.0.135:5001";
 
-                var unsafeHttpClient = UnsafeHttpClientFactory.Create(new Uri(targetIp), new AuthenticationSurfaceBase(targetIp));
+                var unsafeHttpClient = GrpcWebHttpClientFactory.Create(new Uri(targetIp), new AuthenticationSurfaceBase(targetIp));
                 var authentication = new StringContent(JsonSerializer.Serialize(new JwtLoginCredentials()
                 { User = "admin@admin.com", Password = "123456" }), Encoding.UTF8, MediaTypeNames.Application.Json);
                 // var authentication = new StringContent(@"{ ""user"" : ""admin@admin.com"", ""password"": ""123456""}", Encoding.UTF8, MediaTypeNames.Application.Json);

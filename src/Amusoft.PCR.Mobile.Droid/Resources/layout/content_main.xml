@@ -15,12 +15,12 @@
         android:layout_centerInParent="true"
         android:layout_weight="1"
         android:text="Hello World!" />
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
 	    android:id="@+id/btnShutdown"
 	    android:text="Shutdown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
 	    android:id="@+id/btnAbortShutdown"
 		android:text="Abort shutdown"
         android:layout_width="match_parent"

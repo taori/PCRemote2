@@ -6,4 +6,14 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_clear_storage"
+        android:orderInCategory="100"
+        android:title="@string/action_clear_storage"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_view_logs"
+        android:orderInCategory="100"
+        android:title="@string/action_view_logs"
+        app:showAsAction="never" />
 </menu>

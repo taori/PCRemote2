@@ -21,7 +21,7 @@ namespace Amusoft.PCR.Server.Authorization
 	{
 		Task<JwtAuthenticationResult> CreateAuthenticationAsync(string userName, string password);
 		Task<JwtAuthenticationResult> RefreshAsync(string expiredAccessToken, string refreshToken);
-		ClaimsPrincipal GetClaimsPrincipal(string token, out SecurityToken securityToken);
+		bool TryGetGetUserFromToken(string token, out string userName, out SecurityToken securityToken);
 	}
 
 	public class JwtTokenService : IJwtTokenService
@@ -88,11 +88,15 @@ namespace Amusoft.PCR.Server.Authorization
 
 		public async Task<JwtAuthenticationResult> RefreshAsync(string expiredAccessToken, string refreshToken)
 		{
-			_logger.LogTrace("Obtaining principal through accessToken with refreshToken {Token}", refreshToken);
-			var principal = GetClaimsPrincipal(expiredAccessToken, out var securityToken);
+			_logger.LogTrace("Reading username from token {Token}", refreshToken);
+			if (!TryGetGetUserFromToken(expiredAccessToken, out var userName, out var securityToken))
+			{
+				_logger.LogWarning("Failed to get user through token");
+				return new JwtAuthenticationResult() { AuthenticationRequired = true };
+			}
 
-			_logger.LogTrace("Obtaining user through principal {@Principal}", principal);
-			var user = await _userManager.GetUserAsync(principal);
+			_logger.LogTrace("Obtaining user through userName {@UserName}", userName);
+			var user = await _userManager.FindByNameAsync(userName);
 			if (user == null)
 			{
 				_logger.LogWarning("Failed to get user through principal");
@@ -126,7 +130,7 @@ namespace Amusoft.PCR.Server.Authorization
 			}
 		}
 
-		public ClaimsPrincipal GetClaimsPrincipal(string token, out SecurityToken securityToken)
+		public bool TryGetGetUserFromToken(string token, out string userName, out SecurityToken securityToken)
 		{
 			var tokenHandler = new JwtSecurityTokenHandler();
 			var tokenValidationParameters = new TokenValidationParameters();
@@ -139,7 +143,11 @@ namespace Amusoft.PCR.Server.Authorization
 			tokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.Key));
 			var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
 
-			return principal;
+			userName = principal.Identity?.Name;
+			if (userName == null)
+				return false;
+
+			return true;
 		}
 	}
 }

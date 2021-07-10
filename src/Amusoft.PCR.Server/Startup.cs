@@ -178,19 +178,19 @@ namespace Amusoft.PCR.Server
 			app.UseStaticFiles();
 
 			app.UseRouting();
-
 			app.UseAuthentication();
 			app.UseAuthorization();
+			app.UseGrpcWeb();
 
 			app.UseEndpoints(endpoints =>
 			{
-				endpoints.MapGrpcService<BackendIntegrationService>();
+				endpoints.MapGrpcService<BackendIntegrationService>().EnableGrpcWeb();
 				endpoints.MapControllers();
 				endpoints.MapBlazorHub();
 				endpoints.MapFallbackToPage("/_Host");
 				endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 			});
-			
+
 			using (var serviceScope = serviceScopeFactory.CreateScope())
 			{
 				using (var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>())

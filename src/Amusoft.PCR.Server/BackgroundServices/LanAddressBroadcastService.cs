@@ -90,7 +90,8 @@ namespace Amusoft.PCR.Server.BackgroundServices
 			while (!cancellationToken.IsCancellationRequested)
 			{
 				var result = await client.ReceiveAsync();
-				_logger.LogTrace("Received UDP Package from {Address} -> {Message}", result.RemoteEndPoint, Encoding.UTF8.GetString(result.Buffer));
+				// _logger.LogTrace("Received UDP Package from {Address} -> {Message}", result.RemoteEndPoint, Encoding.UTF8.GetString(result.Buffer));
+				_logger.LogInformation("Received UDP Package from {Address} -> {Message}", result.RemoteEndPoint, Encoding.UTF8.GetString(result.Buffer));
 			}
 		}
 	}
