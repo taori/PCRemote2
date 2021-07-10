@@ -21,8 +21,16 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 
 		public async Task UpdateTokenStoreAsync(JwtAuthenticationResult authenticationResult)
 		{
-			await SecureStorage.SetAsync($"{_uriString}.AccessToken", authenticationResult.AccessToken);
-			await SecureStorage.SetAsync($"{_uriString}.RefreshToken", authenticationResult.RefreshToken);
+			if (authenticationResult == null || authenticationResult.AuthenticationRequired)
+			{
+				SecureStorage.Remove($"{_uriString}.AccessToken");
+				SecureStorage.Remove($"{_uriString}.RefreshToken");
+			}
+			else
+			{
+				await SecureStorage.SetAsync($"{_uriString}.AccessToken", authenticationResult.AccessToken);
+				await SecureStorage.SetAsync($"{_uriString}.RefreshToken", authenticationResult.RefreshToken);
+			}
 		}
 
 		public async Task<string> GetAccessTokenAsync()
@@ -39,7 +47,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 		public async Task<HttpContent> CreateAuthenticationRequestContentAsync()
 		{
 			var credentials = await LoginDialog.GetInputAsync("Login");
-			// var credentials = new JwtLoginCredentials() { User = "admin@admin.com", Password = "123456" };
 			return new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, MediaTypeNames.Application.Json);
 		}
 

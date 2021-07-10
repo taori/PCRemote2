@@ -26,16 +26,25 @@ namespace Amusoft.PCR.Grpc.Client
 
 		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			var currentAccessToken = await AuthenticationSurface.GetAccessTokenAsync();
-			if (currentAccessToken == null)
+			try
 			{
-				Log.Debug("No access token available - authenticating request");
-				return await HandleNoAuthenticationAsync(request, cancellationToken);
+				Log.Trace("Sending request to {Uri}", request.RequestUri);
+				var currentAccessToken = await AuthenticationSurface.GetAccessTokenAsync();
+				if (currentAccessToken == null)
+				{
+					Log.Debug("No access token available - authenticating request");
+					return await HandleNoAuthenticationAsync(request, cancellationToken, false);
+				}
+				else
+				{
+					Log.Debug("Using {Token} to authenticate current request", currentAccessToken);
+					return await HandleExistingAuthenticationAsync(request, cancellationToken, currentAccessToken);
+				}
 			}
-			else
+			catch (Exception e)
 			{
-				Log.Debug("Using {Token} to authenticate current request", currentAccessToken);
-				return await HandleExistingAuthenticationAsync(request, cancellationToken, currentAccessToken);
+				Log.Error(e, "Unexpected error occured");
+				throw;
 			}
 		}
 
@@ -57,8 +66,20 @@ namespace Amusoft.PCR.Grpc.Client
 					Log.Trace("Requesting authentication response");
 					using (var authResponse = await base.SendAsync(authRequest, cancellationToken))
 					{
+						if (!authResponse.IsSuccessStatusCode)
+						{
+							throw new Exception(string.Format("Invalid status code {0}, Reason: {1}",
+								authResponse.StatusCode, authResponse.ReasonPhrase));
+						}
+
 						var authResponseString = await authResponse.Content.ReadAsStringAsync();
 						var authResponseResult = JsonConvert.DeserializeObject<JwtAuthenticationResult>(authResponseString);
+
+						if (authResponseResult == null || authResponseResult.AuthenticationRequired)
+						{
+							Log.Debug("RemoteEnd forced reauthentication");
+							return await HandleNoAuthenticationAsync(request, cancellationToken, true);
+						}
 
 						Log.Info("Updating token store");
 						await AuthenticationSurface.UpdateTokenStoreAsync(authResponseResult);
@@ -87,11 +108,12 @@ namespace Amusoft.PCR.Grpc.Client
 			return response;
 		}
 
-		private async Task<HttpResponseMessage> HandleNoAuthenticationAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		private async Task<HttpResponseMessage> HandleNoAuthenticationAsync(HttpRequestMessage request, CancellationToken cancellationToken, bool skipSemaphore)
 		{
 			try
 			{
-				await Semaphore.WaitAsync(cancellationToken);
+				if (!skipSemaphore)
+					await Semaphore.WaitAsync(cancellationToken);
 
 				var authRequest = new HttpRequestMessage(HttpMethod.Post, AuthenticationSurface.GetAuthenticationUri())
 					{Content = await AuthenticationSurface.CreateAuthenticationRequestContentAsync()};
@@ -99,6 +121,12 @@ namespace Amusoft.PCR.Grpc.Client
 				Log.Debug("Requesting authentication response");
 				using (var authResponse = await base.SendAsync(authRequest, cancellationToken))
 				{
+					if (!authResponse.IsSuccessStatusCode)
+					{
+						throw new Exception(string.Format("Invalid status code {0}, Reason: {1}",
+							authResponse.StatusCode, authResponse.ReasonPhrase));
+					}
+
 					var authResponseString = await authResponse.Content.ReadAsStringAsync();
 					var authResponseResult = JsonConvert.DeserializeObject<JwtAuthenticationResult>(authResponseString);
 
@@ -120,7 +148,8 @@ namespace Amusoft.PCR.Grpc.Client
 			}
 			finally
 			{
-				Semaphore.Release();
+				if (!skipSemaphore)
+					Semaphore.Release();
 			}
 		}
 

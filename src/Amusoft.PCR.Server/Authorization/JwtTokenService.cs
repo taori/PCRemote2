@@ -21,7 +21,7 @@ namespace Amusoft.PCR.Server.Authorization
 	{
 		Task<JwtAuthenticationResult> CreateAuthenticationAsync(string userName, string password);
 		Task<JwtAuthenticationResult> RefreshAsync(string expiredAccessToken, string refreshToken);
-		ClaimsPrincipal GetClaimsPrincipal(string token);
+		ClaimsPrincipal GetClaimsPrincipal(string token, out SecurityToken securityToken);
 	}
 
 	public class JwtTokenService : IJwtTokenService
@@ -53,25 +53,31 @@ namespace Amusoft.PCR.Server.Authorization
 				return null;
 			}
 
+			return await CreateAuthenticationResultFromUserAsync(user);
+		}
+
+		private async Task<JwtAuthenticationResult> CreateAuthenticationResultFromUserAsync(ApplicationUser user)
+		{
 			var roles = await _userManager.GetRolesAsync(user);
 			var handler = new JwtSecurityTokenHandler();
 			var claims = new List<Claim>();
-			claims.Add(new Claim(ClaimTypes.Name, userName));
+			claims.Add(new Claim(ClaimTypes.Name, user.UserName));
 			claims.Add(new Claim(JwtRegisteredClaimNames.Aud, _tokenValidationParameters.ValidAudience));
 			claims.AddRange(roles.Select(d => new Claim(ClaimTypes.Role, d)));
-			
+
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.Key));
 			var securityToken = new JwtSecurityToken(
 				_options.Value.Issuer,
 				claims: claims,
 				signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512),
-				expires: DateTime.UtcNow.AddHours(1));
-			
+				expires: DateTime.UtcNow.Add(_options.Value.TokenValidDuration));
+
 			var outputToken = handler.WriteToken(securityToken);
 			var refreshToken = GenerateRefreshToken();
 
 			await _userManager.RemoveAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "RefreshToken");
-			await _userManager.SetAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "RefreshToken", refreshToken);
+			await _userManager.SetAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "RefreshToken",
+				refreshToken);
 
 			return new JwtAuthenticationResult()
 			{
@@ -80,9 +86,34 @@ namespace Amusoft.PCR.Server.Authorization
 			};
 		}
 
-		public Task<JwtAuthenticationResult> RefreshAsync(string expiredAccessToken, string refreshToken)
+		public async Task<JwtAuthenticationResult> RefreshAsync(string expiredAccessToken, string refreshToken)
 		{
-			throw new NotImplementedException();
+			_logger.LogTrace("Obtaining principal through accessToken with refreshToken {Token}", refreshToken);
+			var principal = GetClaimsPrincipal(expiredAccessToken, out var securityToken);
+
+			_logger.LogTrace("Obtaining user through principal {@Principal}", principal);
+			var user = await _userManager.GetUserAsync(principal);
+			if (user == null)
+			{
+				_logger.LogWarning("Failed to get user through principal");
+				return new JwtAuthenticationResult() {AuthenticationRequired = true};
+			}
+
+			var presentRefreshToken = await _userManager.GetAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "RefreshToken");
+			if (presentRefreshToken == null)
+			{
+				_logger.LogWarning("No refresh token available but there should be one");
+				return new JwtAuthenticationResult() { AuthenticationRequired = true };
+			}
+
+			_logger.LogTrace("Comparing refresh tokens");
+			if (refreshToken.Equals(presentRefreshToken, StringComparison.OrdinalIgnoreCase))
+			{
+				_logger.LogDebug("All checks passed, returning new authentication");
+				return await CreateAuthenticationResultFromUserAsync(user);
+			}
+			
+			return new JwtAuthenticationResult() { AuthenticationRequired = true };
 		}
 
 		public string GenerateRefreshToken(int length = 32)
@@ -95,7 +126,7 @@ namespace Amusoft.PCR.Server.Authorization
 			}
 		}
 
-		public ClaimsPrincipal GetClaimsPrincipal(string token)
+		public ClaimsPrincipal GetClaimsPrincipal(string token, out SecurityToken securityToken)
 		{
 			var tokenHandler = new JwtSecurityTokenHandler();
 			var tokenValidationParameters = new TokenValidationParameters();
@@ -106,7 +137,7 @@ namespace Amusoft.PCR.Server.Authorization
 			tokenValidationParameters.ValidIssuer = _options.Value.Issuer;
 			tokenValidationParameters.ValidAudience = _options.Value.Issuer;
 			tokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.Key));
-			var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var validatedToken);
+			var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
 
 			return principal;
 		}

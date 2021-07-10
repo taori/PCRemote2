@@ -11,9 +11,9 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 	{
 		private readonly GrpcChannel _channel;
 
-		public GrpcApplicationAgent(Uri uri, GrpcChannelOptions options = default)
+		public GrpcApplicationAgent(Uri uri, GrpcChannelOptions options)
 		{
-			_channel = options == null ? GrpcChannel.ForAddress(uri) : GrpcChannel.ForAddress(uri, options);
+			_channel = GrpcChannel.ForAddress(uri, options);
 
 			DesktopIntegrationClient = new DesktopIntegrationService.DesktopIntegrationServiceClient(_channel);
 		}

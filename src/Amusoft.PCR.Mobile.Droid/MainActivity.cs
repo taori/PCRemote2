@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Client;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
@@ -19,6 +20,7 @@ using AndroidX.DrawerLayout.Widget;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
+using Grpc.Core;
 using Grpc.Net.Client;
 using NLog;
 using NLog.Config;
@@ -38,6 +40,7 @@ namespace Amusoft.PCR.Mobile.Droid
 	    protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
             Application.RegisterActivityLifecycleCallbacks(ActivityLifecycleCallbacks.Instance);
             
             NLog.LogManager.Configuration = new XmlLoggingConfiguration("assets/nlog.config");
@@ -67,7 +70,7 @@ namespace Amusoft.PCR.Mobile.Droid
             navigationView.SetNavigationItemSelectedListener(this);
         }
 
-	    private void AbortShutdownButtonOnClick(object sender, EventArgs e)
+	    private async void AbortShutdownButtonOnClick(object sender, EventArgs e)
 	    {
 		    try
 		    {
@@ -76,7 +79,7 @@ namespace Amusoft.PCR.Mobile.Droid
 			    {
                     Log.Debug("Sending Abort Shutdown");
 				    // host.DesktopIntegrationClient.AbortShutDownAsync(new AbortShutdownRequest(), deadline: DateTime.UtcNow.AddSeconds(5));
-				    host.DesktopIntegrationClient.AbortShutDownAsync(new AbortShutdownRequest());
+				    await host.DesktopIntegrationClient.AbortShutDownAsync(new AbortShutdownRequest());
 				    Log.Debug("Sent Abort Shutdown");
                 }
 		    }
@@ -90,8 +93,12 @@ namespace Amusoft.PCR.Mobile.Droid
 	    private static GrpcApplicationAgent CreateApplicationAgent()
 	    {
 		    var uriString = "https://192.168.0.135:5001";
+		    // var uriString = "https://192.168.0.135:44365";
 		    var baseAddress = new Uri(uriString);
-		    var channelOptions = new GrpcChannelOptions() { DisposeHttpClient = true, HttpClient = UnsafeHttpClientFactory.Create(baseAddress, new AuthenticationSurface(uriString)) };
+            //todo ssl credentials
+		    var channelOptions = new GrpcChannelOptions() { 
+			    DisposeHttpClient = true, 
+			    HttpClient = UnsafeHttpClientFactory.Create(baseAddress, new AuthenticationSurface(uriString)) };
             return new GrpcApplicationAgent(baseAddress, channelOptions);
 	    }
 
@@ -104,7 +111,7 @@ namespace Amusoft.PCR.Mobile.Droid
 		    client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 55863));
 	    }
 
-	    private void ShutdownButtonOnClick(object sender, EventArgs e)
+	    private async void ShutdownButtonOnClick(object sender, EventArgs e)
 	    {
 		    try
 		    {
@@ -112,7 +119,7 @@ namespace Amusoft.PCR.Mobile.Droid
 			    {
 				    Log.Debug("Sending Shutdown");
                     // host.DesktopIntegrationClient.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = 60 }, deadline: DateTime.UtcNow.AddSeconds(5));
-                    host.DesktopIntegrationClient.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = 60 });
+                    await host.DesktopIntegrationClient.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = 60 });
                     Log.Debug("Sent Shutdown");
                 }
             }
