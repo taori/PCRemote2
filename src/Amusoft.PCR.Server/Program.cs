@@ -27,8 +27,7 @@ namespace Amusoft.PCR.Server
 			try
 			{
 				_logger.Debug("Executing {Method}", nameof(Main));
-
-
+				
 				var isService = !(Debugger.IsAttached || args.Contains("--console"));
 
 				if (isService)
@@ -64,7 +63,7 @@ namespace Amusoft.PCR.Server
 				{
 					logging.AddEventLog(settings =>
 					{
-						settings.Filter = (s, level) => level >= LogLevel.Debug;
+						settings.Filter = (s, level) => level >= LogLevel.Information;
 					});
 				})
 				.UseNLog()
@@ -77,9 +76,6 @@ namespace Amusoft.PCR.Server
 				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
-					// var contentRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-					// _logger.Debug("Setting content root to {Path}", contentRoot);
-					// webBuilder.UseContentRoot(contentRoot);
 					webBuilder.UseStartup<Startup>();
 				});
 	}

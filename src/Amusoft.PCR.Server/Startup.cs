@@ -29,10 +29,12 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 using Microsoft.Data.SqlClient;
@@ -154,7 +156,11 @@ namespace Amusoft.PCR.Server
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceScopeFactory serviceScopeFactory, ILogger<Startup> logger, ApplicationStateTransmitter applicationStateTransmitter)
+		public void Configure(IApplicationBuilder app, 
+			IWebHostEnvironment env, 
+			IServiceScopeFactory serviceScopeFactory, 
+			ILogger<Startup> logger,
+			ApplicationStateTransmitter applicationStateTransmitter)
 		{
 			if (env.IsDevelopment())
 			{
@@ -190,7 +196,7 @@ namespace Amusoft.PCR.Server
 				endpoints.MapFallbackToPage("/_Host");
 				endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 			});
-
+			
 			using (var serviceScope = serviceScopeFactory.CreateScope())
 			{
 				using (var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
@@ -229,7 +235,7 @@ namespace Amusoft.PCR.Server
 					}
 				}
 			}
-
+			
 			applicationStateTransmitter.NotifyConfigurationDone();
 
 			logger.LogInformation("Configuration done");

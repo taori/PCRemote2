@@ -5,7 +5,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Amusoft.PCR.Server.Dependencies;
 using Amusoft.PCR.Server.Extensions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,6 +25,8 @@ namespace Amusoft.PCR.Server.BackgroundServices
 		public int Port { get; set; }
 
 		public TimeSpan BroadcastInterval { get; set; }
+
+		public int[] PublicHttpsPorts { get; set; }
 	}
 
 	internal class LanAddressBroadcastService : BackgroundService
@@ -39,39 +44,13 @@ namespace Amusoft.PCR.Server.BackgroundServices
 		{
 			try
 			{
-				var beaconPort = _settings.Value.Port;
-				_logger.LogInformation("Broadcasting address on port [{Port}]", beaconPort);
+				await Task.WhenAll(BroadcastLoopAsync(stoppingToken), ReceiveLoop(stoppingToken));
 
-				if (_settings.Value.IsBroadcastDiagnosticsEnabled)
-#pragma warning disable 4014
-					Task.Run(() => ReceiveLoop(stoppingToken), stoppingToken);
-#pragma warning restore 4014
-
-				var targetEndpoint = new IPEndPoint(IPAddress.Broadcast, beaconPort);
-				var datagram = Encoding.UTF8.GetBytes($"PCRemote 2 looking for clients.");
-				var broadcastInterval = _settings.Value.BroadcastInterval;
-
-				using (var broadcaster = new UdpClient())
-				{
-					broadcaster.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-					broadcaster.ExclusiveAddressUse = false;
-					broadcaster.AllowNatTraversal(true);
-
-					while (!stoppingToken.IsCancellationRequested)
-					{
-						_logger.LogTrace("---> Transmitting datagram");
-						await broadcaster.SendAsync(datagram, datagram.Length, targetEndpoint);
-
-						_logger.LogTrace("Transmission success - Waiting for next turn ...");
-						await Task.Delay(broadcastInterval, stoppingToken);
-					}
-				}
-
-				_logger.LogInformation("Beacon terminating");
+				_logger.LogInformation("Beacon terminated");
 			}
 			catch (OperationCanceledException)
 			{
-				_logger.LogInformation("Beacon terminating");
+				_logger.LogInformation("Beacon terminated");
 			}
 			catch (Exception e)
 			{
@@ -79,9 +58,38 @@ namespace Amusoft.PCR.Server.BackgroundServices
 			}
 		}
 
+		private async Task BroadcastLoopAsync(CancellationToken stoppingToken)
+		{
+			var beaconPort = _settings.Value.Port;
+			_logger.LogInformation("Broadcasting address on port [{Port}]", beaconPort);
+
+			var ports = _settings.Value.PublicHttpsPorts;
+			var portList = string.Join(",", ports);
+
+			var targetEndpoint = new IPEndPoint(IPAddress.Broadcast, beaconPort);
+			var datagram = Encoding.UTF8.GetBytes($"PCRemote 2 looking for clients at ports [{portList}].");
+			var broadcastInterval = _settings.Value.BroadcastInterval;
+
+			using (var broadcaster = new UdpClient())
+			{
+				broadcaster.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				broadcaster.ExclusiveAddressUse = false;
+				broadcaster.AllowNatTraversal(true);
+
+				while (!stoppingToken.IsCancellationRequested)
+				{
+					_logger.LogTrace("---> Transmitting datagram");
+					await broadcaster.SendAsync(datagram, datagram.Length, targetEndpoint);
+
+					_logger.LogTrace("Transmission success - Waiting for next turn ...");
+					await Task.Delay(broadcastInterval, stoppingToken);
+				}
+			}
+		}
+
 		public async Task ReceiveLoop(CancellationToken cancellationToken)
 		{
-			var client = new UdpClient();
+			using var client = new UdpClient();
 			client.EnableBroadcast = true;
 			client.Client.ExclusiveAddressUse = false;
 			client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -89,9 +97,11 @@ namespace Amusoft.PCR.Server.BackgroundServices
 
 			while (!cancellationToken.IsCancellationRequested)
 			{
+				if (!_settings.Value.IsBroadcastDiagnosticsEnabled)
+					continue;
+
 				var result = await client.ReceiveAsync();
-				// _logger.LogTrace("Received UDP Package from {Address} -> {Message}", result.RemoteEndPoint, Encoding.UTF8.GetString(result.Buffer));
-				_logger.LogInformation("Received UDP Package from {Address} -> {Message}", result.RemoteEndPoint, Encoding.UTF8.GetString(result.Buffer));
+				_logger.LogDebug("Received UDP Package from {Address} -> {Message}", result.RemoteEndPoint, Encoding.UTF8.GetString(result.Buffer));
 			}
 		}
 	}
