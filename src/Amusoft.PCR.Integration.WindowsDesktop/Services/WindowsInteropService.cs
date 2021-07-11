@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Integration.WindowsDesktop.Helpers;
 using Amusoft.PCR.Integration.WindowsDesktop.Interop;
+using Amusoft.PCR.Integration.WindowsDesktop.Managers;
 using Amusoft.Toolkit.Impersonation;
 using Google.Protobuf.Collections;
 using Grpc.Core;
@@ -14,6 +15,13 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 	public class WindowsInteropServiceImplementation : DesktopIntegrationService.DesktopIntegrationServiceBase
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(WindowsInteropServiceImplementation));
+		
+		public override Task<SuicideOnProcessExitResponse> SuicideOnProcessExit(SuicideOnProcessExitRequest request, ServerCallContext context)
+		{
+			Log.Info("Executing [{Name}]", nameof(SuicideOnProcessExit));
+			var listening = ProcessExitListenerManager.TryObserveProcessExit(request.ProcessId);
+			return Task.FromResult(new SuicideOnProcessExitResponse() {Success = listening});
+		}
 
 		public override Task<HibernateReply> Hibernate(HibernateRequest request, ServerCallContext context)
 		{

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Integration.WindowsDesktop.Managers;
 using Amusoft.PCR.Integration.WindowsDesktop.Services;
 using GrpcDotNetNamedPipes;
 using NLog;
@@ -25,7 +27,11 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			Log.Info("Launching Windows desktop integration");
 			base.OnStartup(e);
+
+			Log.Debug("Setting up event handler to check for parent process");
+			ProcessExitListenerManager.ProcessExited += ProcessExitListenerManagerOnProcessExited;
 
 #if !DEBUG
 			_runOnceMutex = new Mutex(true, Globals.InteropMutexName, out var mutexNew);
@@ -37,16 +43,26 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 
 			if (!TryLaunchInteropChannel())
 			{
+				Log.Fatal("Failed to launch named pipe for IPC with web application");
 				_namedPipeServer?.Dispose();
 			}
 		}
 
+		private void ProcessExitListenerManagerOnProcessExited(object? sender, int e)
+		{
+			Log.Info("Parent process {Id} shut down - exiting program", e);
+			Shutdown(0);
+		}
+
 		protected override void OnExit(ExitEventArgs e)
 		{
+			Log.Info("Windows desktop integration shutting down");
 #if !DEBUG
+			Log.Debug("Releasing mutex");
 			_runOnceMutex.ReleaseMutex();
 #endif
 
+			Log.Debug("Shutting down named pipe server");
 			_namedPipeServer.Kill();
 			_namedPipeServer?.Dispose();
 			base.OnExit(e);
@@ -59,10 +75,10 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 
 			try
 			{
-				Log.Info("Starting service.");
+				Log.Info("Starting IPC");
 				_namedPipeServer.Start();
 
-				Log.Info("Service running.");
+				Log.Info("IPC running");
 				return true;
 			}
 			catch (Exception ex)
@@ -70,10 +86,6 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 				Log.Error(ex);
 				return false;
 			}
-		}
-
-		private void NamedPipeThreadWork()
-		{
 		}
 	}
 }

@@ -29,13 +29,22 @@ namespace Amusoft.PCR.Server.BackgroundServices
 		{
 			_logger.LogDebug("{Name} starting", nameof(DesktopIntegrationLauncherService));
 			_canOperate = _integrationApplicationLocator.IsOperational();
-			_logger.LogDebug("{Name} is in operational state {State}", nameof(DesktopIntegrationLauncherService), _canOperate);
+			if (_canOperate)
+			{
+				_logger.LogInformation("{Name} is working", nameof(DesktopIntegrationLauncherService));
+			}
+			else
+			{
+				_logger.LogCritical("{Name} is NOT operational", nameof(DesktopIntegrationLauncherService));
+			}
+
 			return base.StartAsync(cancellationToken);
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			var waitDuration = TimeSpan.FromSeconds(60);
+			_logger.LogDebug("Checking for integration up state every {Seconds} seconds", waitDuration.TotalSeconds);
 			while (!stoppingToken.IsCancellationRequested && _canOperate)
 			{
 				if(!_integrationApplicationLocator.IsRunning())
@@ -67,6 +76,10 @@ namespace Amusoft.PCR.Server.BackgroundServices
 					_logger.LogWarning("No integration instances found. It must have crashed?");
 				}
 			}
+			else
+			{
+				_logger.LogInformation("Not operational. Nothing to do");
+			}
 
 			return base.StopAsync(cancellationToken);
 		}
@@ -75,7 +88,7 @@ namespace Amusoft.PCR.Server.BackgroundServices
 		{
 			try
 			{
-				_logger.LogDebug("Waiting for application to be ready");
+				_logger.LogDebug("Waiting for application configuration to be done");
 				await _applicationStateTransmitter.ConfigurationDone;
 
 				var fullPath = _integrationApplicationLocator.GetAbsolutePath();

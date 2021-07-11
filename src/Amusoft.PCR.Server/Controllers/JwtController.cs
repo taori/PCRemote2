@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 
 namespace Amusoft.PCR.Server.Controllers
@@ -20,16 +21,19 @@ namespace Amusoft.PCR.Server.Controllers
 	public class JwtController : Controller
 	{
 		private readonly IJwtTokenService _jwtTokenService;
+		private readonly ILogger<JwtController> _logger;
 
-		public JwtController(IJwtTokenService jwtTokenService)
+		public JwtController(IJwtTokenService jwtTokenService, ILogger<JwtController> logger)
 		{
 			_jwtTokenService = jwtTokenService;
+			_logger = logger;
 		}
 
 		[Route("[action]")]
 		[HttpPost]
 		public async Task<ActionResult<JwtAuthenticationResult>> Authenticate([FromBody] JwtLoginCredentials model)
 		{
+			_logger.LogInformation("User {Name} is authenticating", model.User);
 			var authentication = await _jwtTokenService.CreateAuthenticationAsync(model.User, model.Password);
 			if (authentication == null)
 				return StatusCode((int) HttpStatusCode.Forbidden);
@@ -41,6 +45,7 @@ namespace Amusoft.PCR.Server.Controllers
 		[HttpPost]
 		public async Task<ActionResult<JwtAuthenticationResult>> RefreshToken([FromBody] JwtAuthenticationResult model)
 		{
+			_logger.LogDebug("Refreshing token for RefreshToken {Token}", model.RefreshToken);
 			var authentication = await _jwtTokenService.RefreshAsync(model.AccessToken, model.RefreshToken);
 			if (authentication == null)
 				return StatusCode((int) HttpStatusCode.Forbidden);

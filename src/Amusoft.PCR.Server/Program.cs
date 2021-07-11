@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Amusoft.PCR.Server.Authorization;
 using Amusoft.PCR.Server.BackgroundServices;
 using Amusoft.PCR.Server.Dependencies;
@@ -27,7 +28,7 @@ namespace Amusoft.PCR.Server
 			try
 			{
 				_logger.Debug("Executing {Method}", nameof(Main));
-				
+
 				var isService = !(Debugger.IsAttached || args.Contains("--console"));
 
 				if (isService)
@@ -45,6 +46,10 @@ namespace Amusoft.PCR.Server
 
 				host.Run();
 			}
+			catch (OperationCanceledException e)
+			{
+				_logger.Error(e, "Outer operation cancelled exception occured");
+			}
 			catch (Exception exception)
 			{
 				_logger.Error(exception, "Stopped program because of exception");
@@ -53,7 +58,8 @@ namespace Amusoft.PCR.Server
 			finally
 			{
 				// Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-				NLog.LogManager.Shutdown();
+				LogManager.Flush();
+				LogManager.Shutdown();
 			}
 		}
 
