@@ -33,6 +33,9 @@ namespace Amusoft.PCR.Server.Controllers
 		[HttpPost]
 		public async Task<ActionResult<JwtAuthenticationResult>> Authenticate([FromBody] JwtLoginCredentials model)
 		{
+			if (model == null)
+				return StatusCode((int) HttpStatusCode.ExpectationFailed);
+
 			_logger.LogInformation("User {Name} is authenticating", model.User);
 			var authentication = await _jwtTokenService.CreateAuthenticationAsync(model.User, model.Password);
 			if (authentication == null)

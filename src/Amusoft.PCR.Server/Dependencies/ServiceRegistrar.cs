@@ -7,6 +7,7 @@ using Amusoft.PCR.Server.Areas.Identity;
 using Amusoft.PCR.Server.Authorization;
 using Amusoft.PCR.Server.BackgroundServices;
 using Amusoft.PCR.Server.Data;
+using Amusoft.PCR.Server.Managers;
 using Amusoft.PCR.Server.Services;
 using Grpc.Net.Client;
 using GrpcDotNetNamedPipes;
@@ -29,7 +30,8 @@ namespace Amusoft.PCR.Server.Dependencies
 			collection.AddSingleton<IIntegrationApplicationLocator, IntegrationApplicationLocator>();
 			collection.AddSingleton<IAuthorizationHandler, RoleOrAdminAuthorizationHandler>();
 			collection.AddSingleton<ApplicationStateTransmitter>(); 
-			
+
+			collection.AddScoped<IRefreshTokenManager, RefreshTokenManager>();
 			collection.AddScoped<IJwtTokenService, JwtTokenService>();
 			collection.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 			collection.AddScoped<IDialogService, DialogService>();

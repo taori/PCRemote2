@@ -10,5 +10,15 @@ namespace Amusoft.PCR.Model
 			: base(options)
 		{
 		}
+
+		protected override void OnModelCreating(ModelBuilder builder)
+		{
+			base.OnModelCreating(builder);
+
+			builder.Entity<RefreshToken>()
+				.HasKey(d => new { d.UserId, d.RefreshTokenId });
+		}
+
+		public DbSet<RefreshToken> RefreshTokens { get; set; }
 	}
 }

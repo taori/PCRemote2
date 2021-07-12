@@ -6,9 +6,11 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model.Entities;
 using Amusoft.PCR.Model.Statics;
+using Amusoft.PCR.Server.Managers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -26,17 +28,20 @@ namespace Amusoft.PCR.Server.Authorization
 
 	public class JwtTokenService : IJwtTokenService
 	{
+		private readonly IRefreshTokenManager _refreshTokenManager;
 		private readonly TokenValidationParameters _tokenValidationParameters;
 		private readonly ILogger<JwtTokenService> _logger;
 		private readonly IOptions<JwtSettings> _options;
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public JwtTokenService(
+			IRefreshTokenManager refreshTokenManager,
 			TokenValidationParameters tokenValidationParameters,
 			ILogger<JwtTokenService> logger,
 			IOptions<JwtSettings> options, 
 			UserManager<ApplicationUser> userManager)
 		{
+			_refreshTokenManager = refreshTokenManager;
 			_tokenValidationParameters = tokenValidationParameters;
 			_logger = logger;
 			_options = options;
@@ -75,9 +80,7 @@ namespace Amusoft.PCR.Server.Authorization
 			var outputToken = handler.WriteToken(securityToken);
 			var refreshToken = GenerateRefreshToken();
 
-			await _userManager.RemoveAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "RefreshToken");
-			await _userManager.SetAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "RefreshToken",
-				refreshToken);
+			await _refreshTokenManager.AddRefreshTokenAsync(user, refreshToken, DateTime.UtcNow.AddMonths(2));
 
 			return new JwtAuthenticationResult()
 			{
@@ -103,26 +106,38 @@ namespace Amusoft.PCR.Server.Authorization
 				return new JwtAuthenticationResult() {AuthenticationRequired = true};
 			}
 
-			var presentRefreshToken = await _userManager.GetAuthenticationTokenAsync(user, JwtBearerDefaults.AuthenticationScheme, "RefreshToken");
-			if (presentRefreshToken == null)
+			var refreshTokenData = await _refreshTokenManager.GetRefreshTokenAsync(user, refreshToken);
+			if (refreshTokenData == null)
 			{
 				_logger.LogWarning("No refresh token available but there should be one");
 				return new JwtAuthenticationResult() { AuthenticationRequired = true };
 			}
-
-			_logger.LogTrace("Comparing refresh tokens");
-			if (refreshToken.Equals(presentRefreshToken, StringComparison.OrdinalIgnoreCase))
+			else
 			{
-				_logger.LogDebug("All checks passed, returning new authentication");
-				return await CreateAuthenticationResultFromUserAsync(user);
+				if (refreshTokenData.IsUsed)
+				{
+					_logger.LogWarning("A used token refresh token was sent again - perhaps someone stole the token, expire all client tokens and force re-authentication");
+					await _refreshTokenManager.RemoveAllAsync(user);
+					return new JwtAuthenticationResult() { AuthenticationRequired = true };
+				}
 			}
-			
-			return new JwtAuthenticationResult() { AuthenticationRequired = true };
+
+			using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+			{
+				_logger.LogDebug("Generating new authentication from refresh token");
+				var authenticationResult = await CreateAuthenticationResultFromUserAsync(user);
+
+				await _refreshTokenManager.InvalidateRefreshTokenAsync(user, refreshToken);
+
+				transaction.Complete();
+
+				return authenticationResult;
+			}
 		}
 
-		public string GenerateRefreshToken(int length = 32)
+		public string GenerateRefreshToken()
 		{
-			var randomNumber = new byte[length];
+			var randomNumber = new byte[32];
 			using (var generator = RandomNumberGenerator.Create())
 			{
 				generator.GetBytes(randomNumber);
