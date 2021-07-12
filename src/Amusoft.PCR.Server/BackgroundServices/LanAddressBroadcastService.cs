@@ -44,10 +44,7 @@ namespace Amusoft.PCR.Server.BackgroundServices
 		{
 			try
 			{
-				// doing ordinary WhenAny calls breaks kestrel startup, but this way works
-				var receive = Task.Run(() => ReceiveLoop(stoppingToken), stoppingToken);
-				var transmit = Task.Run(() => BroadcastLoopAsync(stoppingToken), stoppingToken);
-				await Task.WhenAny(receive, transmit);
+				await Task.WhenAny(ReceiveLoop(stoppingToken), BroadcastLoopAsync(stoppingToken));
 
 				_logger.LogInformation("Beacon terminated");
 			}
@@ -101,7 +98,10 @@ namespace Amusoft.PCR.Server.BackgroundServices
 			while (!cancellationToken.IsCancellationRequested)
 			{
 				if (!_settings.Value.IsBroadcastDiagnosticsEnabled)
+				{
+					await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
 					continue;
+				}
 
 				var result = await client.ReceiveAsync();
 				_logger.LogDebug("Received UDP Package from {Address} -> {Message}", result.RemoteEndPoint,
