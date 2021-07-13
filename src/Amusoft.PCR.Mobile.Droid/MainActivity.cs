@@ -9,6 +9,7 @@ using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
 using Amusoft.PCR.Mobile.Droid.Domain.Log;
 using Amusoft.PCR.Mobile.Droid.Domain.Networking;
+using Amusoft.PCR.Mobile.Droid.Domain.Server;
 using Amusoft.PCR.Mobile.Droid.Services;
 using Android.App;
 using Android.OS;
@@ -36,11 +37,7 @@ namespace Amusoft.PCR.Mobile.Droid
 	public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(MainActivity));
-
-		private UdpBroadcastReceiver _broadcastReceiver;
-
-		private UdpReceiveResult _lastMessage;
-
+		
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
 			base.OnCreate(savedInstanceState);
@@ -50,98 +47,24 @@ namespace Amusoft.PCR.Mobile.Droid
 			NLog.LogManager.Configuration = new XmlLoggingConfiguration("assets/nlog.config");
 			Xamarin.Essentials.Platform.Init(this, savedInstanceState);
 			SetContentView(Resource.Layout.activity_main);
-			_broadcastReceiver = new UdpBroadcastReceiver(55863);
-			_broadcastReceiver.MessageReceived.Subscribe(UdpMessageReceived);
-			_broadcastReceiver.Start();
 
-			Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+			var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
 			SetSupportActionBar(toolbar);
 
-			FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-			fab.Click += FabOnClick;
-
-			var shutdownButton = FindViewById<Button>(Resource.Id.btnShutdown);
-			shutdownButton.Click += ShutdownButtonOnClick;
-			var abortShutdownButton = FindViewById<Button>(Resource.Id.btnAbortShutdown);
-			abortShutdownButton.Click += AbortShutdownButtonOnClick;
-
-			DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-			ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
+			var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+			var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
 			drawer.AddDrawerListener(toggle);
 			toggle.SyncState();
 
-			NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+			var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
 			navigationView.SetNavigationItemSelectedListener(this);
-		}
 
-		private async void AbortShutdownButtonOnClick(object sender, EventArgs e)
-		{
-			try
+			using (var transaction = SupportFragmentManager.BeginTransaction())
 			{
-				SendBroadcastMessage();
-				using (var host = CreateApplicationAgent())
-				{
-					Log.Debug("Sending Abort Shutdown");
-					// host.DesktopIntegrationClient.AbortShutDownAsync(new AbortShutdownRequest(), deadline: DateTime.UtcNow.AddSeconds(5));
-					await host.DesktopIntegrationClient.AbortShutDownAsync(new AbortShutdownRequest());
-					Log.Debug("Sent Abort Shutdown");
-				}
+				transaction.Replace(Resource.Id.content_display_frame, new SelectServerFragment());
+				transaction.DisallowAddToBackStack();
+				transaction.Commit();
 			}
-			catch (Exception exception)
-			{
-				Log.Error(exception);
-			}
-		}
-
-
-		private static GrpcApplicationAgent CreateApplicationAgent()
-		{
-			var uriString = "https://192.168.0.135:5001";
-			// var uriString = "https://192.168.0.135:44365";
-			var baseAddress = new Uri(uriString);
-
-			var channelOptions = new GrpcChannelOptions()
-			{
-				DisposeHttpClient = true,
-				HttpClient = GrpcWebHttpClientFactory.Create(baseAddress, new AuthenticationSurface(uriString))
-			};
-			var channel = GrpcChannel.ForAddress(new Uri(uriString), channelOptions);
-
-			return new GrpcApplicationAgent(channel);
-		}
-
-		private static void SendBroadcastMessage()
-		{
-			using var client = new UdpClient();
-			client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-			client.ExclusiveAddressUse = false;
-			var bytes = Encoding.UTF8.GetBytes("test");
-			client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 55863));
-		}
-
-		private async void ShutdownButtonOnClick(object sender, EventArgs e)
-		{
-			try
-			{
-				using (var host = CreateApplicationAgent())
-				{
-					Log.Debug("Sending Shutdown");
-					// host.DesktopIntegrationClient.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = 60 }, deadline: DateTime.UtcNow.AddSeconds(5));
-					await host.DesktopIntegrationClient.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = 60 });
-					Log.Debug("Sent Shutdown");
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.Error(exception);
-			}
-		}
-
-		private void UdpMessageReceived(UdpReceiveResult obj)
-		{
-			Log.Trace("Received UDP message");
-			var textView = FindViewById<TextView>(Resource.Id.textView);
-			textView.Text = obj.RemoteEndPoint.ToString();
 		}
 
 		public override void OnBackPressed()
@@ -197,30 +120,6 @@ namespace Amusoft.PCR.Mobile.Droid
 			}
 
 			return base.OnOptionsItemSelected(item);
-		}
-
-		private async void FabOnClick(object sender, EventArgs eventArgs)
-		{
-			Log.Debug("Fab pressed");
-			var sent = await SendBroadcast();
-			var message = _lastMessage == default
-				? $"Sent {sent} bytes"
-				: Encoding.UTF8.GetString(_lastMessage.Buffer);
-			View view = (View)sender;
-
-			Snackbar.Make(view, message, Snackbar.LengthLong)
-				.SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
-		}
-
-		private static async Task<int> SendBroadcast()
-		{
-			Log.Debug("Sending broadcast");
-			var broadcaster = new UdpClient();
-			var datagram = Encoding.UTF8.GetBytes("message from android client");
-			broadcaster.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-			broadcaster.ExclusiveAddressUse = false;
-			// broadcaster.AllowNatTraversal(true);
-			return await broadcaster.SendAsync(datagram, datagram.Length, new IPEndPoint(IPAddress.Broadcast, 55863));
 		}
 
 		public bool OnNavigationItemSelected(IMenuItem item)

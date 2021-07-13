@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Server.Dependencies;
 using Amusoft.PCR.Server.Extensions;
 using Microsoft.AspNetCore.Hosting;
@@ -64,10 +65,8 @@ namespace Amusoft.PCR.Server.BackgroundServices
 			_logger.LogInformation("Broadcasting address on port [{Port}]", beaconPort);
 
 			var ports = _settings.Value.PublicHttpsPorts;
-			var portList = string.Join(",", ports);
-
 			var targetEndpoint = new IPEndPoint(IPAddress.Broadcast, beaconPort);
-			var datagram = Encoding.UTF8.GetBytes($"PCRemote 2 looking for clients at ports [{portList}].");
+			var datagram = Encoding.UTF8.GetBytes(GrpcHandshakeFormatter.Write(Environment.MachineName, ports));
 			var broadcastInterval = _settings.Value.BroadcastInterval;
 
 			using (var broadcaster = new UdpClient())
