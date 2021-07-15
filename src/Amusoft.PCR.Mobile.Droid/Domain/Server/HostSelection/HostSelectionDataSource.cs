@@ -12,11 +12,11 @@ using Xamarin.Essentials;
 using Logger = NLog.Logger;
 using LogManager = NLog.LogManager;
 
-namespace Amusoft.PCR.Mobile.Droid.Domain.Server
+namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 {
-	public class SelectServerFragmentDataSource : RecyclerView.Adapter
+	public class HostSelectionDataSource : RecyclerView.Adapter
 	{
-		private static readonly Logger Log = LogManager.GetLogger(nameof(SelectServerFragmentDataSource));
+		private static readonly Logger Log = LogManager.GetLogger(nameof(HostSelectionDataSource));
 
 		public class ServerDataItem
 		{
@@ -29,7 +29,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 			public string MachineName { get; set; }
 		}
 
-		public static readonly SelectServerFragmentDataSource Instance = new SelectServerFragmentDataSource();
+		public static readonly HostSelectionDataSource Instance = new HostSelectionDataSource();
 
 		private List<UdpBroadcastReceiver> _receivers = new List<UdpBroadcastReceiver>();
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
@@ -37,7 +37,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 
 		public event EventHandler<ServerDataItem> ItemClicked;
 
-		private SelectServerFragmentDataSource()
+		private HostSelectionDataSource()
 		{
 			ClearPortListeners();
 			BuildListenersFromStorage();

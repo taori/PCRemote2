@@ -6,6 +6,7 @@
     <string name="action_clear_storage">Clear storage</string>
     <string name="action_view_logs">View logs</string>
     <string name="button_reload">Reload</string>
+    <string name="button_toggle_mute">Toggle mute</string>
 	<string name="label_user">User</string>
 	<string name="label_password">Password</string>
 </resources>

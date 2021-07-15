@@ -68,15 +68,21 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Common\BackStackHandler.cs" />
+    <Compile Include="Domain\Common\ButtonListFragment.cs" />
+    <Compile Include="Domain\Common\GrpcApplicationAgentFactory.cs" />
     <Compile Include="Domain\Communication\AuthenticationSurface.cs" />
     <Compile Include="Domain\Communication\GrpcApplicationAgent.cs" />
     <Compile Include="Domain\Communication\LoginDialog.cs" />
     <Compile Include="Domain\Log\LogFragment.cs" />
     <Compile Include="Domain\Networking\UdpBroadcastReceiver.cs" />
-    <Compile Include="Domain\Server\SelectServerFragment.cs" />
-    <Compile Include="Domain\Server\SelectServerFragmentDataSource.cs" />
-    <Compile Include="Domain\Server\ServerControlFragment.cs" />
-    <Compile Include="Domain\Server\ServerControlFragmentDataSource.cs" />
+    <Compile Include="Domain\Server\AudioControl\AudioFragment.cs" />
+    <Compile Include="Domain\Server\HostControl\HostControlFragment.cs" />
+    <Compile Include="Domain\Server\HostControl\HostControlDataSource.cs" />
+    <Compile Include="Domain\Server\HostControl\SecondaryHostControlFragment.cs" />
+    <Compile Include="Domain\Server\HostSelection\HostSelectionFragment.cs" />
+    <Compile Include="Domain\Server\HostSelection\HostSelectionDataSource.cs" />
+    <Compile Include="Extensions\FragmentExtensions.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -98,6 +104,7 @@
     <AndroidResource Include="Resources\layout\app_bar_main.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\button_list.xml" />
     <AndroidResource Include="Resources\layout\content_main.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -222,6 +229,17 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\button_list_item.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\server_control_audio.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

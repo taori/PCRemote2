@@ -1,8 +1,6 @@
 ﻿using System;
 using Amusoft.PCR.Grpc.Client;
-using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
-using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -12,11 +10,11 @@ using Grpc.Net.Client;
 using NLog;
 using Exception = System.Exception;
 
-namespace Amusoft.PCR.Mobile.Droid.Domain.Server
+namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 {
-	public class ServerControlFragment : Fragment
+	public class HostControlFragment : Fragment
 	{
-		private static readonly Logger Log = LogManager.GetLogger(nameof(ServerControlFragment));
+		private static readonly Logger Log = LogManager.GetLogger(nameof(HostControlFragment));
 
 		private TextView _header;
 		private GrpcApplicationAgent _agent;
@@ -45,13 +43,13 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 			_agent = CreateApplicationAgent();
 
 			_recyclerView = view.FindViewById<RecyclerView>(Resource.Id.listView);
-			var dataSource = new ServerControlFragmentDataSource(_agent);
+			var dataSource = new HostControlDataSource(_agent);
 			_recyclerView.SetAdapter(dataSource);
 			dataSource.CallStarted += DataSourceOnCallStarted;
 			dataSource.CallFinished += DataSourceOnCallFinished;
 			dataSource.CallFailed += DataSourceOnCallFailed;
 
-			dataSource.SetupItems(ServerControlFragmentDataSource.DataSourceLevel.Top);
+			dataSource.SetupItems(HostControlDataSource.DataSourceLevel.Top);
 		}
 
 		private void DataSourceOnCallFailed(object sender, Exception e)

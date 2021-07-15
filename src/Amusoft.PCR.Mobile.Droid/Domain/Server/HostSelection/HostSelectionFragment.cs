@@ -1,29 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
-using Android.Content;
+using Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
 using AndroidX.Fragment.App;
 using AndroidX.RecyclerView.Widget;
 using AndroidX.SwipeRefreshLayout.Widget;
-using Google.Android.Material.Snackbar;
 using NLog;
 
-namespace Amusoft.PCR.Mobile.Droid.Domain.Server
+namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 {
-	public class SelectServerFragment : Fragment, SwipeRefreshLayout.IOnRefreshListener
+	public class HostSelectionFragment : Fragment, SwipeRefreshLayout.IOnRefreshListener
 	{
-		private static readonly Logger Log = LogManager.GetLogger(nameof(SelectServerFragment));
-
-
+		private static readonly Logger Log = LogManager.GetLogger(nameof(HostSelectionFragment));
+		
 		private RecyclerView _recyclerView;
 		private SwipeRefreshLayout _swipeRefreshLayout;
 
@@ -36,13 +31,13 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 		{
 			base.OnViewCreated(view, savedInstanceState);
 			_recyclerView = view.FindViewById<RecyclerView>(Resource.Id.listView); 
-			_recyclerView.SetAdapter(SelectServerFragmentDataSource.Instance);
+			_recyclerView.SetAdapter(HostSelectionDataSource.Instance);
 
 			_swipeRefreshLayout = view.FindViewById<SwipeRefreshLayout>(Resource.Id.swipeRefreshLayout1);
 			_swipeRefreshLayout.SetOnRefreshListener(this);
 
-			SelectServerFragmentDataSource.Instance.ItemClicked -= InstanceOnItemClicked;
-			SelectServerFragmentDataSource.Instance.ItemClicked += InstanceOnItemClicked;
+			HostSelectionDataSource.Instance.ItemClicked -= InstanceOnItemClicked;
+			HostSelectionDataSource.Instance.ItemClicked += InstanceOnItemClicked;
 
 			HandleForceBroadcastButton(view);
 		}
@@ -62,16 +57,20 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 
 		public void OnRefresh()
 		{
-			SelectServerFragmentDataSource.Instance.NotifyDataSetChanged();
+			HostSelectionDataSource.Instance.NotifyDataSetChanged();
 			_swipeRefreshLayout.Refreshing = false;
 		}
 
-		private void InstanceOnItemClicked(object sender, SelectServerFragmentDataSource.ServerDataItem e)
+		private void InstanceOnItemClicked(object sender, HostSelectionDataSource.ServerDataItem e)
 		{
-			var fragment = new ServerControlFragment();
+			var fragment = new SecondaryHostControlFragment();
+			fragment.DisplayListHeader = true;
 			var bundle = new Bundle();
-			bundle.PutString(ServerControlFragment.ArgumentTargetAddress, e.EndPoint.Address.ToString());
+			bundle.PutInt(SecondaryHostControlFragment.ArgumentTargetAddress, e.HttpsPorts[0]);
+			bundle.PutString(SecondaryHostControlFragment.ArgumentTargetAddress, e.EndPoint.Address.ToString());
+			bundle.PutString(SecondaryHostControlFragment.ArgumentTargetMachineName, e.MachineName);
 			fragment.Arguments = bundle;
+
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.AddToBackStack(null);
@@ -80,6 +79,19 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 
 				transaction.Commit();
 			}
+
+			// var fragment = new HostControlFragment();
+			// var bundle = new Bundle();
+			// bundle.PutString(HostControlFragment.ArgumentTargetAddress, e.EndPoint.Address.ToString());
+			// fragment.Arguments = bundle;
+			// using (var transaction = ParentFragmentManager.BeginTransaction())
+			// {
+			// 	transaction.AddToBackStack(null);
+			// 	transaction.SetCustomAnimations(Resource.Animation.enter_from_right, Resource.Animation.exit_to_left, Resource.Animation.enter_from_left, Resource.Animation.exit_to_right);
+			// 	transaction.Replace(Resource.Id.content_display_frame, fragment);
+			//
+			// 	transaction.Commit();
+			// }
 		}
 
 		private static void SendBroadcastMessage()

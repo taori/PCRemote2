@@ -6,10 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Client;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
 using Amusoft.PCR.Mobile.Droid.Domain.Log;
 using Amusoft.PCR.Mobile.Droid.Domain.Networking;
 using Amusoft.PCR.Mobile.Droid.Domain.Server;
+using Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection;
 using Amusoft.PCR.Mobile.Droid.Services;
 using Android.App;
 using Android.OS;
@@ -61,7 +63,7 @@ namespace Amusoft.PCR.Mobile.Droid
 
 			using (var transaction = SupportFragmentManager.BeginTransaction())
 			{
-				transaction.Replace(Resource.Id.content_display_frame, new SelectServerFragment());
+				transaction.Replace(Resource.Id.content_display_frame, new HostSelectionFragment());
 				transaction.DisallowAddToBackStack();
 				transaction.Commit();
 			}
@@ -69,6 +71,12 @@ namespace Amusoft.PCR.Mobile.Droid
 
 		public override void OnBackPressed()
 		{
+			if (BackStackHandler.PopCall())
+			{
+				base.OnBackPressed();
+				return;
+			}
+
 			DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
 			if (drawer.IsDrawerOpen(GravityCompat.Start))
 			{

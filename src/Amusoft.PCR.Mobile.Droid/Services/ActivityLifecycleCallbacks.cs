@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.App;
 using Android.OS;
+using AndroidX.Core.App;
 using Java.Interop;
 using NLog;
 using Object = Java.Lang.Object;

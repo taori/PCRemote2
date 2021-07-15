@@ -9,9 +9,9 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.RecyclerView.Widget;
 
-namespace Amusoft.PCR.Mobile.Droid.Domain.Server
+namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 {
-	public class ServerControlFragmentDataSource : RecyclerView.Adapter
+	public class HostControlDataSource : RecyclerView.Adapter
 	{
 		public enum DataSourceLevel
 		{
@@ -27,12 +27,12 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 			public Func<Task> ClickCallback { get; set; }
 		}
 
-		public ServerControlFragmentDataSource(IntPtr javaReference, JniHandleOwnership transfer, GrpcApplicationAgent agent) : base(javaReference, transfer)
+		public HostControlDataSource(IntPtr javaReference, JniHandleOwnership transfer, GrpcApplicationAgent agent) : base(javaReference, transfer)
 		{
 			Agent = agent;
 		}
 
-		public ServerControlFragmentDataSource(GrpcApplicationAgent agent)
+		public HostControlDataSource(GrpcApplicationAgent agent)
 		{
 			Agent = agent;
 		}
