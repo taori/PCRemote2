@@ -4,7 +4,7 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model.Statics;
-using Amusoft.PCR.Server.Authorization;
+using Amusoft.PCR.Server.Domain.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

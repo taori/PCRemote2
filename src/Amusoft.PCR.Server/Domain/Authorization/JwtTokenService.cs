@@ -9,15 +9,12 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model.Entities;
-using Amusoft.PCR.Model.Statics;
-using Amusoft.PCR.Server.Managers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Amusoft.PCR.Server.Authorization
+namespace Amusoft.PCR.Server.Domain.Authorization
 {
 	public interface IJwtTokenService
 	{
@@ -165,4 +162,4 @@ namespace Amusoft.PCR.Server.Authorization
 			return true;
 		}
 	}
-}
+}<

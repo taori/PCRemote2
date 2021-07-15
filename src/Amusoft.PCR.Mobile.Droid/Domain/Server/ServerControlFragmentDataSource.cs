@@ -17,6 +17,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 		{
 			Top
 		}
+
 		public GrpcApplicationAgent Agent { get; set; }
 
 		public class CommandItem
@@ -73,17 +74,20 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 			return async () =>
 			{
 				var now = Interlocked.Increment(ref _runningCalls);
-				CallStarted?.Invoke(this, now);
 				try
 				{
+					CallStarted?.Invoke(this, now);
 					await function();
 				}
 				catch (Exception e)
 				{
 					CallFailed?.Invoke(this, e);
 				}
-				now = Interlocked.Decrement(ref _runningCalls);
-				CallFinished?.Invoke(this, now);
+				finally
+				{
+					now = Interlocked.Decrement(ref _runningCalls);
+					CallFinished?.Invoke(this, now);
+				}
 			};
 		}
 

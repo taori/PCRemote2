@@ -4,11 +4,8 @@ using Amusoft.PCR.Blazor.Services;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model.Entities;
 using Amusoft.PCR.Server.Areas.Identity;
-using Amusoft.PCR.Server.Authorization;
-using Amusoft.PCR.Server.BackgroundServices;
-using Amusoft.PCR.Server.Data;
-using Amusoft.PCR.Server.Managers;
-using Amusoft.PCR.Server.Services;
+using Amusoft.PCR.Server.Domain.Authorization;
+using Amusoft.PCR.Server.Domain.IPC;
 using Grpc.Net.Client;
 using GrpcDotNetNamedPipes;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +19,6 @@ namespace Amusoft.PCR.Server.Dependencies
 	{
 		public static void Register(IServiceCollection collection)
 		{
-			collection.AddSingleton<WeatherForecastService>();
 			collection.AddSingleton<ClassLoader>();
 			collection.AddSingleton<IValidationService, ValidationService>();
 			collection.AddSingleton<NamedPipeChannel>(CreateConfiguredNamedPipeChannel());
@@ -30,6 +26,8 @@ namespace Amusoft.PCR.Server.Dependencies
 			collection.AddSingleton<IIntegrationApplicationLocator, IntegrationApplicationLocator>();
 			collection.AddSingleton<IAuthorizationHandler, RoleOrAdminAuthorizationHandler>();
 			collection.AddSingleton<ApplicationStateTransmitter>(); 
+			collection.AddSingleton<IRoleNameProvider, BackEndRoleProvider>(); 
+			collection.AddSingleton<IRoleNameProvider, DefaultRoleProvider>(); 
 
 			collection.AddScoped<IRefreshTokenManager, RefreshTokenManager>();
 			collection.AddScoped<IJwtTokenService, JwtTokenService>();

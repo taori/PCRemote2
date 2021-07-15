@@ -52,11 +52,6 @@
 		<ProjectReference Include="..\Amusoft.Toolkit.UI\Amusoft.Toolkit.UI.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Models\" />
-	  <Folder Include="Managers\" />
-	</ItemGroup>
-
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
 	  <TypeScriptTarget>ES5</TypeScriptTarget>
 	  <TypeScriptJSXEmit>React</TypeScriptJSXEmit>

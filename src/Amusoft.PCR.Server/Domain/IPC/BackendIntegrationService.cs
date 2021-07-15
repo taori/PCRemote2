@@ -2,14 +2,12 @@
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model.Statics;
-using Amusoft.PCR.Server.BackgroundServices;
 using Amusoft.PCR.Server.Dependencies;
 using Grpc.Core;
-using GrpcDotNetNamedPipes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
-namespace Amusoft.PCR.Server.Services
+namespace Amusoft.PCR.Server.Domain.IPC
 {
 	[Authorize(Policy = PolicyNames.ApiPolicy)]
 	public class BackendIntegrationService : DesktopIntegrationService.DesktopIntegrationServiceBase
@@ -23,7 +21,7 @@ namespace Amusoft.PCR.Server.Services
 			Logger = logger;
 		}
 
-		[Authorize(Roles = RoleNames.Audio)]
+		[Authorize(Roles = RoleNames.FunctionToggleMute)]
 		public override async Task<ToggleMuteReply> ToggleMute(ToggleMuteRequest request, ServerCallContext context)
 		{
 			var result = await InteropService.ToggleMute();
@@ -33,7 +31,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Computer)]
+		[Authorize(Roles = RoleNames.FunctionMonitorControl)]
 		public override async Task<MonitorOnReply> MonitorOn(MonitorOnRequest request, ServerCallContext context)
 		{
 			var result = await InteropService.MonitorOn();
@@ -43,7 +41,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Computer)]
+		[Authorize(Roles = RoleNames.FunctionMonitorControl)]
 		public override async Task<MonitorOffReply> MonitorOff(MonitorOffRequest request, ServerCallContext context)
 		{
 			var result = await InteropService.MonitorOff();
@@ -53,7 +51,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Computer)]
+		[Authorize(Roles = RoleNames.FunctionShutdownCancel)]
 		public override async Task<AbortShutdownReply> AbortShutDown(AbortShutdownRequest request, ServerCallContext context)
 		{
 			var success = await InteropService.AbortShutdown();
@@ -63,7 +61,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Computer)]
+		[Authorize(Roles = RoleNames.FunctionShutdown)]
 		public override async Task<ShutdownDelayedReply> ShutDownDelayed(ShutdownDelayedRequest request, ServerCallContext context)
 		{
 			var success = await InteropService.Shutdown(TimeSpan.FromSeconds(request.Seconds), request.Force);
@@ -73,7 +71,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Computer)]
+		[Authorize(Roles = RoleNames.FunctionRestart)]
 		public override async Task<RestartReply> Restart(RestartRequest request, ServerCallContext context)
 		{
 			var success = await InteropService.Restart(TimeSpan.FromSeconds(request.Delay), request.Force);
@@ -83,7 +81,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Computer)]
+		[Authorize(Roles = RoleNames.FunctionHibernate)]
 		public override async Task<HibernateReply> Hibernate(HibernateRequest request, ServerCallContext context)
 		{
 			var success = await InteropService.Hibernate();
@@ -93,7 +91,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Audio)]
+		[Authorize(Roles = RoleNames.FunctionMasterVolumeControl)]
 		public override async Task<SetMasterVolumeReply> SetMasterVolume(SetMasterVolumeRequest request, ServerCallContext context)
 		{
 			var value = await InteropService.SetMasterVolume(request.Value);
@@ -103,7 +101,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Audio)]
+		[Authorize(Roles = RoleNames.FunctionMasterVolumeControl)]
 		public override async Task<GetMasterVolumeReply> GetMasterVolume(GetMasterVolumeRequest request, ServerCallContext context)
 		{
 			var value = await InteropService.GetMasterVolume();
@@ -113,7 +111,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.ActiveWindow)]
+		[Authorize(Roles = RoleNames.FunctionSendInput)]
 		public override async Task<SendKeysReply> SendKeys(SendKeysRequest request, ServerCallContext context)
 		{
 			var success = await InteropService.SendKeys(request.Message);
@@ -123,7 +121,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.ActiveWindow)]
+		[Authorize(Roles = RoleNames.FunctionSendInput)]
 		public override async Task<SendMediaKeysReply> SendMediaKeys(SendMediaKeysRequest request, ServerCallContext context)
 		{
 			var success = await InteropService.SendMediaKey(request.KeyCode);
@@ -133,7 +131,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Computer)]
+		[Authorize(Roles = RoleNames.FunctionLockWorkstation)]
 		public override async Task<LockWorkStationReply> LockWorkStation(LockWorkStationRequest request, ServerCallContext context)
 		{
 			var success = await InteropService.LockWorkStation();
@@ -143,7 +141,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Processes)]
+		[Authorize(Roles = RoleNames.FunctionGetProcessList)]
 		public override async Task<ProcessListResponse> GetProcessList(ProcessListRequest request, ServerCallContext context)
 		{
 			var results = await InteropService.GetProcessList();
@@ -152,7 +150,7 @@ namespace Amusoft.PCR.Server.Services
 			return processListResponse;
 		}
 
-		[Authorize(Roles = RoleNames.Processes)]
+		[Authorize(Roles = RoleNames.FunctionKillProcessById)]
 		public override async Task<KillProcessResponse> KillProcessById(KillProcessRequest request, ServerCallContext context)
 		{
 			var success = await InteropService.KillProcessById(request.ProcessId);
@@ -162,7 +160,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.ActiveWindow)]
+		[Authorize(Roles = RoleNames.FunctionFocusWindow)]
 		public override async Task<FocusWindowResponse> FocusWindow(FocusWindowRequest request, ServerCallContext context)
 		{
 			var success = await InteropService.FocusProcessWindow(request.ProcessId);
@@ -172,7 +170,7 @@ namespace Amusoft.PCR.Server.Services
 			};
 		}
 
-		[Authorize(Roles = RoleNames.Processes)]
+		[Authorize(Roles = RoleNames.FunctionLaunchProgram)]
 		public override async Task<LaunchProgramResponse> LaunchProgram(LaunchProgramRequest request, ServerCallContext context)
 		{
 			if (request.Arguments == null)

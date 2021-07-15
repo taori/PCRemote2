@@ -20,11 +20,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Amusoft.PCR.Server.Areas.Identity;
-using Amusoft.PCR.Server.Authorization;
-using Amusoft.PCR.Server.BackgroundServices;
-using Amusoft.PCR.Server.Data;
 using Amusoft.PCR.Server.Dependencies;
-using Amusoft.PCR.Server.Services;
+using Amusoft.PCR.Server.Domain.Authorization;
+using Amusoft.PCR.Server.Domain.IPC;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -60,7 +58,6 @@ namespace Amusoft.PCR.Server
 			services.Configure<JwtSettings>(Configuration.GetSection("ApplicationSettings:Jwt"));
 			services.Configure<DesktopIntegrationSettings>(Configuration.GetSection("ApplicationSettings:DesktopIntegration"));
 			services.Configure<LanAddressBroadcastSettings>(Configuration.GetSection("ApplicationSettings:ServerUrlTransmitter"));
-			services.Configure<AuthorizationSettings>(Configuration.GetSection("ApplicationSettings:AuthorizationSettings"));
 			services.Configure<StaticFileOptions>(options =>
 			{
 				var contentTypeProvider = new FileExtensionContentTypeProvider();

@@ -1,4 +1,4 @@
-namespace Amusoft.PCR.Server.BackgroundServices
+namespace Amusoft.PCR.Server.Domain.IPC
 {
 	public class DesktopIntegrationSettings
 	{

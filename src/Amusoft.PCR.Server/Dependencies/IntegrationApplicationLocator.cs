@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Amusoft.PCR.Server.BackgroundServices;
+using Amusoft.PCR.Server.Domain.IPC;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

@@ -3,34 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Amusoft.PCR.Model;
 using Amusoft.PCR.Model.Entities;
 using Amusoft.PCR.Model.Statics;
-using Amusoft.PCR.Server.Data;
 using Amusoft.PCR.Server.Dependencies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-namespace Amusoft.PCR.Server.Authorization
+namespace Amusoft.PCR.Server.Domain.Authorization
 {
 	public class PermissionSeedService : BackgroundService
 	{
 		private readonly IServiceScopeFactory _serviceScopeFactory;
-		private readonly IOptions<AuthorizationSettings> _authorizationSettings;
+		private readonly IEnumerable<IRoleNameProvider> _roleNameProviders;
 		private readonly ILogger<PermissionSeedService> _logger;
 		private readonly ApplicationStateTransmitter _applicationStateTransmitter;
 
 		public PermissionSeedService(IServiceScopeFactory serviceScopeFactory, 
-			IOptions<AuthorizationSettings> authorizationSettings, 
+			IEnumerable<IRoleNameProvider> roleNameProviders,
 			ILogger<PermissionSeedService> logger, 
 			ApplicationStateTransmitter applicationStateTransmitter)
 		{
 			_serviceScopeFactory = serviceScopeFactory;
-			_authorizationSettings = authorizationSettings;
+			_roleNameProviders = roleNameProviders;
 			_logger = logger;
 			_applicationStateTransmitter = applicationStateTransmitter;
 		}
@@ -45,24 +42,17 @@ namespace Amusoft.PCR.Server.Authorization
 			using (var serviceScope = _serviceScopeFactory.CreateScope())
 			{
 				using var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-				await EnsureRoleExistsAsync(RoleNames.Administrator, roleManager);
-				await EnsureRoleExistsAsync(RoleNames.Functions, roleManager);
-				await EnsureRoleExistsAsync(RoleNames.Processes, roleManager);
-				await EnsureRoleExistsAsync(RoleNames.Computer, roleManager);
-				await EnsureRoleExistsAsync(RoleNames.Audio, roleManager);
-				await EnsureRoleExistsAsync(RoleNames.ActiveWindow, roleManager);
-
-				_logger.LogTrace("Adding additional roles from appsettings.json");
-				if (_authorizationSettings.Value.AdditionalRoles != null)
+				
+				_logger.LogDebug("Adding roles from {Name} implementations", nameof(IRoleNameProvider));
+				foreach (var provider in _roleNameProviders)
 				{
-					foreach (var roleName in _authorizationSettings.Value.AdditionalRoles)
+					_logger.LogTrace("Adding roles from {Type}", provider.GetType().Name);
+					foreach (var roleName in provider.GetRoleNames())
 					{
-						if (!string.IsNullOrEmpty(roleName))
-							await EnsureRoleExistsAsync(roleName, roleManager);
+						await EnsureRoleExistsAsync(roleName, roleManager);
 					}
 				}
-
+				
 				await EnsureAdminsHavePermissionsAsync(serviceScope.ServiceProvider);
 			}
 

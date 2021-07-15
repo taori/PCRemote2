@@ -56,6 +56,18 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 
 		private void DataSourceOnCallFailed(object sender, Exception e)
 		{
+			// var message = _lastMessage == default
+			// 	? "Replace with your own action"
+			// 	: Encoding.UTF8.GetString(_lastMessage.Buffer);
+			// View view = (View)sender;
+			//
+			// Snackbar.Make(view, message, Snackbar.LengthLong)
+			// 	.SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
+			var toast = new Toast(Context);
+			toast.Duration = ToastLength.Short;
+			// toast.SetGravity(GravityFlags.Bottom);
+			toast.SetText("An error occured.");
+			toast.Show();
 			Log.Error(e);
 		}
 
@@ -75,25 +87,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 			base.Dispose(disposing);
 		}
 
-		private async void AbortShutdownButtonOnClick(object sender, EventArgs e)
-		{
-			try
-			{
-				// SendBroadcastMessage();
-				using (var host = CreateApplicationAgent())
-				{
-					Log.Debug("Sending Abort Shutdown");
-					// host.DesktopIntegrationClient.AbortShutDownAsync(new AbortShutdownRequest(), deadline: DateTime.UtcNow.AddSeconds(5));
-					await host.DesktopIntegrationClient.AbortShutDownAsync(new AbortShutdownRequest());
-					Log.Debug("Sent Abort Shutdown");
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.Error(exception);
-			}
-		}
-
 
 		private GrpcApplicationAgent CreateApplicationAgent()
 		{
@@ -103,6 +96,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 			var targetPort = Arguments.GetString(ArgumentTargetPort, "5001");
 			var uriString = $"https://{targetAddress}:{targetPort}";
 			var baseAddress = new Uri(uriString);
+			Log.Debug("Creating agent with connection {Address}", uriString);
 
 			var channelOptions = new GrpcChannelOptions()
 			{
@@ -112,24 +106,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server
 			var channel = GrpcChannel.ForAddress(new Uri(uriString), channelOptions);
 
 			return new GrpcApplicationAgent(channel);
-		}
-
-		private async void ShutdownButtonOnClick(object sender, EventArgs e)
-		{
-			try
-			{
-				using (var host = CreateApplicationAgent())
-				{
-					Log.Debug("Sending Shutdown");
-					// host.DesktopIntegrationClient.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = 60 }, deadline: DateTime.UtcNow.AddSeconds(5));
-					await host.DesktopIntegrationClient.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = 60 });
-					Log.Debug("Sent Shutdown");
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.Error(exception);
-			}
 		}
 	}
 }

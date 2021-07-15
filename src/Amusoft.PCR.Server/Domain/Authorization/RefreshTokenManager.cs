@@ -3,11 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amusoft.PCR.Model;
 using Amusoft.PCR.Model.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Amusoft.PCR.Server.Managers
+namespace Amusoft.PCR.Server.Domain.Authorization
 {
 	public interface IRefreshTokenManager
 	{

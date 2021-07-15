@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
-using Amusoft.PCR.Server.Dependencies;
-using Amusoft.PCR.Server.Extensions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols;
-using NLog;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-namespace Amusoft.PCR.Server.BackgroundServices
+namespace Amusoft.PCR.Server.Domain.IPC
 {
 	internal class LanAddressBroadcastSettings
 	{

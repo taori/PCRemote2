@@ -4,7 +4,7 @@ using Amusoft.PCR.Model.Statics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
-namespace Amusoft.PCR.Server.Authorization
+namespace Amusoft.PCR.Server.Domain.Authorization
 {
 	public class RoleOrAdminAuthorizationHandler : IAuthorizationHandler
 	{

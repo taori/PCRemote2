@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Amusoft.PCR.Server.Authorization
+namespace Amusoft.PCR.Server.Domain.Authorization
 {
 	public class JwtSettings
 	{

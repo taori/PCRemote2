@@ -9,7 +9,7 @@ using Amusoft.Toolkit.Impersonation;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Amusoft.PCR.Server.BackgroundServices
+namespace Amusoft.PCR.Server.Domain.IPC
 {
 	public class DesktopIntegrationLauncherService : BackgroundService
 	{
