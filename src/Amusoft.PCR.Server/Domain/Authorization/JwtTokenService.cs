@@ -162,4 +162,4 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 			return true;
 		}
 	}
-}<
+}
