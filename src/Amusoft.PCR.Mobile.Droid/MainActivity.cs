@@ -45,7 +45,7 @@ namespace Amusoft.PCR.Mobile.Droid
 	public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(MainActivity));
-		private LoaderPanel? _loaderPanel;
+		private LoaderPanel _loaderPanel;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{

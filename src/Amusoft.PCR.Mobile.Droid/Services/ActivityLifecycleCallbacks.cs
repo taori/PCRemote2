@@ -20,7 +20,7 @@ namespace Amusoft.PCR.Mobile.Droid.Services
 		
 		public Activity TopMostActivity { get; private set; }
 
-		public void OnActivityCreated(Activity activity, Bundle? savedInstanceState)
+		public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
 		{
 			TopMostActivity = activity;
 			Log.Debug("{Name} called", nameof(OnActivityCreated));

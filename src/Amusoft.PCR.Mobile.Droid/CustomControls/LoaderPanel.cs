@@ -21,12 +21,12 @@ namespace Amusoft.PCR.Mobile.Droid.CustomControls
 			InitializeView(context, null);
 		}
 
-		public LoaderPanel(Context context, IAttributeSet? attrs) : base(context, attrs)
+		public LoaderPanel(Context context, IAttributeSet attrs) : base(context, attrs)
 		{
 			InitializeView(context, attrs);
 		}
 
-		private void InitializeView(Context context, IAttributeSet? attrs)
+		private void InitializeView(Context context, IAttributeSet attrs)
 		{
 			LayoutInflater.FromContext(context).Inflate(Resource.Layout.custom_loader_panel, this);
 			_overlay = FindViewById<FrameLayout>(Resource.Id.loading_overlay);
@@ -42,7 +42,7 @@ namespace Amusoft.PCR.Mobile.Droid.CustomControls
 			allStyles.Recycle();
 		}
 
-		public override void AddView(View? child, int index, ViewGroup.LayoutParams? @params)
+		public override void AddView(View child, int index, ViewGroup.LayoutParams @params)
 		{
 			if (_contentContainer == null)
 			{
