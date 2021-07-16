@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">PC Remote 2</string>
+    <string name="notification_channel_id">PC Remote 2</string>
+    <string name="notification_channel_name">PC Remote 2</string>
+    <string name="notification_channel_description">PC Remote 2</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
@@ -7,6 +10,10 @@
     <string name="action_view_logs">View logs</string>
     <string name="button_reload">Reload</string>
     <string name="button_toggle_mute">Toggle mute</string>
+    <string name="button_shutdown">Shutdown</string>
+    <string name="button_restart">Restart</string>
+    <string name="button_abort">Abort</string>
+    <string name="button_lock_workstation">Lock workstation</string>
 	<string name="label_user">User</string>
 	<string name="label_password">Password</string>
 </resources>

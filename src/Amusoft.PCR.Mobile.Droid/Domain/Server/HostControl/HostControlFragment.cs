@@ -1,109 +1,112 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Client;
+using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
+using Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl;
+using Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl;
+using Amusoft.PCR.Mobile.Droid.Extensions;
+using Amusoft.PCR.Mobile.Droid.Services;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
-using AndroidX.Fragment.App;
-using AndroidX.RecyclerView.Widget;
+using AndroidX.AppCompat.App;
 using Grpc.Net.Client;
 using NLog;
-using Exception = System.Exception;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 {
-	public class HostControlFragment : Fragment
+	public class HostControlFragment : ButtonListFragment
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(HostControlFragment));
 
-		private TextView _header;
 		private GrpcApplicationAgent _agent;
-		private RecyclerView _recyclerView;
 
+		public const string ArgumentTargetMachineName = "MachineName";
 		public const string ArgumentTargetAddress = "Address";
 		public const string ArgumentTargetPort = "Port";
-		
-		public override void OnSaveInstanceState(Bundle outState)
-		{
-			Arguments.PutString(ArgumentTargetAddress, _header.Text);
-			base.OnSaveInstanceState(outState);
-		}
 
-		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+		protected override ButtonListDataSource CreateDataSource()
 		{
-			return inflater.Inflate(Resource.Layout.server_control_main, container, false);
+			return new ButtonListDataSource(CreateButtons);
 		}
 
 		public override void OnViewCreated(View view, Bundle savedInstanceState)
 		{
 			base.OnViewCreated(view, savedInstanceState);
-			_header = view.FindViewById<TextView>(Resource.Id.textView1);
-			_header.Text = Arguments.GetString(ArgumentTargetAddress, "No Address");
 
-			_agent = CreateApplicationAgent();
+			var ipAddress = Arguments.GetString(ArgumentTargetAddress);
+			var machineName = Arguments.GetString(ArgumentTargetMachineName);
+			var ipPort = Arguments.GetInt(ArgumentTargetPort);
 
-			_recyclerView = view.FindViewById<RecyclerView>(Resource.Id.listView);
-			var dataSource = new HostControlDataSource(_agent);
-			_recyclerView.SetAdapter(dataSource);
-			dataSource.CallStarted += DataSourceOnCallStarted;
-			dataSource.CallFinished += DataSourceOnCallFinished;
-			dataSource.CallFailed += DataSourceOnCallFailed;
+			if (!HasBeenResumedBefore)
+				Activity.SetStatusBarTitle($"{ipAddress} - {machineName}");
 
-			dataSource.SetupItems(HostControlDataSource.DataSourceLevel.Top);
-		}
-
-		private void DataSourceOnCallFailed(object sender, Exception e)
-		{
-			// var message = _lastMessage == default
-			// 	? "Replace with your own action"
-			// 	: Encoding.UTF8.GetString(_lastMessage.Buffer);
-			// View view = (View)sender;
-			//
-			// Snackbar.Make(view, message, Snackbar.LengthLong)
-			// 	.SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
-			var toast = new Toast(Context);
-			toast.Duration = ToastLength.Short;
-			// toast.SetGravity(GravityFlags.Bottom);
-			toast.SetText("An error occured.");
-			toast.Show();
-			Log.Error(e);
-		}
-
-		private void DataSourceOnCallFinished(object sender, int e)
-		{
-			Log.Info("Call finished. Running now: {Value}", e);
-		}
-
-		private void DataSourceOnCallStarted(object sender, int e)
-		{
-			Log.Info("Call started. Running now: {Value}", e);
-		}
-
-		protected override void Dispose(bool disposing)
-		{
 			_agent?.Dispose();
-			base.Dispose(disposing);
+			_agent = GrpcApplicationAgentFactory.Create(ipAddress, ipPort);
 		}
 
-
-		private GrpcApplicationAgent CreateApplicationAgent()
+		private Task<List<ButtonElement>> CreateButtons()
 		{
-			// var uriString = "https://192.168.0.135:5001";
-			// var uriString = "https://192.168.0.135:44365";
-			var targetAddress = Arguments.GetString(ArgumentTargetAddress);
-			var targetPort = Arguments.GetString(ArgumentTargetPort, "5001");
-			var uriString = $"https://{targetAddress}:{targetPort}";
-			var baseAddress = new Uri(uriString);
-			Log.Debug("Creating agent with connection {Address}", uriString);
+			var buttons = new List<ButtonElement>();
+			buttons.Add(CreateButton("Audio", true, AudioClicked));
+			buttons.Add(CreateButton("Monitors", true, MonitorClicked));
+			buttons.Add(CreateButton("System state", true, SystemStateClicked));
+			buttons.Add(CreateButton("Input control", true, InputControlClicked));
+			buttons.Add(CreateButton("Programs", true, ProgramsClicked));
 
-			var channelOptions = new GrpcChannelOptions()
+			return Task.FromResult(buttons);
+		}
+
+		private void ProgramsClicked()
+		{
+			// processes
+			// launch program
+			Toast.MakeText(Context, nameof(ProgramsClicked), ToastLength.Short).Show();
+		}
+
+		private void InputControlClicked()
+		{
+			// send input
+			Toast.MakeText(Context, nameof(InputControlClicked), ToastLength.Short).Show(); ;
+		}
+
+		private void SystemStateClicked()
+		{
+			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
-				DisposeHttpClient = true,
-				HttpClient = GrpcWebHttpClientFactory.Create(baseAddress, new AuthenticationSurface(uriString))
-			};
-			var channel = GrpcChannel.ForAddress(new Uri(uriString), channelOptions);
+				transaction.SetStatusBarTitle("System state");
+				transaction.ReplaceContentAnimated(new SystemStateFragment(_agent));
+				transaction.Commit();
+			}
+		}
 
-			return new GrpcApplicationAgent(channel);
+		private void MonitorClicked()
+		{
+			Toast.MakeText(Context, nameof(MonitorClicked), ToastLength.Short).Show(); 
+			// monitor on
+			// monitor off
+		}
+
+		private void AudioClicked()
+		{
+			using (var transaction = ParentFragmentManager.BeginTransaction())
+			{
+				transaction.SetStatusBarTitle("Audio");
+				transaction.ReplaceContentAnimated(new AudioFragment(_agent));
+				transaction.Commit();
+			}
+		}
+
+		private ButtonElement CreateButton(string buttonText, bool clickable, Action action)
+		{
+			return new ButtonElement()
+			{
+				ButtonText = buttonText,
+				Clickable = clickable,
+				ButtonAction = action
+			};
 		}
 	}
 }

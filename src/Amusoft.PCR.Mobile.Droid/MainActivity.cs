@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -12,8 +13,10 @@ using Amusoft.PCR.Mobile.Droid.Domain.Log;
 using Amusoft.PCR.Mobile.Droid.Domain.Networking;
 using Amusoft.PCR.Mobile.Droid.Domain.Server;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection;
+using Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl;
 using Amusoft.PCR.Mobile.Droid.Services;
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -27,10 +30,12 @@ using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
 using Grpc.Core;
 using Grpc.Net.Client;
+using Java.Lang;
 using NLog;
 using NLog.Config;
 using Xamarin.Essentials;
 using Environment = System.Environment;
+using FragmentManager = AndroidX.Fragment.App.FragmentManager;
 using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
 namespace Amusoft.PCR.Mobile.Droid
@@ -39,7 +44,7 @@ namespace Amusoft.PCR.Mobile.Droid
 	public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(MainActivity));
-		
+
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
 			base.OnCreate(savedInstanceState);
@@ -50,11 +55,15 @@ namespace Amusoft.PCR.Mobile.Droid
 			Xamarin.Essentials.Platform.Init(this, savedInstanceState);
 			SetContentView(Resource.Layout.activity_main);
 
+			NotificationHelper.CreateNotificationChannel(this);
+			AddBackgroundServices(this);
+
 			var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
 			SetSupportActionBar(toolbar);
 
 			var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-			var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
+			var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open,
+				Resource.String.navigation_drawer_close);
 			drawer.AddDrawerListener(toggle);
 			toggle.SyncState();
 
@@ -66,6 +75,23 @@ namespace Amusoft.PCR.Mobile.Droid
 				transaction.Replace(Resource.Id.content_display_frame, new HostSelectionFragment());
 				transaction.DisallowAddToBackStack();
 				transaction.Commit();
+			}
+		}
+
+		private void AddBackgroundServices(MainActivity mainActivity)
+		{
+		}
+
+		private static void AddBackgroundService(MainActivity mainActivity, Type type)
+		{
+			var intent = new Intent(mainActivity, type);
+			if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.O)
+			{
+				mainActivity.StartForegroundService(intent);
+			}
+			else
+			{
+				mainActivity.StartService(intent);
 			}
 		}
 
@@ -105,6 +131,7 @@ namespace Amusoft.PCR.Mobile.Droid
 				{
 					File.Delete(path);
 				}
+
 				return true;
 			}
 
@@ -117,6 +144,7 @@ namespace Amusoft.PCR.Mobile.Droid
 					transaction.SetTransition(AndroidX.Fragment.App.FragmentTransaction.TransitFragmentFade);
 					transaction.Commit();
 				}
+
 				return true;
 			}
 
@@ -164,7 +192,8 @@ namespace Amusoft.PCR.Mobile.Droid
 			return true;
 		}
 
-		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+		public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
+			[GeneratedEnum] Android.Content.PM.Permission[] grantResults)
 		{
 			Log.Debug("Requesting permissions");
 			Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -173,4 +202,3 @@ namespace Amusoft.PCR.Mobile.Droid
 		}
 	}
 }
-

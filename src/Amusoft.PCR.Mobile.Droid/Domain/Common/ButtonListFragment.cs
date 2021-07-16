@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -11,7 +12,7 @@ using AndroidX.SwipeRefreshLayout.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 {
-    public abstract class ButtonListFragment : Fragment, SwipeRefreshLayout.IOnRefreshListener
+    public abstract class ButtonListFragment : SmartFragment, SwipeRefreshLayout.IOnRefreshListener
     {
 	    private ButtonListDataSource _dataSource;
 	    private SwipeRefreshLayout _swipeRefreshLayout;

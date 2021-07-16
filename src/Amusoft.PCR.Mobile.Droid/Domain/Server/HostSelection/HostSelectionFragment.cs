@@ -63,12 +63,12 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 		private void InstanceOnItemClicked(object sender, HostSelectionDataSource.ServerDataItem e)
 		{
-			var fragment = new SecondaryHostControlFragment();
+			var fragment = new HostControlFragment();
 			fragment.DisplayListHeader = true;
 			var bundle = new Bundle();
-			bundle.PutInt(SecondaryHostControlFragment.ArgumentTargetAddress, e.HttpsPorts[0]);
-			bundle.PutString(SecondaryHostControlFragment.ArgumentTargetAddress, e.EndPoint.Address.ToString());
-			bundle.PutString(SecondaryHostControlFragment.ArgumentTargetMachineName, e.MachineName);
+			bundle.PutInt(HostControlFragment.ArgumentTargetPort, e.HttpsPorts[0]);
+			bundle.PutString(HostControlFragment.ArgumentTargetAddress, e.EndPoint.Address.ToString());
+			bundle.PutString(HostControlFragment.ArgumentTargetMachineName, e.MachineName);
 			fragment.Arguments = bundle;
 
 			using (var transaction = ParentFragmentManager.BeginTransaction())

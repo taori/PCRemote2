@@ -12,6 +12,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 
 		public static GrpcApplicationAgent Create(string ipAddress, int port)
 		{
+#if DEBUG
+			ipAddress = "192.168.0.135";
+			port = 5001;
+#endif
+
 			var uriString = $"https://{ipAddress}:{port}";
 			var baseAddress = new Uri(uriString);
 			Log.Debug("Creating agent with connection {Address}", uriString);
