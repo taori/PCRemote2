@@ -8,13 +8,14 @@
         android:id="@+id/loading_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="false"
+        android:clickable="true"
         android:background="#d555">
         <FrameLayout
             android:layout_gravity="center"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/rounded_corners">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:padding="12dp"
+            android:background="@drawable/circle">
             <ProgressBar
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"

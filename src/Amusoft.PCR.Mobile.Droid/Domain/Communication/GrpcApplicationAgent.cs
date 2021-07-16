@@ -91,6 +91,16 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 			}
 		}
 
+		public async Task<bool> MonitorOnAsync(TimeSpan timeout)
+		{
+			return await SecuredCallAsync(async(d) => (await d.MonitorOnAsync(new MonitorOnRequest(), deadline: DateTime.UtcNow.Add(timeout))).Success, false);
+		}
+
+		public async Task<bool> MonitorOffAsync(TimeSpan timeout)
+		{
+			return await SecuredCallAsync(async(d) => (await d.MonitorOffAsync(new MonitorOffRequest(), deadline: DateTime.UtcNow.Add(timeout))).Success, false);
+		}
+
 		public async Task<int> GetMasterVolumeAsync(TimeSpan timeout, int defaultValue)
 		{
 			return await SecuredCallAsync(async(d) => (await d.GetMasterVolumeAsync(new GetMasterVolumeRequest(), deadline: DateTime.UtcNow.Add(timeout))).Value, defaultValue);

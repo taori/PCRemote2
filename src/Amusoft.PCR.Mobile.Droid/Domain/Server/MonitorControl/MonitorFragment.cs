@@ -33,14 +33,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.MonitorControl
 			_monitorOn.Click += MonitorOnOnClick;
 		}
 
-		private void MonitorOnOnClick(object sender, EventArgs e)
+		private async void MonitorOnOnClick(object sender, EventArgs e)
 		{
-			throw new NotImplementedException();
+			await _agent.DesktopClient.MonitorOnAsync(TimeSpan.FromSeconds(5));
 		}
 
-		private void MonitorOffOnClick(object sender, EventArgs e)
+		private async void MonitorOffOnClick(object sender, EventArgs e)
 		{
-			throw new NotImplementedException();
+			await _agent.DesktopClient.MonitorOffAsync(TimeSpan.FromSeconds(5));
 		}
 	}
 }
