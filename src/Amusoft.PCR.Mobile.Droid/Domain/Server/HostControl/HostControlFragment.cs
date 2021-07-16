@@ -5,6 +5,9 @@ using Amusoft.PCR.Grpc.Client;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl;
+using Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl;
+using Amusoft.PCR.Mobile.Droid.Domain.Server.MonitorControl;
+using Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl;
 using Amusoft.PCR.Mobile.Droid.Extensions;
 using Amusoft.PCR.Mobile.Droid.Services;
@@ -61,15 +64,22 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 
 		private void ProgramsClicked()
 		{
-			// processes
-			// launch program
-			Toast.MakeText(Context, nameof(ProgramsClicked), ToastLength.Short).Show();
+			using (var transaction = ParentFragmentManager.BeginTransaction())
+			{
+				transaction.SetStatusBarTitle("Programs");
+				transaction.ReplaceContentAnimated(new ProgramFragment(_agent));
+				transaction.Commit();
+			}
 		}
 
 		private void InputControlClicked()
 		{
-			// send input
-			Toast.MakeText(Context, nameof(InputControlClicked), ToastLength.Short).Show(); ;
+			using (var transaction = ParentFragmentManager.BeginTransaction())
+			{
+				transaction.SetStatusBarTitle("Send input");
+				transaction.ReplaceContentAnimated(new InputFragment(_agent));
+				transaction.Commit();
+			}
 		}
 
 		private void SystemStateClicked()
@@ -84,9 +94,12 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 
 		private void MonitorClicked()
 		{
-			Toast.MakeText(Context, nameof(MonitorClicked), ToastLength.Short).Show(); 
-			// monitor on
-			// monitor off
+			using (var transaction = ParentFragmentManager.BeginTransaction())
+			{
+				transaction.SetStatusBarTitle("Monitors");
+				transaction.ReplaceContentAnimated(new MonitorFragment(_agent));
+				transaction.Commit();
+			}
 		}
 
 		private void AudioClicked()

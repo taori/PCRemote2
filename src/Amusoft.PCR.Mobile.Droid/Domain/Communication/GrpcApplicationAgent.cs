@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Grpc.Core;
@@ -8,6 +9,7 @@ using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Configuration;
 using Grpc.Net.Client.Web;
+using Java.Security;
 using NLog;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
@@ -33,6 +35,32 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 		}
 	}
 
+	public static class GrpcRequestObserver
+	{
+		private static int _runningCalls;
+
+		public static event EventHandler<int> CallRunning;
+		public static event EventHandler<Exception> CallFailed;
+		public static event EventHandler<int> CallFinished;
+
+		public static void NotifyCallRunning()
+		{
+			Interlocked.Increment(ref _runningCalls);
+			CallRunning?.Invoke(null, _runningCalls);
+		}
+
+		public static void NotifyCallFailed(Exception exception)
+		{
+			CallFailed?.Invoke(null, exception);
+		}
+
+		public static void NotifyCallFinished()
+		{
+			Interlocked.Decrement(ref _runningCalls);
+			CallFinished?.Invoke(null, _runningCalls);
+		}
+	}
+
 	public class SimpleDesktopClient
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(SimpleDesktopClient));
@@ -43,17 +71,23 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 		{
 			_client = client;
 		}
-
+		
 		private async Task<TResult> SecuredCallAsync<TResult>(Func<DesktopIntegrationService.DesktopIntegrationServiceClient, Task<TResult>> functionCall, TResult defaultValue, [CallerMemberName] string methodName = default)
 		{
 			try
 			{
+				GrpcRequestObserver.NotifyCallRunning();
 				return await functionCall(_client);
 			}
 			catch (Exception e)
 			{
 				Log.Error(e, methodName + " failed.");
+				GrpcRequestObserver.NotifyCallFailed(e);
 				return defaultValue;
+			}
+			finally
+			{
+				GrpcRequestObserver.NotifyCallFinished();
 			}
 		}
 
@@ -69,8 +103,13 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 
 		public async Task<bool> ShutDownDelayedAsync(TimeSpan timeout, bool quitApplications, TimeSpan delay)
 		{
-			return await SecuredCallAsync(async (d) => (await d.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Force = quitApplications, Seconds = (int)delay.TotalSeconds }, deadline: DateTime.UtcNow.Add(timeout))).Success, false);
-
+			return await SecuredCallAsync(
+				async (d) =>
+					(await d.ShutDownDelayedAsync(
+						new ShutdownDelayedRequest() {
+							Force = quitApplications,
+							Seconds = (int) delay.TotalSeconds},
+						deadline: DateTime.UtcNow.Add(timeout))).Success, false);
 		}
 
 		public async Task<bool> AbortShutDownAsync(TimeSpan timeout)

@@ -14,6 +14,8 @@
     <string name="button_restart">Restart</string>
     <string name="button_abort">Abort</string>
     <string name="button_lock_workstation">Lock workstation</string>
+    <string name="button_monitor_on">Turn on</string>
+    <string name="button_monitor_off">Turn off</string>
 	<string name="label_user">User</string>
 	<string name="label_password">Password</string>
 </resources>

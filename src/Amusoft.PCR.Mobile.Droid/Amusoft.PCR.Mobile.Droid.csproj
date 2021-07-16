@@ -68,6 +68,7 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\LoaderPanel.cs" />
     <Compile Include="Domain\Common\BackStackHandler.cs" />
     <Compile Include="Domain\Common\ButtonListFragment.cs" />
     <Compile Include="Domain\Common\GrpcApplicationAgentFactory.cs" />
@@ -82,6 +83,9 @@
     <Compile Include="Domain\Server\HostControl\HostControlFragment.cs" />
     <Compile Include="Domain\Server\HostSelection\HostSelectionFragment.cs" />
     <Compile Include="Domain\Server\HostSelection\HostSelectionDataSource.cs" />
+    <Compile Include="Domain\Server\InputControl\InputFragment.cs" />
+    <Compile Include="Domain\Server\MonitorControl\MonitorFragment.cs" />
+    <Compile Include="Domain\Server\ProgramControl\ProgramFragment.cs" />
     <Compile Include="Domain\Server\SystemStateControl\SystemStateFragment.cs" />
     <Compile Include="Extensions\FragmentTransactionExtensions.cs" />
     <Compile Include="MainActivity.cs" />
@@ -406,6 +410,37 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\outline_restart_alt_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\rounded_corners.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\custom_loader_panel.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\attrs.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\server_control_monitor.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\server_control_program_main.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\server_control_input_main.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

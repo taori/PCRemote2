@@ -25,6 +25,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 		public SystemStateFragment(GrpcApplicationAgent agent)
 		{
 			_agent = agent;
+			// processes
+			// launch program
 		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Client;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Mobile.Droid.CustomControls;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
 using Amusoft.PCR.Mobile.Droid.Domain.Log;
@@ -44,6 +45,7 @@ namespace Amusoft.PCR.Mobile.Droid
 	public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(MainActivity));
+		private LoaderPanel? _loaderPanel;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -54,6 +56,12 @@ namespace Amusoft.PCR.Mobile.Droid
 			NLog.LogManager.Configuration = new XmlLoggingConfiguration("assets/nlog.config");
 			Xamarin.Essentials.Platform.Init(this, savedInstanceState);
 			SetContentView(Resource.Layout.activity_main);
+
+			_loaderPanel = FindViewById<LoaderPanel>(Resource.Id.content_display_frame_loading_panel);
+			GrpcRequestObserver.CallRunning -= UpdateLoaderPanel;
+			GrpcRequestObserver.CallFinished -= UpdateLoaderPanel;
+			GrpcRequestObserver.CallRunning += UpdateLoaderPanel;
+			GrpcRequestObserver.CallFinished += UpdateLoaderPanel;
 
 			NotificationHelper.CreateNotificationChannel(this);
 			AddBackgroundServices(this);
@@ -75,6 +83,14 @@ namespace Amusoft.PCR.Mobile.Droid
 				transaction.Replace(Resource.Id.content_display_frame, new HostSelectionFragment());
 				transaction.DisallowAddToBackStack();
 				transaction.Commit();
+			}
+		}
+
+		private void UpdateLoaderPanel(object sender, int e)
+		{
+			if (_loaderPanel != null)
+			{
+				_loaderPanel.OverlayVisible = e > 0;
 			}
 		}
 
