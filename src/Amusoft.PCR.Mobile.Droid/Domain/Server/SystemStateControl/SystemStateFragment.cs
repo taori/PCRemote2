@@ -47,6 +47,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 			_abort.Click += AbortOnClick;
 			_restart.Click += RestartOnClick;
 			_lockWorkstation.Click += LockWorkstationOnClick;
+			_progressBar.Visibility = ViewStates.Gone;
 		}
 
 		private void ProgressBarOnClick(object sender, EventArgs e)
