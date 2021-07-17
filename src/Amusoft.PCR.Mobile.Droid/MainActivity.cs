@@ -166,8 +166,7 @@ namespace Amusoft.PCR.Mobile.Droid
 
 			if (id == Resource.Id.action_clear_storage)
 			{
-				var surface = new AuthenticationSurface("https://192.168.0.135:5001");
-				Task.Run(() => surface.UpdateTokenStoreAsync(null));
+				SecureStorage.RemoveAll();
 				return true;
 			}
 

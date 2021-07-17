@@ -4,6 +4,7 @@ option csharp_namespace = "Amusoft.PCR.Grpc.Common";
 package Amusoft.PCR.Grpc.Common;
 
 service DesktopIntegrationService {
+	rpc Authenticate (.Amusoft.PCR.Grpc.Common.AuthenticateRequest) returns (.Amusoft.PCR.Grpc.Common.AuthenticateResponse) {}
 	rpc SuicideOnProcessExit (.Amusoft.PCR.Grpc.Common.SuicideOnProcessExitRequest) returns (.Amusoft.PCR.Grpc.Common.SuicideOnProcessExitResponse) {}
 	rpc ToggleMute (ToggleMuteRequest) returns (ToggleMuteReply) {}
 	rpc MonitorOn (MonitorOnRequest) returns (MonitorOnReply) {}
@@ -21,6 +22,11 @@ service DesktopIntegrationService {
 	rpc KillProcessById (.Amusoft.PCR.Grpc.Common.KillProcessRequest) returns (.Amusoft.PCR.Grpc.Common.KillProcessResponse) {}
 	rpc FocusWindow (.Amusoft.PCR.Grpc.Common.FocusWindowRequest) returns (.Amusoft.PCR.Grpc.Common.FocusWindowResponse) {}
 	rpc LaunchProgram (.Amusoft.PCR.Grpc.Common.LaunchProgramRequest) returns (.Amusoft.PCR.Grpc.Common.LaunchProgramResponse) {}
+}
+
+message AuthenticateRequest {}
+message AuthenticateResponse {
+	bool success = 1;
 }
 
 message SuicideOnProcessExitRequest {

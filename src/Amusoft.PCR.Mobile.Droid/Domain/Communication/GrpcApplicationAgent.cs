@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Mobile.Droid.Domain.Common;
+using Google.Protobuf.Collections;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
@@ -35,32 +37,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 		}
 	}
 
-	public static class GrpcRequestObserver
-	{
-		private static int _runningCalls;
-
-		public static event EventHandler<int> CallRunning;
-		public static event EventHandler<Exception> CallFailed;
-		public static event EventHandler<int> CallFinished;
-
-		public static void NotifyCallRunning()
-		{
-			Interlocked.Increment(ref _runningCalls);
-			CallRunning?.Invoke(null, _runningCalls);
-		}
-
-		public static void NotifyCallFailed(Exception exception)
-		{
-			CallFailed?.Invoke(null, exception);
-		}
-
-		public static void NotifyCallFinished()
-		{
-			Interlocked.Decrement(ref _runningCalls);
-			CallFinished?.Invoke(null, _runningCalls);
-		}
-	}
-
 	public class SimpleDesktopClient
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(SimpleDesktopClient));
@@ -89,6 +65,23 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 			{
 				GrpcRequestObserver.NotifyCallFinished();
 			}
+		}
+
+		public async Task<bool> AuthenticateAsync()
+		{
+			return await SecuredCallAsync(async (d) => (await d.AuthenticateAsync(new AuthenticateRequest())).Success, false);
+		}
+
+		public async Task<bool> KillProcessByIdAsync(TimeSpan timeout, int processId)
+		{
+			return await SecuredCallAsync(async (d) => (await d.KillProcessByIdAsync(new KillProcessRequest(){ProcessId = processId}, deadline: DateTime.UtcNow.Add(timeout))).Success, false);
+		}
+
+		private static readonly IList<ProcessListResponseItem> EmptyProcessList = new List<ProcessListResponseItem>();
+
+		public async Task<IList<ProcessListResponseItem>> GetProcessListAsync(TimeSpan timeout)
+		{
+			return await SecuredCallAsync(async(d) => ((IList<ProcessListResponseItem>)(await d.GetProcessListAsync(new ProcessListRequest(), deadline: DateTime.UtcNow.Add(timeout))).Results), EmptyProcessList);
 		}
 
 		public async Task<bool> MonitorOnAsync(TimeSpan timeout)

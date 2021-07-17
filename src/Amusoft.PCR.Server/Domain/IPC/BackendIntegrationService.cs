@@ -21,6 +21,12 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			Logger = logger;
 		}
 
+		[Authorize]
+		public override Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, ServerCallContext context)
+		{
+			return Task.FromResult(new AuthenticateResponse() {Success = true});
+		}
+
 		[Authorize(Roles = RoleNames.FunctionToggleMute)]
 		public override async Task<ToggleMuteReply> ToggleMute(ToggleMuteRequest request, ServerCallContext context)
 		{

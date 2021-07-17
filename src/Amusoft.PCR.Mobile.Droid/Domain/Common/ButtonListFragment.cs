@@ -9,6 +9,7 @@ using Android.Widget;
 using AndroidX.Fragment.App;
 using AndroidX.RecyclerView.Widget;
 using AndroidX.SwipeRefreshLayout.Widget;
+using Xamarin.Essentials;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 {
@@ -24,6 +25,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 	    public SwipeRefreshLayout SwipeRefreshLayout => _swipeRefreshLayout;
 
 	    public bool DisplayListHeader { get; set; }
+
+		protected ButtonListDataSource DataSource => _recyclerView.GetAdapter() as ButtonListDataSource;
 
 	    protected override void Dispose(bool disposing)
 	    {
@@ -53,7 +56,9 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 	        if (_dataSource == null)
 	        {
 		        _dataSource = CreateDataSource();
-		        Task.Run(() => _dataSource.ReloadAsync());
+		        _dataSource.ReloadAsync().ContinueWith(d => MainThread.BeginInvokeOnMainThread(() => _dataSource.NotifyDataSetChanged()));
+
+				// Task.Run(() => _dataSource.ReloadAsync());
 		        return _dataSource;
 	        }
 
@@ -107,6 +112,12 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 	    }
 
 	    public override int ItemCount => _elements.Count;
+
+	    public void RemoveAt(int index)
+	    {
+			_elements.RemoveAt(index);
+			NotifyItemRemoved(index);
+	    }
 
 	    public async Task ReloadAsync()
 	    {

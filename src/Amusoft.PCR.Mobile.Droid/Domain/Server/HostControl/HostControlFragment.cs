@@ -62,8 +62,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			return Task.FromResult(buttons);
 		}
 
-		private void ProgramsClicked()
+		private async void ProgramsClicked()
 		{
+			if (!await IsAuthorizedAsync())
+				return;
+
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Programs");
@@ -72,8 +75,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			}
 		}
 
-		private void InputControlClicked()
+		private async void InputControlClicked()
 		{
+			if (!await IsAuthorizedAsync())
+				return;
+
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Send input");
@@ -82,8 +88,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			}
 		}
 
-		private void SystemStateClicked()
+		private async void SystemStateClicked()
 		{
+			if (!await IsAuthorizedAsync())
+				return;
+
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("System state");
@@ -92,8 +101,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			}
 		}
 
-		private void MonitorClicked()
+		private async void MonitorClicked()
 		{
+			if (!await IsAuthorizedAsync())
+				return;
+
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Monitors");
@@ -102,14 +114,28 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			}
 		}
 
-		private void AudioClicked()
+		private async void AudioClicked()
 		{
+			if (!await IsAuthorizedAsync())
+				return;
+
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Audio");
 				transaction.ReplaceContentAnimated(new AudioFragment(_agent));
 				transaction.Commit();
 			}
+		}
+
+		private async Task<bool> IsAuthorizedAsync()
+		{
+			var result = await _agent.DesktopClient.AuthenticateAsync();
+			if (!result)
+			{
+				Toast.MakeText(Context, "Authentication required.", ToastLength.Long).Show();
+			}
+
+			return result;
 		}
 
 		private ButtonElement CreateButton(string buttonText, bool clickable, Action action)

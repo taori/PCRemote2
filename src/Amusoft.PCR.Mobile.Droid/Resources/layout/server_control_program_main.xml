@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <Button
-        android:id="@+id/button_monitor_on"
-        android:text="@string/button_monitor_on"
+        android:id="@+id/button_kill_process"
+        android:text="@string/button_kill_process"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <Button
-        android:id="@+id/button_monitor_off"
-        android:text="@string/button_monitor_off"
+        android:id="@+id/button_start_program"
+        android:text="@string/button_start_program"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 </LinearLayout>
