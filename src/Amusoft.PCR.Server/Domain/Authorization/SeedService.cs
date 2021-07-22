@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Amusoft.PCR.Model.Entities;
 using Amusoft.PCR.Model.Statics;
 using Amusoft.PCR.Server.Dependencies;
+using Amusoft.PCR.Server.Domain.IPC;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,16 +15,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Amusoft.PCR.Server.Domain.Authorization
 {
-	public class PermissionSeedService : BackgroundService
+	public class SeedService : BackgroundService
 	{
 		private readonly IServiceScopeFactory _serviceScopeFactory;
 		private readonly IEnumerable<IRoleNameProvider> _roleNameProviders;
-		private readonly ILogger<PermissionSeedService> _logger;
+		private readonly ILogger<SeedService> _logger;
 		private readonly ApplicationStateTransmitter _applicationStateTransmitter;
 
-		public PermissionSeedService(IServiceScopeFactory serviceScopeFactory, 
+		public SeedService(IServiceScopeFactory serviceScopeFactory, 
 			IEnumerable<IRoleNameProvider> roleNameProviders,
-			ILogger<PermissionSeedService> logger, 
+			ILogger<SeedService> logger, 
 			ApplicationStateTransmitter applicationStateTransmitter)
 		{
 			_serviceScopeFactory = serviceScopeFactory;
@@ -37,7 +38,7 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 			_logger.LogTrace("Waiting for configuration to be done");
 			await _applicationStateTransmitter.ConfigurationDone;
 
-			_logger.LogTrace("{Name} running", nameof(PermissionSeedService));
+			_logger.LogTrace("{Name} running", nameof(SeedService));
 
 			using (var serviceScope = _serviceScopeFactory.CreateScope())
 			{
@@ -54,9 +55,26 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 				}
 				
 				await EnsureAdminsHavePermissionsAsync(serviceScope.ServiceProvider);
+
+				await AddHostCommandsAsync(serviceScope.ServiceProvider);
 			}
 
-			_logger.LogTrace("{Name} complete", nameof(PermissionSeedService));
+			_logger.LogTrace("{Name} complete", nameof(SeedService));
+		}
+
+		private async Task AddHostCommandsAsync(IServiceProvider serviceProvider)
+		{
+			var hostCommandService = serviceProvider.GetRequiredService<IHostCommandService>();
+			var allCommands = await hostCommandService.GetAllAsync();
+			if (allCommands.All(d => d.ProgramPath != "spotify"))
+			{
+				await hostCommandService.CreateAsync(new HostCommand(){ProgramPath = "spotify", CommandName = "Spotify"});
+			}
+
+			if (!allCommands.Any(d => d.ProgramPath == "explorer" && d.Arguments == "https://www.google.com"))
+			{
+				await hostCommandService.CreateAsync(new HostCommand(){ProgramPath = "explorer", Arguments = "https://www.google.com", CommandName = "Browser" });
+			}
 		}
 
 		private async Task EnsureAdminsHavePermissionsAsync(IServiceProvider serviceProvider)

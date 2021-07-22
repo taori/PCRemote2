@@ -22,5 +22,6 @@
 		public const string FunctionKillProcessById = "function-killProcessById";
 		public const string FunctionFocusWindow = "function-focusWindow";
 		public const string FunctionLaunchProgram = "function-launchProgram";
+		public const string FunctionAddNewProgram = "function-addNewProgram";
 	}
 }

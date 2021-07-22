@@ -18,7 +18,10 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 			if (rolesAuthorizationRequirement != null)
 			{
 				if (context.User.IsInRole(RoleNames.Administrator))
+				{
 					context.Succeed(rolesAuthorizationRequirement);
+					return Task.CompletedTask;
+				}
 			}
 
 			return Task.CompletedTask;

@@ -74,6 +74,15 @@ namespace Amusoft.PCR.Server
 			services.AddOptions();
 			services.AddAuthorization(options =>
 			{
+				options.AddPolicy(PolicyNames.ApplicationPermissionPolicy, policyBuilder =>
+				{
+					policyBuilder.AddAuthenticationSchemes(
+							CookieAuthenticationDefaults.AuthenticationScheme,
+							JwtBearerDefaults.AuthenticationScheme)
+						.RequireAuthenticatedUser()
+						.AddRequirements(new HostCommandPermissionRequirement())
+						.Build();
+				});
 				options.AddPolicy(PolicyNames.ApiPolicy, policyBuilder =>
 				{
 					policyBuilder.AddAuthenticationSchemes(

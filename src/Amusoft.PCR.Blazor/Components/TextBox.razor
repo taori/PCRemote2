@@ -1,10 +1,16 @@
-﻿<div class="form-group">
-	<input type="text" class="form-control" 
+﻿<div class="form-group @WrapperClasses">
+	<input type="text" class="form-control @ControlClasses" 
 	       @bind-value="@ValueInternal" 
 	       @bind-value:event="oninput" placeholder="@Placeholder"/>
 </div>
 
 @code {
+
+	[Parameter]
+	public string WrapperClasses { get; set; }
+
+	[Parameter]
+	public string ControlClasses { get; set; }
 
 	[Parameter]
 	public string Value

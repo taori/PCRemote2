@@ -1,4 +1,4 @@
-﻿<button class="@ButtonClass @CssClass" disabled="@(!EnabledInternal)" @onclick="d => OnClick.InvokeAsync(d)">@ChildContent</button>
+﻿<button type="@GetRenderedButtonForm(ButtonForm)" class="@ButtonClass @CssClass" disabled="@(!EnabledInternal)" @onclick="d => OnClick.InvokeAsync(d)">@ChildContent</button>
 
 @code {
 
@@ -29,22 +29,11 @@
 		}
 	}
 
-	public enum ButtonThemeKind
-	{
-		Primary,
-		Secondary,
-		Success,
-		Danger,
-		Warning,
-		Info,
-		Light,
-		Dark,
-		Link
-
-	}
-
 	[Parameter]
 	public ButtonThemeKind ButtonTheme { get; set; } = ButtonThemeKind.Dark;
+
+	[Parameter]
+	public ButtonFormKind ButtonForm { get; set; } = ButtonFormKind.Button;
 
 	[Parameter]
 	public bool Enabled
@@ -55,6 +44,9 @@
 
 	[Parameter]
 	public string CssClass { get; set; }
+
+	[Parameter]
+	public bool SubmitButton { get; set; }
 
 	[Parameter]
 	public RenderFragment ChildContent { get; set; }
@@ -75,4 +67,16 @@
 
 		ButtonClass = $"btn {classEnabled} {classThemeClass}";
 	}
+
+	private string GetRenderedButtonForm(ButtonFormKind kind)
+	{
+		return kind switch
+		{
+			ButtonFormKind.Button => "button",
+			ButtonFormKind.Submit => "submit",
+			ButtonFormKind.Reset => "reset",
+			_ => throw new ArgumentOutOfRangeException()
+		};
+	}
+
 }

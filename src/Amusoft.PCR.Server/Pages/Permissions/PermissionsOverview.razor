@@ -3,6 +3,7 @@
 @using Amusoft.PCR.Model.Entities
 @using Amusoft.PCR.Model.Statics
 @using Microsoft.AspNetCore.Identity
+@using Amusoft.PCR.Blazor
 @attribute [Authorize(Roles = RoleNames.Permissions)]
 @inject UserManager<ApplicationUser> _userManager
 
@@ -14,7 +15,7 @@
 	<div class="row mb-3 mb-xl-2">
 		
 		<Button CssClass="d-inline-block col-xl-4"
-		        ButtonTheme="@Button.ButtonThemeKind.Primary"
+		        ButtonTheme="@ButtonThemeKind.Primary"
 		        OnClick="@(() => ChangeUserPermissions(@user))">
 			@user.UserName
 		</Button>

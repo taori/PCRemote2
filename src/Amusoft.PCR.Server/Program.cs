@@ -79,7 +79,7 @@ namespace Amusoft.PCR.Server
 				{
 					services.AddHostedService<DesktopIntegrationLauncherService>();
 					services.AddHostedService<LanAddressBroadcastService>();
-					services.AddHostedService<PermissionSeedService>();
+					services.AddHostedService<SeedService>();
 					services.AddHostedService<DbCleanupService>();
 				})
 				.ConfigureWebHostDefaults(webBuilder =>

@@ -8,6 +8,7 @@ using Amusoft.PCR.Server.Domain.Authorization;
 using Amusoft.PCR.Server.Domain.IPC;
 using Grpc.Net.Client;
 using GrpcDotNetNamedPipes;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -25,15 +26,19 @@ namespace Amusoft.PCR.Server.Dependencies
 			collection.AddSingleton<IInteropService, InteropService>();
 			collection.AddSingleton<IIntegrationApplicationLocator, IntegrationApplicationLocator>();
 			collection.AddSingleton<IAuthorizationHandler, RoleOrAdminAuthorizationHandler>();
+			collection.AddSingleton<IAuthorizationHandler, HostCommandAuthorizationHandler>();
 			collection.AddSingleton<ApplicationStateTransmitter>(); 
 			collection.AddSingleton<IRoleNameProvider, BackEndRoleProvider>(); 
-			collection.AddSingleton<IRoleNameProvider, DefaultRoleProvider>(); 
+			collection.AddSingleton<IRoleNameProvider, DefaultRoleProvider>();
 
+			collection.AddScoped<IPermissionService, PermissionService>();
+			collection.AddScoped<IHostCommandService, HostCommandService>();
 			collection.AddScoped<IRefreshTokenManager, RefreshTokenManager>();
 			collection.AddScoped<IJwtTokenService, JwtTokenService>();
 			collection.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 			collection.AddScoped<IDialogService, DialogService>();
 			collection.AddScoped<BackendIntegrationService>();
+			collection.AddScoped<IClaimsTransformation, ApplicationPermissionTransform>();
 		}
 
 		private static Func<IServiceProvider, NamedPipeChannel> CreateConfiguredNamedPipeChannel()

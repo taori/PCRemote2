@@ -1,13 +1,125 @@
 ﻿@page "/functions/processMenu/programLauncher"
+@attribute [Authorize(Roles = RoleNames.FunctionLaunchProgram)]
 @using Amusoft.PCR.Server.Dependencies
+@using Amusoft.PCR.Server.Domain.IPC;
+@using Amusoft.PCR.Model.Entities
+@using Amusoft.PCR.Model.Statics
+@using global::Grpc.Core.Logging
+@using Microsoft.Extensions.Logging
+@using Amusoft.PCR.Blazor.Extensions
+@using Amusoft.PCR.Blazor
+@using Amusoft.PCR.Server.Extensions
+@using Microsoft.AspNetCore.Authorization.Infrastructure
+@using System.Security.Claims
 @inject IInteropService _interopService
 
 <Title WindowTitle="Launch program" Headline="Launch program"></Title>
 <div class="container">
-	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.LaunchProgram("spotify"))">Spotify</Button>
-	</div>
-	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="d-inline-block col-xl-4" OnClick="@(() => _interopService.LaunchProgram("explorer", "https://www.google.com" ))">Browser</Button>
-	</div>
+	@if (_commands == null)
+	{
+		<ProgressBar></ProgressBar>
+	}
+	else
+	{
+		foreach (var item in _commands)
+		{
+			<div class="row mb-3 mb-xl-2">
+				<Button CssClass="col" OnClick="@(() => _interopService.LaunchProgram(item.ProgramPath, item.Arguments ))">@item.CommandName</Button>
+				@if (_displayModificationButtons)
+				{
+					<Button CssClass="col-auto ml-3" ButtonTheme="ButtonThemeKind.Success" OnClick="@(() => EditProgram(item))">Edit</Button>
+					<Button CssClass="col-auto ml-3" ButtonTheme="ButtonThemeKind.Danger" OnClick="@(() => DeleteProgram(item))">Delete</Button>
+				}
+			</div>
+		}
+
+		@if (_displayModificationButtons)
+		{
+			<div class="row mb-3 mb-xl-2">
+				<Button CssClass="col-12" ButtonTheme="ButtonThemeKind.Primary" OnClick="@(() => NavigationManager.NavigateTo("/functions/processMenu/addHostedCommand"))">Add new Command</Button>
+			</div>
+
+		}
+	}
 </div>
+
+@code{
+
+	[Inject]
+	public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+	[Inject]
+	public IAuthorizationService AuthorizationService { get; set; }
+
+	[Inject]
+	public IHostCommandService HostCommandService { get; set; }
+
+	[Inject]
+	public NavigationManager NavigationManager { get; set; }
+
+	[Inject]
+	public IJSRuntime JsRuntime { get; set; }
+
+	[Inject]
+	public global::Microsoft.Extensions.Logging.ILogger<ProgramLauncher> Log { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var authstate = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		_displayModificationButtons = await AuthorizationService.IsInRoleAsync(authstate.User, RoleNames.FunctionAddNewProgram);
+
+		await LoadAsync();
+		await base.OnInitializedAsync();
+	}
+
+	private async Task LoadAsync()
+	{
+		_commands = null;
+
+		var allCommands = await HostCommandService.GetAllAsync();
+		var filteredCommands = new List<HostCommand>();
+		var authstate = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		foreach (var command in allCommands)
+		{
+			var authorization =
+				await AuthorizationService.AuthorizeAsync(authstate.User, command, PolicyNames.ApplicationPermissionPolicy);
+			if (!authorization.Succeeded)
+			{
+				Log.LogDebug("Permission for command is missing for user {User}",
+					authstate.User.Identity?.Name ?? "Unknown");
+				continue;
+			}
+
+			filteredCommands.Add(command);
+		}
+
+		_commands = filteredCommands.OrderBy(d => d.CommandName).ToList();
+	}
+
+	private List<HostCommand> _commands;
+	private bool _displayModificationButtons;
+
+	private async Task DeleteProgram(HostCommand item)
+	{
+		var authstate = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var authorization = await AuthorizationService.AuthorizeAsync(authstate.User, item, PolicyNames.ApplicationPermissionPolicy);
+		if (!authorization.Succeeded)
+		{
+			Log.LogError("Missing permission to delete program through user {User}", authstate.User.Identity?.Name ?? "Unknown");
+		}
+
+		if (!await HostCommandService.DeleteAsync(item))
+		{
+			await JsRuntime.UI().Alert("Failed to delete command");
+			return;
+		}
+
+		await LoadAsync();
+	}
+
+	private void EditProgram(HostCommand item)
+	{
+		NavigationManager.NavigateTo($"/functions/processMenu/addHostedCommand/{item.Id}");
+	}
+
+}
