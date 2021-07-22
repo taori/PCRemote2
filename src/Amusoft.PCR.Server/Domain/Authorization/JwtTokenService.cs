@@ -64,6 +64,7 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 			var handler = new JwtSecurityTokenHandler();
 			var claims = new List<Claim>();
 			claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+			claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
 			claims.Add(new Claim(JwtRegisteredClaimNames.Aud, _tokenValidationParameters.ValidAudience));
 			claims.AddRange(roles.Select(d => new Claim(ClaimTypes.Role, d)));
 
