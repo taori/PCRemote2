@@ -1,5 +1,6 @@
 ﻿@page "/functions/computer/systemState"
 @using Amusoft.PCR.Server.Dependencies
+@using Amusoft.PCR.Blazor
 @inject IInteropService _interopService
 
 <Title Headline="System state" WindowTitle="System state"></Title>
@@ -13,15 +14,15 @@
 	</div>
 
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.AbortShutdown())" ButtonTheme="@Button.ButtonThemeKind.Primary">Abort Shutdown</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.AbortShutdown())" ButtonTheme="@ButtonThemeKind.Primary">Abort Shutdown</Button>
 	</div>
 
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Shutdown(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@Button.ButtonThemeKind.Danger">Shutdown</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Shutdown(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@ButtonThemeKind.Danger">Shutdown</Button>
 	</div>
 
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Restart(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@Button.ButtonThemeKind.Danger">Restart</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Restart(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@ButtonThemeKind.Danger">Restart</Button>
 	</div>
 
 	<div class="row mb-3 mb-xl-2">

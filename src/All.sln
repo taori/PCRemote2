@@ -34,7 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libraries", "libraries", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Grpc.Client", "Amusoft.PCR.Grpc.Client\Amusoft.PCR.Grpc.Client.csproj", "{76D7ED59-4C31-4CDA-955E-4E14770F2B27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.PCR.App.Console", "Amusoft.PCR.App.Console\Amusoft.PCR.App.Console.csproj", "{7AA0DC77-3F0B-48F3-8EEB-F059BC884AD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.App.Console", "Amusoft.PCR.App.Console\Amusoft.PCR.App.Console.csproj", "{7AA0DC77-3F0B-48F3-8EEB-F059BC884AD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

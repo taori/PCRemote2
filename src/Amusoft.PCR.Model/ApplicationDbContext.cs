@@ -17,8 +17,15 @@ namespace Amusoft.PCR.Model
 
 			builder.Entity<RefreshToken>()
 				.HasKey(d => new { d.UserId, d.RefreshTokenId });
+
+			builder.Entity<Permission>()
+				.HasKey(d => new { d.UserId, d.SubjectId, d.PermissionType });
 		}
 
 		public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+		public DbSet<Permission> Permissions { get; set; }
+
+		public DbSet<HostCommand> HostCommands { get; set; }
 	}
 }

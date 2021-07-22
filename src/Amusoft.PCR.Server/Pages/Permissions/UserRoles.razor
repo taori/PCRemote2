@@ -3,6 +3,7 @@
 @using Amusoft.PCR.Model.Entities
 @using Amusoft.PCR.Server.Areas.Identity.Pages.Account.Manage
 @using System.Diagnostics
+@using Amusoft.PCR.Blazor
 @using Amusoft.PCR.Blazor.Extensions
 @using Amusoft.PCR.Model.Statics
 @using Microsoft.Extensions.Logging
@@ -34,7 +35,7 @@ else
 		
 		<div class="row mb-3 mb-xl-2 ">
 			<Button CssClass="d-inline-block col-xl-4"
-			        ButtonTheme="@Button.ButtonThemeKind.Primary"
+			        ButtonTheme="@ButtonThemeKind.Primary"
 			        OnClick="Save">
 				Save
 			</Button>
