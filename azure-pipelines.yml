@@ -15,14 +15,6 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@1
-- task: MSBuild@1
-  inputs:
-    solution: '**/*.sln'
-    configuration: 'Release'
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '**/*.sln'
 
 - task: XamarinAndroid@1
   inputs:
