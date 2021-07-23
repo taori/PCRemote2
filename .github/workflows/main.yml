@@ -22,7 +22,7 @@ jobs:
           distribution: 'adopt' # See 'Supported distributions' for available options
           java-version: '11'
       #- run: java -cp java HelloWorldApp
-      - uses: taori/xamarinandroid-signedbuild-action@v8
+      - uses: taori/xamarinandroid-signedbuild-action@v9
         with:
           csproj_path: src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj
           signing_keystore: ${{ secrets.ANDROID_KEYSTORE }}
