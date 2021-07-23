@@ -134,5 +134,16 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 		{
 			return await SecuredCallAsync(async (d) => (await d.LockWorkStationAsync(new LockWorkStationRequest(), deadline: DateTime.UtcNow.Add(timeout))).Success, false);
 		}
+
+		public async Task<bool> InvokeHostCommand(TimeSpan timeout, string id)
+		{
+			return await SecuredCallAsync(async (d) => (await d.InvokeHostCommandAsync(new InvokeHostCommandRequest(){ Id = id}, deadline: DateTime.UtcNow.Add(timeout))).Success, false);
+		}
+
+		private static readonly IList<GetHostCommandResponseItem> GetHostCommandsAsyncEmpty = new List<GetHostCommandResponseItem>();
+		public async Task<IList<GetHostCommandResponseItem>> GetHostCommandsAsync(TimeSpan timeout)
+		{
+			return await SecuredCallAsync(async (d) => (await d.GetHostCommandsAsync(new GetHostCommandRequest(), deadline: DateTime.UtcNow.Add(timeout))).Results as IList<GetHostCommandResponseItem>, GetHostCommandsAsyncEmpty);
+		}
 	}
 }

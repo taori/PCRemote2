@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
+using Android.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 {
@@ -19,9 +22,29 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 			return new ButtonListDataSource(GenerateData);
 		}
 
-		private Task<List<ButtonElement>> GenerateData()
+		private async Task<List<ButtonElement>> GenerateData()
 		{
-			return Task.FromResult(new List<ButtonElement>());
+			var hostCommands = await _agent.DesktopClient.GetHostCommandsAsync(TimeSpan.FromSeconds(5));
+			var results = new List<ButtonElement>();
+			foreach (var command in hostCommands)
+			{
+				results.Add(new ButtonElement()
+				{
+					Clickable = true,
+					ButtonText = command.Title,
+					ButtonAction = async () => await _agent.DesktopClient.InvokeHostCommand(TimeSpan.FromSeconds(5), command.CommandId)
+				});
+			}
+
+			if (hostCommands.Count == 0)
+			{
+				results.Add(new ButtonElement()
+				{
+					ButtonText = "No commands available",
+					ButtonAction = () => {}
+				});
+			}
+			return results;
 		}
 	}
 }

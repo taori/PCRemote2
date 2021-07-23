@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Model;
+using Amusoft.PCR.Model.Entities;
 using Amusoft.PCR.Model.Statics;
 using Amusoft.PCR.Server.Dependencies;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Amusoft.PCR.Server.Domain.IPC
@@ -12,11 +16,15 @@ namespace Amusoft.PCR.Server.Domain.IPC
 	[Authorize(Policy = PolicyNames.ApiPolicy)]
 	public class BackendIntegrationService : DesktopIntegrationService.DesktopIntegrationServiceBase
 	{
+		private readonly ApplicationDbContext _dbContext;
+		private readonly IAuthorizationService _authorizationService;
 		public IInteropService InteropService { get; }
 		public ILogger<BackendIntegrationService> Logger { get; }
 
-		public BackendIntegrationService(IInteropService interopService, ILogger<BackendIntegrationService> logger)
+		public BackendIntegrationService(IInteropService interopService, ILogger<BackendIntegrationService> logger, ApplicationDbContext dbContext, IAuthorizationService authorizationService)
 		{
+			_dbContext = dbContext;
+			_authorizationService = authorizationService;
 			InteropService = interopService;
 			Logger = logger;
 		}
@@ -195,6 +203,46 @@ namespace Amusoft.PCR.Server.Domain.IPC
 					Success = success
 				};
 			}
+		}
+
+		[Authorize(Roles = RoleNames.FunctionLaunchProgram)]
+		public override async Task<GetHostCommandResponse> GetHostCommands(GetHostCommandRequest request, ServerCallContext context)
+		{
+			var commands = await _dbContext.HostCommands.ToListAsync();
+			var response = new GetHostCommandResponse();
+			
+			foreach (var command in commands)
+			{
+				var authorizeResult = await _authorizationService.AuthorizeAsync(context.GetHttpContext().User, command, PolicyNames.ApplicationPermissionPolicy);
+				Logger.LogDebug("User {User} authorization status for command {Id} is {Status}", context.GetHttpContext().User, command.Id, authorizeResult.Succeeded);
+				if (authorizeResult.Succeeded)
+				{
+					response.Results.Add(new GetHostCommandResponseItem()
+					{
+						CommandId = command.Id,
+						Title = command.CommandName
+					});
+				}
+			}
+
+			return response;
+		}
+
+		[Authorize(Roles = RoleNames.FunctionLaunchProgram)]
+		public override async Task<InvokeHostCommandResponse> InvokeHostCommand(InvokeHostCommandRequest request, ServerCallContext context)
+		{
+			var command = await _dbContext.HostCommands.FindAsync(request.Id);
+			if (command == null)
+			{
+				throw new RpcException(new Status(StatusCode.NotFound, $"Command {request.Id} not found"));
+			}
+
+			var success = await InteropService.LaunchProgram(command.ProgramPath, command.Arguments);
+
+			return new InvokeHostCommandResponse()
+			{
+				Success = success
+			};
 		}
 	}
 }

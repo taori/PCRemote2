@@ -22,6 +22,8 @@ service DesktopIntegrationService {
 	rpc KillProcessById (.Amusoft.PCR.Grpc.Common.KillProcessRequest) returns (.Amusoft.PCR.Grpc.Common.KillProcessResponse) {}
 	rpc FocusWindow (.Amusoft.PCR.Grpc.Common.FocusWindowRequest) returns (.Amusoft.PCR.Grpc.Common.FocusWindowResponse) {}
 	rpc LaunchProgram (.Amusoft.PCR.Grpc.Common.LaunchProgramRequest) returns (.Amusoft.PCR.Grpc.Common.LaunchProgramResponse) {}
+	rpc GetHostCommands (.Amusoft.PCR.Grpc.Common.GetHostCommandRequest) returns (.Amusoft.PCR.Grpc.Common.GetHostCommandResponse) {}
+	rpc InvokeHostCommand (.Amusoft.PCR.Grpc.Common.InvokeHostCommandRequest) returns (.Amusoft.PCR.Grpc.Common.InvokeHostCommandResponse) {}
 }
 
 message AuthenticateRequest {}
@@ -144,5 +146,21 @@ message LaunchProgramRequest {
 	string arguments = 2;
 }
 message LaunchProgramResponse {
+	bool success = 1;
+}
+
+message GetHostCommandRequest {}
+message GetHostCommandResponseItem {
+	string commandId = 1;
+	string title = 2;
+}
+message GetHostCommandResponse {
+	repeated GetHostCommandResponseItem results = 1;
+}
+
+message InvokeHostCommandRequest {
+	string id = 1;
+}
+message InvokeHostCommandResponse {
 	bool success = 1;
 }
