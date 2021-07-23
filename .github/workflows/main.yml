@@ -13,24 +13,21 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
-  build:
-
+  Android:
     runs-on: macos-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set default Xamarin SDK versions
-      run: |
-        $VM_ASSETS/select-xamarin-sdk-v2.sh --mono=6.10 --android=10.2
-
-    - name: Setup .NET Core SDK 5.0.x
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '5.0.x'
-
-    - name: Install dependencies
-      run: nuget restore src/All.sln
-
-    - name: Build
-      run: msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /t:PackageForAndroid /p:Configuration=Debug
+      - uses: actions/checkout@v2
+      - uses: bradyjoslin/xamarinandroid-signedbuild-action@v1
+        with:
+          csproj_path: src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj
+          signing_keystore: ${{ secrets.KEYSTORE }}
+          keystore_password: ${{ secrets.KEYSTORE_PASS }}
+          signing_key_alias: ${{ secrets.KEY_ALIAS }}
+          signing_key_password: ${{ secrets.KEY_PASS }}
+          configuration: "Release"
+          mono_version: "preview"
+          xamarin_android_version: "preview"
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ipa
+          path: src/*.Droid/bin/Android/Release/**Signed.apk
