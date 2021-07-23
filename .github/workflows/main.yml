@@ -30,8 +30,8 @@ jobs:
           signing_key_alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           signing_key_password: ${{ secrets.ANDROID_KEY_PASS }}
           configuration: "Release"
-          mono_version: "stable"
-          xamarin_android_version: "stable"
+          mono_version: "preview"
+          xamarin_android_version: "preview"
       - uses: actions/upload-artifact@v2
         with:
           name: ipa
