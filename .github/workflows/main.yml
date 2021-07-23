@@ -21,13 +21,14 @@ jobs:
         with:
           distribution: 'adopt' # See 'Supported distributions' for available options
           java-version: '11'
+      - run: java -cp java HelloWorldApp
       - uses: bradyjoslin/xamarinandroid-signedbuild-action@v1
         with:
           csproj_path: src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj
-          signing_keystore: ${{ secrets.KEYSTORE }}
-          keystore_password: ${{ secrets.KEYSTORE_PASS }}
-          signing_key_alias: ${{ secrets.KEY_ALIAS }}
-          signing_key_password: ${{ secrets.KEY_PASS }}
+          signing_keystore: ${{ secrets.ANDROID_KEYSTORE }}
+          keystore_password: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          signing_key_alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          signing_key_password: ${{ secrets.ANDROID_KEY_PASS }}
           configuration: "Release"
           mono_version: "stable"
           xamarin_android_version: "stable"
