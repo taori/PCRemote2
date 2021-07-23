@@ -14,16 +14,10 @@ variables:
   outputDirectory: '$(build.binariesDirectory)/$(buildConfiguration)'
 
 steps:
-- task: NuGetToolInstaller@1
-- task: DotNetCoreCLI@2
+
+- task: VSBuild@1
   inputs:
-    command: 'restore'
-    projects: '**/*.sln'
-    feedsToUse: 'select'
-- task: XamarinAndroid@1
-  inputs:
-    projectFile: '**/*.Droid.csproj'
-    outputDirectory: '$(outputDirectory)'
+    solution: '**\*.sln'
     configuration: '$(buildConfiguration)'
-    msbuildVersionOption: 'latest'
-    jdkOption: 'JDKVersion'
+    maximumCpuCount: true
+    restoreNugetPackages: true
