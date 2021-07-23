@@ -21,7 +21,7 @@ jobs:
         with:
           distribution: 'adopt' # See 'Supported distributions' for available options
           java-version: '11'
-      - run: java -cp java HelloWorldApp
+      #- run: java -cp java HelloWorldApp
       - uses: bradyjoslin/xamarinandroid-signedbuild-action@v1
         with:
           csproj_path: src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj
