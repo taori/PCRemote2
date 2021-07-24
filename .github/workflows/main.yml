@@ -33,7 +33,3 @@ jobs:
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASS }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASS }}
-      - uses: actions/upload-artifact@v2
-      - name: Signed APK upload
-        with:
-         path: ${{steps.sign_app.outputs.signedReleaseFile}}
