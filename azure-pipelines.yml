@@ -25,6 +25,17 @@ steps:
 - task: XamarinAndroid@1
   inputs:
     projectFile: '**/*Droid.csproj'
+    outputDirectory: '$(Build.BinariesDirectory)'
     configuration: '$(buildConfiguration)'
     msbuildVersionOption: 'latest'
     jdkOption: 'JDKVersion'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.BinariesDirectory)'
+    Contents: '*.apk'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/APK'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/APK'
+    ArtifactName: 'APK'
+    publishLocation: 'Container'
