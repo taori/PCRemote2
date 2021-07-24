@@ -27,7 +27,7 @@ jobs:
         uses: r0adkll/sign-android-release@v1
         id: sign_app        
         with:          
-          releaseDirectory: $GITHUB_WORKSPACE\artifacts
+          releaseDirectory: ${{ env.GITHUB_WORKSPACE }}\artifacts
           signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASS }}
