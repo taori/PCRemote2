@@ -4,5 +4,6 @@ Remote controller for your own PC
 ## OS support:
 - Windows 10
 
-## Remote Client suppport:
+## Remote Client support:
 - Android
+- Browser
