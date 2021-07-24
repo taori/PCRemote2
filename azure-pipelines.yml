@@ -28,3 +28,12 @@ steps:
     configuration: '$(buildConfiguration)'
     msbuildVersionOption: 'latest'
     jdkOption: 'JDKVersion'
+- task: CopyFiles@2
+  inputs:
+    Contents: '*.apk'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/APK'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/APK'
+    ArtifactName: 'APK'
+    publishLocation: 'Container'
