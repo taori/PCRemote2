@@ -24,8 +24,8 @@ jobs:
           vs-version: 16.9
       - run: msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /restore /t:"PackageForAndroid" /bl /p:Configuration=Release
       - name: Sign app APK
-      - uses: r0adkll/sign-android-release@v1
-      - id: sign_app        
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app        
         with:          
           releaseDirectory: app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
