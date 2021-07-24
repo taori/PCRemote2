@@ -18,7 +18,7 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '**\*Droid.csproj'
-    msbuildArgs: '/t:Restore /p:AndroidBuildApplicationPackage=true'
+    msbuildArgs: '/t:Restore;SignAndroidPackage'
     configuration: '$(buildConfiguration)'
     maximumCpuCount: true
     restoreNugetPackages: true
