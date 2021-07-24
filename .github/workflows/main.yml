@@ -25,7 +25,9 @@ jobs:
       - run: msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /restore /t:"PackageForAndroid" /bl /p:Configuration=Release /p:OutputPath=$GITHUB_WORKSPACE\artifacts
       - name: Sign app APK
         uses: r0adkll/sign-android-release@v1
-        id: sign_app        
+        id: sign_app
+        env:
+          BUILD_TOOLS_VERSION: "30.0.2"
         with:          
           releaseDirectory: ${{ env.GITHUB_WORKSPACE }}\artifacts
           signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
