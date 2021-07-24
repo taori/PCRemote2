@@ -18,7 +18,13 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '**\*Droid.csproj'
-    msbuildArgs: '/t:Restore;SignAndroidPackage'
+    msbuildArgs: '/t:Restore'
     configuration: '$(buildConfiguration)'
     clean: true
     maximumCpuCount: true
+- task: XamarinAndroid@1
+  inputs:
+    projectFile: '**/*Droid.csproj'
+    configuration: '$(buildConfiguration)'
+    msbuildVersionOption: 'latest'
+    jdkOption: 'JDKVersion'
