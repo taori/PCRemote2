@@ -20,5 +20,5 @@ steps:
     solution: '**\*Droid.csproj'
     msbuildArgs: '/t:Restore;SignAndroidPackage'
     configuration: '$(buildConfiguration)'
+    clean: true
     maximumCpuCount: true
-    restoreNugetPackages: true
