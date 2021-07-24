@@ -138,7 +138,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		{
 			if (sender is SelectServerFragmentDataSourceItem holder)
 			{
-				ItemClicked?.Invoke(null, _dataItems[holder.AdapterPosition]);
+				ItemClicked?.Invoke(null, _dataItems[holder.AbsoluteAdapterPosition]);
 			}
 		}
 

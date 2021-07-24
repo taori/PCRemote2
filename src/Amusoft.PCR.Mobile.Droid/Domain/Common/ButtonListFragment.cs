@@ -140,7 +140,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 
 	    private void ItemClicked(object sender, EventArgs e)
 	    {
-		    ViewHolderClicked?.Invoke(this, AdapterPosition);
+		    ViewHolderClicked?.Invoke(this, AbsoluteAdapterPosition);
 	    }
     }
 
