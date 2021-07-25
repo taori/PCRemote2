@@ -38,5 +38,12 @@ jobs:
           msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:normal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts" /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$env:ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$env:ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="$env:WS\android.keystore" /p:AndroidSigningStorePass="$env:ANDROID_KEYSTORE_PASS"
           Remove-Item "$env:WS\android.keystore.encoded"
           Remove-Item "$env:WS\android.keystore"
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: apk
+          path: "*-Signed.apk"          
+          if-no-files-found: error
+          retention-days: 1
 
           
