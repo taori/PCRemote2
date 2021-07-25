@@ -25,5 +25,5 @@ jobs:
       - run: |
           echo ${#$ANDROID_KEYSTORE}
           echo -n "$ANDROID_KEYSTORE" | base64 --decode > ${{ github.workspace }}\android.keystore
-          msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:minimal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath=${{ github.workspace }}\artifacts /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="${{ github.workspace }}\android.keystore" /p:AndroidSigningStorePass="$ANDROID_KEYSTORE_PASS"
+          msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:normal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath=${{ github.workspace }}\artifacts /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="${{ github.workspace }}\android.keystore" /p:AndroidSigningStorePass="$ANDROID_KEYSTORE_PASS"
           
