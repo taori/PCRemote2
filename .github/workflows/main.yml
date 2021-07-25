@@ -45,5 +45,41 @@ jobs:
           path: "**/*-Signed.apk"          
           if-no-files-found: error
           retention-days: 14
+          
+      - name: version
+        run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
+        id: version
+        
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: true
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          
+      - name: upload linux artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/azblogfilter.linux-amd64.tar.gz
+          asset_name: azblogfilter.linux-amd64.tar.gz
+          asset_content_type: application/gzip
+          
+      - name: Upload Release Assets
+      # You may pin to the exact commit or the version.
+      # uses: alexellis/upload-assets@5586bc227f8525a5e3525e6edf64da5350bfb5b1
+        uses: alexellis/upload-assets@0.3.0
+        env:          
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_content_type: "application/vnd.android.package-archive"
+          asset_paths: '[ "**/*-Signed.apk" ]'
 
           
