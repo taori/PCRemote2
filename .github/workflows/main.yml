@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v2.2.4
         with:
           name: apk
-          path: "*-Signed.apk"          
+          path: "**/*-Signed.apk"          
           if-no-files-found: error
           retention-days: 1
 
