@@ -23,6 +23,6 @@ jobs:
           # Version of Visual Studio to search; defaults to latest if not specified
           vs-version: 16.9
       - run: |
-          echo -n "$ANDROID_KEYSTORE" | base64 --decode --output $GITHUB_WORKSPACE/build/android.keystore
+          echo -n "$ANDROID_KEYSTORE" | base64 --decode > $GITHUB_WORKSPACE/build/android.keystore
           msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:minimal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath=$GITHUB_WORKSPACE\artifacts /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="$GITHUB_WORKSPACE"/build/android.keystore /p:AndroidSigningStorePass="$ANDROID_KEYSTORE_PASS"
           rm $GITHUB_WORKSPACE/build/android.keystore
