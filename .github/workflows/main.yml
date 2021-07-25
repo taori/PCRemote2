@@ -44,6 +44,6 @@ jobs:
           name: apk
           path: "**/*-Signed.apk"          
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 14
 
           
