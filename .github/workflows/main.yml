@@ -22,15 +22,7 @@ jobs:
         with:
           # Version of Visual Studio to search; defaults to latest if not specified
           vs-version: 16.9
-      - run: msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:normal /restore /t:"PackageForAndroid" /bl /p:Configuration=Release /p:OutputPath=$GITHUB_WORKSPACE\artifacts
-      - name: Sign app APK
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        env:
-          BUILD_TOOLS_VERSION: "30.0.2"
-        with:          
-          releaseDirectory: ${{ env.GITHUB_WORKSPACE }}\artifacts
-          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
-          alias: ${{ secrets.ANDROID_KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          keyPassword: ${{ secrets.ANDROID_KEY_PASS }}
+      - run: |
+          echo -n "$ANDROID_KEYSTORE" | base64 --decode --output $GITHUB_WORKSPACE/build/android.keystore
+          msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:minimal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath=$GITHUB_WORKSPACE\artifacts /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="$GITHUB_WORKSPACE"/build/android.keystore /p:AndroidSigningStorePass="$ANDROID_KEYSTORE_PASS"
+          rm $GITHUB_WORKSPACE/build/android.keystore
