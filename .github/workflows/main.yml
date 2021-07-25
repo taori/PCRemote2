@@ -51,8 +51,8 @@ jobs:
         #run: echo "::set-output name=version::release-${{ github.sha }}"        
         shell: pwsh
         run: |
-          $trimmedSha = $("${{ github.sha }}").Substring(0,30)
-          echo "::set-output name=version::release-$trimmedSha"  
+          $trimmedSha = $("${{ github.sha }}").Substring(0,27)
+          echo "::set-output name=version::ci-release-$trimmedSha"  
         id: version
         
       - name: release
