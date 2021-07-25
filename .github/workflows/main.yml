@@ -36,7 +36,7 @@ jobs:
       - shell: pwsh
         run: |
           msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:normal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts" /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$env:ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$env:ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="$env:WS\android.keystore" /p:AndroidSigningStorePass="$env:ANDROID_KEYSTORE_PASS"
-          Remove-Item "$WS\android.keystore.encoded"
-          Remove-Item "$WS\android.keystore"
+          Remove-Item "$env:WS\android.keystore.encoded"
+          Remove-Item "$env:WS\android.keystore"
 
           
