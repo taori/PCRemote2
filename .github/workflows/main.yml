@@ -47,7 +47,8 @@ jobs:
           retention-days: 14
           
       - name: version
-        run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
+        #run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
+        run: echo "::set-output name=version::${{ github.sha }}
         id: version
         
       - name: release
