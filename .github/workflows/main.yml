@@ -24,7 +24,7 @@ jobs:
           vs-version: 16.9
       - shell: bash
         run: |
-          echo -n "$ANDROID_KEYSTORE" | base64 --decode $WS\android.keystore
+          echo -n "$ANDROID_KEYSTORE" | base64 --decode "$WS\android.keystore"
           msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:normal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath="$WS\artifacts" /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="$WS\android.keystore" /p:AndroidSigningStorePass="$ANDROID_KEYSTORE_PASS"
         env:
           ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
