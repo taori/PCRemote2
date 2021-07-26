@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Amusoft.PCR.Server.Dependencies
 {
-	public interface IInteropService
+	public interface IUserContextChannel
 	{
 		Task<bool> ToggleMute();
 		Task<bool> MonitorOn();
@@ -32,14 +32,16 @@ namespace Amusoft.PCR.Server.Dependencies
 		Task<bool> FocusProcessWindow(int processId);
 		Task<bool> LaunchProgram(string programName, string arguments = default);
 		Task<bool> SendMediaKey(SendMediaKeysRequest.Types.MediaKeyCode code);
+		Task<string> GetClipboardAsync(string requestee);
+		Task<bool> SetClipboardAsync(string requestee, string content);
 	}
 
-	public class InteropService : IInteropService
+	public class UserContextChannel : IUserContextChannel
 	{
-		private readonly ILogger<InteropService> _logger;
+		private readonly ILogger<UserContextChannel> _logger;
 		private readonly DesktopIntegrationService.DesktopIntegrationServiceClient _service;
 
-		public InteropService(NamedPipeChannel channel, ILogger<InteropService> logger)
+		public UserContextChannel(NamedPipeChannel channel, ILogger<UserContextChannel> logger)
 		{
 			_logger = logger;
 			_service = new DesktopIntegrationService.DesktopIntegrationServiceClient(channel);
@@ -291,6 +293,36 @@ namespace Amusoft.PCR.Server.Dependencies
 			{
 				_logger.LogError(e, "Exception occured while calling [{Name}] with code [{Code}]", nameof(SendMediaKey), code);
 				return false;
+			}
+		}
+
+		public async Task<string> GetClipboardAsync(string requestee)
+		{
+			try
+			{
+				_logger.LogInformation("Calling method {Method}", nameof(GetClipboardAsync));
+				var content = await _service.GetClipboardAsync(new GetClipboardRequest(){ Requestee = requestee});
+				return content.Content;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(GetClipboardAsync));
+				return default;
+			}
+		}
+
+		public async Task<bool> SetClipboardAsync(string requestee, string content)
+		{
+			try
+			{
+				_logger.LogInformation("Calling method {Method}", nameof(SetClipboardAsync));
+				var result = await _service.SetClipboardAsync(new SetClipboardRequest() {Content = content, Requestee = requestee});
+				return result.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(SetClipboardAsync));
+				return default;
 			}
 		}
 	}

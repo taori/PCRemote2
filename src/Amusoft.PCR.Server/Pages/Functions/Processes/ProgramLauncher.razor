@@ -11,7 +11,7 @@
 @using Amusoft.PCR.Server.Extensions
 @using Microsoft.AspNetCore.Authorization.Infrastructure
 @using System.Security.Claims
-@inject IInteropService _interopService
+@inject IUserContextChannel _userContextChannel
 
 <Title WindowTitle="Launch program" Headline="Launch program"></Title>
 <div class="container">
@@ -24,7 +24,7 @@
 		foreach (var item in _commands)
 		{
 			<div class="row mb-3 mb-xl-2">
-				<Button CssClass="col" OnClick="@(() => _interopService.LaunchProgram(item.ProgramPath, item.Arguments ))">@item.CommandName</Button>
+				<Button CssClass="col" OnClick="@(() => _userContextChannel.LaunchProgram(item.ProgramPath, item.Arguments ))">@item.CommandName</Button>
 				@if (_displayModificationButtons)
 				{
 					<Button CssClass="col-auto ml-3" ButtonTheme="ButtonThemeKind.Success" OnClick="@(() => EditProgram(item))">Edit</Button>

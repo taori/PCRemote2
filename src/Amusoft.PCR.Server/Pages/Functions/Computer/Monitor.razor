@@ -1,14 +1,14 @@
 ﻿@page "/functions/computer/monitor"
 @using Amusoft.PCR.Server.Dependencies
-@inject IInteropService _interopService
+@inject IUserContextChannel _userContextChannel
 
 <Title Headline="Monitor" WindowTitle="Monitor"></Title>
 
 <div class="container">
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="d-inline-block col-xl-4" OnClick="(() => _interopService.MonitorOff())">Monitor Off</Button>
+		<Button CssClass="d-inline-block col-xl-4" OnClick="(() => _userContextChannel.MonitorOff())">Monitor Off</Button>
 	</div>
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="d-inline-block col-xl-4" OnClick="(() => _interopService.MonitorOn())">Monitor On</Button>
+		<Button CssClass="d-inline-block col-xl-4" OnClick="(() => _userContextChannel.MonitorOn())">Monitor On</Button>
 	</div>
 </div>

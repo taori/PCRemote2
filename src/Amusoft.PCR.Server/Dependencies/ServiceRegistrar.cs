@@ -23,7 +23,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			collection.AddSingleton<ClassLoader>();
 			collection.AddSingleton<IValidationService, ValidationService>();
 			collection.AddSingleton<NamedPipeChannel>(CreateConfiguredNamedPipeChannel());
-			collection.AddSingleton<IInteropService, InteropService>();
+			collection.AddSingleton<IUserContextChannel, UserContextChannel>();
 			collection.AddSingleton<IIntegrationApplicationLocator, IntegrationApplicationLocator>();
 			collection.AddSingleton<IAuthorizationHandler, RoleOrAdminAuthorizationHandler>();
 			collection.AddSingleton<IAuthorizationHandler, HostCommandAuthorizationHandler>();

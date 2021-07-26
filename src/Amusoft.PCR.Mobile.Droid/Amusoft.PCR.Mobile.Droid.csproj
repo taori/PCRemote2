@@ -84,6 +84,7 @@
     <Compile Include="Domain\Server\HostControl\HostControlFragment.cs" />
     <Compile Include="Domain\Server\HostSelection\HostSelectionFragment.cs" />
     <Compile Include="Domain\Server\HostSelection\HostSelectionDataSource.cs" />
+    <Compile Include="Domain\Server\InputControl\ClipboardFragment.cs" />
     <Compile Include="Domain\Server\InputControl\InputFragment.cs" />
     <Compile Include="Domain\Server\MonitorControl\MonitorFragment.cs" />
     <Compile Include="Domain\Server\ProgramControl\KillProcessByIdFragment.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Domain\Server\ProgramControl\ProgramFragment.cs" />
     <Compile Include="Domain\Server\SystemStateControl\SystemStateFragment.cs" />
     <Compile Include="Extensions\FragmentTransactionExtensions.cs" />
+    <Compile Include="Helpers\ToastHelper.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -442,15 +444,11 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\server_control_input_main.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\circle.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

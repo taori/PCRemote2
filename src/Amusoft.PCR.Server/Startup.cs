@@ -24,6 +24,7 @@ using Amusoft.PCR.Server.Dependencies;
 using Amusoft.PCR.Server.Domain.Authorization;
 using Amusoft.PCR.Server.Domain.IPC;
 using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -42,6 +43,23 @@ using Microsoft.OpenApi.Models;
 
 namespace Amusoft.PCR.Server
 {
+	// public class BlaInterceptor : Interceptor
+	// {
+	// 	public override async AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context,
+	// 		AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
+	// 	{
+	// 		try
+	// 		{
+	// 			var interceptor = await base.AsyncUnaryCall(request, context, continuation);
+	// 			return interceptor;
+	// 		}
+	// 		catch (Exception e)
+	// 		{
+	// 			return default(TResponse);
+	// 		}
+	// 	}
+	// }
+
 	public class Startup
 	{
 		public Startup(IConfiguration configuration)
@@ -69,7 +87,10 @@ namespace Amusoft.PCR.Server
 			{
 				options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 			});
-			services.AddGrpc();
+			services.AddGrpc(options =>
+			{
+				// options.Interceptors.Add<BlaInterceptor>();
+			});
 			services.AddDatabaseDeveloperPageExceptionFilter();
 			services.AddOptions();
 			services.AddAuthorization(options =>

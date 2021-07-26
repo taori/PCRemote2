@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Integration.WindowsDesktop.Helpers;
 using Amusoft.PCR.Integration.WindowsDesktop.Interop;
@@ -8,13 +10,15 @@ using Amusoft.Toolkit.Impersonation;
 using Google.Protobuf.Collections;
 using Grpc.Core;
 using NLog;
+using MessageBox = System.Windows.Forms.MessageBox;
 using NativeMethods = Amusoft.PCR.Integration.WindowsDesktop.Interop.NativeMethods;
+using TextDataFormat = System.Windows.TextDataFormat;
 
 namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 {
-	public class WindowsInteropServiceImplementation : DesktopIntegrationService.DesktopIntegrationServiceBase
+	public class WindowsDesktopIntegrationService : DesktopIntegrationService.DesktopIntegrationServiceBase
 	{
-		private static readonly Logger Log = LogManager.GetLogger(nameof(WindowsInteropServiceImplementation));
+		private static readonly Logger Log = LogManager.GetLogger(nameof(WindowsDesktopIntegrationService));
 		
 		public override Task<SuicideOnProcessExitResponse> SuicideOnProcessExit(SuicideOnProcessExitRequest request, ServerCallContext context)
 		{
@@ -174,6 +178,56 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 			}
 
 			return Task.FromResult(new SendMediaKeysReply());
+		}
+		
+		public override async Task<GetClipboardResponse> GetClipboard(GetClipboardRequest request, ServerCallContext context)
+		{
+			Log.Info("Executing [{Name}]", nameof(GetClipboard));
+			if (MessageBox.Show($"Send clipboard content to {request.Requestee}?", "PC Remote 2", MessageBoxButtons.YesNo) == DialogResult.Yes)
+			{
+				try
+				{
+					var content = await ClipboardHelper.GetClipboardAsync(System.Windows.Forms.TextDataFormat.UnicodeText);
+
+					Log.Debug("Returning {Length} characters to client", content.Length);
+					return new GetClipboardResponse() { Content = content };
+				}
+				catch (Exception e)
+				{
+					Log.Error(e, "Failed to read clipboard.");
+					return new GetClipboardResponse() { Content = default };
+				}
+			}
+			else
+			{
+				Log.Warn("Permission denied");
+				throw new RpcException(new Status(StatusCode.PermissionDenied, "Host declined permission"));
+			}
+		}
+		
+		public override async Task<SetClipboardResponse> SetClipboard(SetClipboardRequest request, ServerCallContext context)
+		{
+			Log.Info("Executing [{Name}]", nameof(GetClipboard));
+			if (MessageBox.Show($"Allow {request.Requestee} to set clipboard?", "PC Remote 2", MessageBoxButtons.YesNo) == DialogResult.Yes)
+			{
+				try
+				{
+					Log.Debug("Setting {Length} characters to client", request.Content.Length);
+					await ClipboardHelper.SetClipboardAsync(request.Content, System.Windows.Forms.TextDataFormat.UnicodeText);
+
+					return new SetClipboardResponse() { Success = true };
+				}
+				catch (Exception e)
+				{
+					Log.Error(e, "Failed to set clipboard.");
+					return new SetClipboardResponse() { Success = false };
+				}
+			}
+			else
+			{
+				Log.Warn("Permission denied");
+				throw new RpcException(new Status(StatusCode.PermissionDenied, "Host declined permission"));
+			}
 		}
 	}
 }

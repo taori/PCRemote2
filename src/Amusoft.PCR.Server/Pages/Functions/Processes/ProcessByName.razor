@@ -37,7 +37,7 @@ else
 @code {
 
 	[Inject]
-	public IInteropService InteropService { get; set; }
+	public IUserContextChannel UserContextChannel { get; set; }
 
 	[Inject]
 	public NavigationManager NavigationManager { get; set; }
@@ -56,7 +56,7 @@ else
 
 	private async Task ReloadAsync()
 	{
-		var processList = await InteropService.GetProcessList();
+		var processList = await UserContextChannel.GetProcessList();
 		_processList = processList.Where(d => string.Equals(d.ProcessName, ProcessName)).ToList();
 	}
 
@@ -64,7 +64,7 @@ else
 
 	private async Task KillProcess(ProcessListResponseItem item)
 	{
-		await InteropService.KillProcessById(item.ProcessId);
+		await UserContextChannel.KillProcessById(item.ProcessId);
 		await ReloadAsync();
 
 		if (_processList.Count == 0)

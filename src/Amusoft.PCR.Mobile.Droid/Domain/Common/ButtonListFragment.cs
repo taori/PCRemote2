@@ -146,10 +146,21 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 
     public class ButtonElement
     {
+	    public ButtonElement(bool clickable, string buttonText, Action buttonAction)
+	    {
+		    Clickable = clickable;
+		    ButtonText = buttonText;
+		    ButtonAction = buttonAction;
+	    }
+
+	    public ButtonElement()
+	    {
+	    }
+
 	    public bool Clickable { get; set; }
 
-	    public Action ButtonAction { get; set; }
-
 	    public string ButtonText { get; set; }
+
+		public Action ButtonAction { get; set; }
     }
 }

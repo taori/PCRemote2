@@ -4,7 +4,7 @@
 @using Amusoft.Toolkit.UI
 @using Microsoft.Extensions.Logging
 @using Amusoft.PCR.Blazor
-@inject IInteropService _interopService
+@inject IUserContextChannel _userContextChannel
 @inject ILogger<ProcessByNameOverview> _logger
 @inject NavigationManager _navigationManager
 
@@ -49,7 +49,7 @@ else
 		_logger.LogDebug("Reloading list");
 
 		_processList = null;
-		var processes = await _interopService.GetProcessList();
+		var processes = await _userContextChannel.GetProcessList();
 		_processList = processes.GroupBy(d => d.ProcessName).Select(grouping => grouping.First()).OrderBy(d => d.ProcessName).ToList();
 	}
 
@@ -60,7 +60,7 @@ else
 
 	private async Task ExecuteKillProcess(ProcessListResponseItem item)
 	{
-		await _interopService.KillProcessById(item.ProcessId);
+		await _userContextChannel.KillProcessById(item.ProcessId);
 		await ReloadAsync();
 		await KillRequested.InvokeAsync(item.ProcessId);
 	}

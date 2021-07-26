@@ -2,7 +2,7 @@
 @using Amusoft.PCR.Server.Dependencies
 @using Amusoft.PCR.Model.Statics
 @inject NavigationManager _navigationManager
-@inject IInteropService _interopService
+@inject IUserContextChannel _userContextChannel
 @attribute [Authorize(Roles = RoleNames.Computer)]
 
 <Title WindowTitle="Computer controls" Headline="Computer controls"></Title>
