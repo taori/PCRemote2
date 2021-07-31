@@ -48,7 +48,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 			}
 		}
 
-		private void ProcessExitListenerManagerOnProcessExited(object? sender, int e)
+		private void ProcessExitListenerManagerOnProcessExited(object sender, int e)
 		{
 			Log.Info("Parent process {Id} shut down - exiting program", e);
 			Shutdown(0);

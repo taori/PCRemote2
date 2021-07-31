@@ -14,7 +14,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 		{
 #if DEBUG
 			// ipAddress = "192.168.0.135";
-			ipAddress = "192.168.178.30";
+			ipAddress = "192.168.0.129";
 			port = 5001;
 #endif
 

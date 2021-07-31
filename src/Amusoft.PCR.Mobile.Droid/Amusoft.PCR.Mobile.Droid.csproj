@@ -93,6 +93,7 @@
     <Compile Include="Domain\Server\ProgramControl\ProgramFragment.cs" />
     <Compile Include="Domain\Server\SystemStateControl\SystemStateFragment.cs" />
     <Compile Include="Extensions\FragmentTransactionExtensions.cs" />
+    <Compile Include="Helpers\SocketHelper.cs" />
     <Compile Include="Helpers\ToastHelper.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />

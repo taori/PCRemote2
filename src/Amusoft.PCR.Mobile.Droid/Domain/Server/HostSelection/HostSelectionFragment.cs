@@ -79,19 +79,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 				transaction.Commit();
 			}
-
-			// var fragment = new HostControlFragment();
-			// var bundle = new Bundle();
-			// bundle.PutString(HostControlFragment.ArgumentTargetAddress, e.EndPoint.Address.ToString());
-			// fragment.Arguments = bundle;
-			// using (var transaction = ParentFragmentManager.BeginTransaction())
-			// {
-			// 	transaction.AddToBackStack(null);
-			// 	transaction.SetCustomAnimations(Resource.Animation.enter_from_right, Resource.Animation.exit_to_left, Resource.Animation.enter_from_left, Resource.Animation.exit_to_right);
-			// 	transaction.Replace(Resource.Id.content_display_frame, fragment);
-			//
-			// 	transaction.Commit();
-			// }
 		}
 
 		private static void SendBroadcastMessage()

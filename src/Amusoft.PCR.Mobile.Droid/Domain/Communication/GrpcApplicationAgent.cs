@@ -19,6 +19,7 @@ using NLog;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 {
+
 	public class GrpcApplicationAgent : IDisposable
 	{
 		private readonly GrpcChannel _channel;

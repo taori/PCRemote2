@@ -40,12 +40,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			return Task.FromResult(buttons);
 		}
 
-		private async Task TellClipboard()
+		private Task TellClipboard()
 		{
 			if (TryGetClipboardContent(out var content))
 			{
 				ToastHelper.Display(Context, content, ToastLength.Long);
 			}
+
+			return Task.CompletedTask;
 		}
 
 		private async Task SetHostClipboard()

@@ -87,10 +87,7 @@ namespace Amusoft.PCR.Server
 			{
 				options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 			});
-			services.AddGrpc(options =>
-			{
-				// options.Interceptors.Add<BlaInterceptor>();
-			});
+			services.AddGrpc();
 			services.AddDatabaseDeveloperPageExceptionFilter();
 			services.AddOptions();
 			services.AddAuthorization(options =>
