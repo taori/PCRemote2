@@ -79,7 +79,7 @@ jobs:
           
       - name: Display structure of downloaded files
         shell: bash
-        run: ls -R ${{ github.workspace }}
+        run: ls -R $GITHUB_WORKSPACE
           
       - id: upload-release-asset 
         uses: actions/upload-release-asset@v1
