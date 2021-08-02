@@ -38,21 +38,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 			HostSelectionDataSource.Instance.ItemClicked -= InstanceOnItemClicked;
 			HostSelectionDataSource.Instance.ItemClicked += InstanceOnItemClicked;
-
-			HandleForceBroadcastButton(view);
-		}
-
-		private void HandleForceBroadcastButton(View view)
-		{
-			var button = view.FindViewById<Button>(Resource.Id.button1);
-			button.Click += ButtonOnClick;
-			HideButton(button);
-		}
-
-		[Conditional("RELEASE")]
-		private void HideButton(Button button)
-		{
-			button.Visibility = ViewStates.Gone;
 		}
 
 		public void OnRefresh()
@@ -79,20 +64,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 				transaction.Commit();
 			}
-		}
-
-		private static void SendBroadcastMessage()
-		{
-			using var client = new UdpClient();
-			client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-			client.ExclusiveAddressUse = false;
-			var bytes = Encoding.UTF8.GetBytes(GrpcHandshakeFormatter.Write("TestMachine", new[] { 55863 }));
-			client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 55863));
-		}
-
-		private void ButtonOnClick(object sender, EventArgs e)
-		{
-			SendBroadcastMessage();
 		}
 	}
 }

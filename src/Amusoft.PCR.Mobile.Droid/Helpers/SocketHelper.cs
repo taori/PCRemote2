@@ -13,7 +13,7 @@ namespace Amusoft.PCR.Mobile.Droid.Helpers
 		{
 			try
 			{
-				var socket = new Socket();
+				using var socket = new Socket();
 				await socket.ConnectAsync(new InetSocketAddress(ip, port), (int)timeout.TotalMilliseconds);
 				socket.Close();
 				return true;
