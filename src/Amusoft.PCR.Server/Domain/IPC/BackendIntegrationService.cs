@@ -18,14 +18,14 @@ namespace Amusoft.PCR.Server.Domain.IPC
 	{
 		private readonly ApplicationDbContext _dbContext;
 		private readonly IAuthorizationService _authorizationService;
-		public IUserContextChannel UserContextChannel { get; }
+		public IUserContextChannel InteropService { get; }
 		public ILogger<BackendIntegrationService> Logger { get; }
 
-		public BackendIntegrationService(IUserContextChannel userContextChannel, ILogger<BackendIntegrationService> logger, ApplicationDbContext dbContext, IAuthorizationService authorizationService)
+		public BackendIntegrationService(IUserContextChannel interopService, ILogger<BackendIntegrationService> logger, ApplicationDbContext dbContext, IAuthorizationService authorizationService)
 		{
 			_dbContext = dbContext;
 			_authorizationService = authorizationService;
-			UserContextChannel = userContextChannel;
+			InteropService = interopService;
 			Logger = logger;
 		}
 
@@ -38,7 +38,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionToggleMute)]
 		public override async Task<ToggleMuteReply> ToggleMute(ToggleMuteRequest request, ServerCallContext context)
 		{
-			var result = await UserContextChannel.ToggleMute();
+			var result = await InteropService.ToggleMute();
 			return new ToggleMuteReply()
 			{
 				Muted = result
@@ -48,7 +48,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionMonitorControl)]
 		public override async Task<MonitorOnReply> MonitorOn(MonitorOnRequest request, ServerCallContext context)
 		{
-			var result = await UserContextChannel.MonitorOn();
+			var result = await InteropService.MonitorOn();
 			return new MonitorOnReply()
 			{
 				Success = result
@@ -58,7 +58,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionMonitorControl)]
 		public override async Task<MonitorOffReply> MonitorOff(MonitorOffRequest request, ServerCallContext context)
 		{
-			var result = await UserContextChannel.MonitorOff();
+			var result = await InteropService.MonitorOff();
 			return new MonitorOffReply()
 			{
 				Success = result
@@ -68,7 +68,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionShutdownCancel)]
 		public override async Task<AbortShutdownReply> AbortShutDown(AbortShutdownRequest request, ServerCallContext context)
 		{
-			var success = await UserContextChannel.AbortShutdown();
+			var success = await InteropService.AbortShutdown();
 			return new AbortShutdownReply()
 			{
 				Success = success
@@ -78,7 +78,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionShutdown)]
 		public override async Task<ShutdownDelayedReply> ShutDownDelayed(ShutdownDelayedRequest request, ServerCallContext context)
 		{
-			var success = await UserContextChannel.Shutdown(TimeSpan.FromSeconds(request.Seconds), request.Force);
+			var success = await InteropService.Shutdown(TimeSpan.FromSeconds(request.Seconds), request.Force);
 			return new ShutdownDelayedReply()
 			{
 				Success = success
@@ -88,7 +88,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionRestart)]
 		public override async Task<RestartReply> Restart(RestartRequest request, ServerCallContext context)
 		{
-			var success = await UserContextChannel.Restart(TimeSpan.FromSeconds(request.Delay), request.Force);
+			var success = await InteropService.Restart(TimeSpan.FromSeconds(request.Delay), request.Force);
 			return new RestartReply()
 			{
 				Success = success
@@ -98,7 +98,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionHibernate)]
 		public override async Task<HibernateReply> Hibernate(HibernateRequest request, ServerCallContext context)
 		{
-			var success = await UserContextChannel.Hibernate();
+			var success = await InteropService.Hibernate();
 			return new HibernateReply()
 			{
 				Success = success
@@ -108,7 +108,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionMasterVolumeControl)]
 		public override async Task<SetMasterVolumeReply> SetMasterVolume(SetMasterVolumeRequest request, ServerCallContext context)
 		{
-			var value = await UserContextChannel.SetMasterVolume(request.Value);
+			var value = await InteropService.SetMasterVolume(request.Value);
 			return new SetMasterVolumeReply()
 			{
 				Value = value
@@ -118,7 +118,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionMasterVolumeControl)]
 		public override async Task<GetMasterVolumeReply> GetMasterVolume(GetMasterVolumeRequest request, ServerCallContext context)
 		{
-			var value = await UserContextChannel.GetMasterVolume();
+			var value = await InteropService.GetMasterVolume();
 			return new GetMasterVolumeReply()
 			{
 				Value = value
@@ -128,7 +128,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionSendInput)]
 		public override async Task<SendKeysReply> SendKeys(SendKeysRequest request, ServerCallContext context)
 		{
-			var success = await UserContextChannel.SendKeys(request.Message);
+			var success = await InteropService.SendKeys(request.Message);
 			return new SendKeysReply()
 			{
 				Success = success
@@ -138,7 +138,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionSendInput)]
 		public override async Task<SendMediaKeysReply> SendMediaKeys(SendMediaKeysRequest request, ServerCallContext context)
 		{
-			var success = await UserContextChannel.SendMediaKey(request.KeyCode);
+			var success = await InteropService.SendMediaKey(request.KeyCode);
 			return new SendMediaKeysReply()
 			{
 				Success = success
@@ -148,7 +148,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionLockWorkstation)]
 		public override async Task<LockWorkStationReply> LockWorkStation(LockWorkStationRequest request, ServerCallContext context)
 		{
-			var success = await UserContextChannel.LockWorkStation();
+			var success = await InteropService.LockWorkStation();
 			return new LockWorkStationReply()
 			{
 				Success = success
@@ -158,7 +158,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionGetProcessList)]
 		public override async Task<ProcessListResponse> GetProcessList(ProcessListRequest request, ServerCallContext context)
 		{
-			var results = await UserContextChannel.GetProcessList();
+			var results = await InteropService.GetProcessList();
 			var processListResponse = new ProcessListResponse();
 			processListResponse.Results.AddRange(results);
 			return processListResponse;
@@ -167,7 +167,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionKillProcessById)]
 		public override async Task<KillProcessResponse> KillProcessById(KillProcessRequest request, ServerCallContext context)
 		{
-			var success = await UserContextChannel.KillProcessById(request.ProcessId);
+			var success = await InteropService.KillProcessById(request.ProcessId);
 			return new KillProcessResponse()
 			{
 				Success = success
@@ -177,7 +177,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionFocusWindow)]
 		public override async Task<FocusWindowResponse> FocusWindow(FocusWindowRequest request, ServerCallContext context)
 		{
-			var success = await UserContextChannel.FocusProcessWindow(request.ProcessId);
+			var success = await InteropService.FocusProcessWindow(request.ProcessId);
 			return new FocusWindowResponse()
 			{
 				Success = success
@@ -189,7 +189,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		{
 			if (request.Arguments == null)
 			{
-				var success = await UserContextChannel.LaunchProgram(request.ProgramName);
+				var success = await InteropService.LaunchProgram(request.ProgramName);
 				return new LaunchProgramResponse()
 				{
 					Success = success
@@ -197,7 +197,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			}
 			else
 			{
-				var success = await UserContextChannel.LaunchProgram(request.ProgramName, request.Arguments);
+				var success = await InteropService.LaunchProgram(request.ProgramName, request.Arguments);
 				return new LaunchProgramResponse()
 				{
 					Success = success
@@ -237,26 +237,12 @@ namespace Amusoft.PCR.Server.Domain.IPC
 				throw new RpcException(new Status(StatusCode.NotFound, $"Command {request.Id} not found"));
 			}
 
-			var success = await UserContextChannel.LaunchProgram(command.ProgramPath, command.Arguments);
+			var success = await InteropService.LaunchProgram(command.ProgramPath, command.Arguments);
 
 			return new InvokeHostCommandResponse()
 			{
 				Success = success
 			};
-		}
-
-		[Authorize(Roles = RoleNames.FunctionReadClipboard)]
-		public override async Task<GetClipboardResponse> GetClipboard(GetClipboardRequest request, ServerCallContext context)
-		{
-			var content = await UserContextChannel.GetClipboardAsync(request.Requestee);
-			return new GetClipboardResponse() { Content = content };
-		}
-
-		[Authorize(Roles = RoleNames.FunctionWriteClipboard)]
-		public override async Task<SetClipboardResponse> SetClipboard(SetClipboardRequest request, ServerCallContext context)
-		{
-			var result = await UserContextChannel.SetClipboardAsync(request.Requestee, request.Content);
-			return new SetClipboardResponse() {Success = result};
 		}
 	}
 }
