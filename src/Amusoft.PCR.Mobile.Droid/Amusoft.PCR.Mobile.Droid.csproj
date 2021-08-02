@@ -88,8 +88,10 @@
     <Compile Include="Domain\Server\HostControl\HostControlFragment.cs" />
     <Compile Include="Domain\Server\HostSelection\HostSelectionFragment.cs" />
     <Compile Include="Domain\Server\HostSelection\HostSelectionDataSource.cs" />
+    <Compile Include="Domain\Server\InputControl\BrowserVideoPlayerFragment.cs" />
     <Compile Include="Domain\Server\InputControl\ClipboardFragment.cs" />
     <Compile Include="Domain\Server\InputControl\InputFragment.cs" />
+    <Compile Include="Domain\Server\InputControl\SendInputFragment.cs" />
     <Compile Include="Domain\Server\MonitorControl\MonitorFragment.cs" />
     <Compile Include="Domain\Server\ProgramControl\KillProcessByIdFragment.cs" />
     <Compile Include="Domain\Server\ProgramControl\KillProcessFragment.cs" />

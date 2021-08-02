@@ -76,6 +76,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 			}
 		}
 
+		public async Task<bool> SendKeysAsync(string message)
+		{
+			return await SecuredCallAsync(async (d) => (await d.SendKeysAsync(new SendKeysRequest(){ Message = message})).Success, false);
+		}
+
 		public async Task<bool> AuthenticateAsync()
 		{
 			return await SecuredCallAsync(async (d) => (await d.AuthenticateAsync(new AuthenticateRequest())).Success, false);
