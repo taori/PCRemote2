@@ -10,6 +10,7 @@ using Amusoft.PCR.Mobile.Droid.Domain.Server.MonitorControl;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl;
 using Amusoft.PCR.Mobile.Droid.Extensions;
+using Amusoft.PCR.Mobile.Droid.Helpers;
 using Amusoft.PCR.Mobile.Droid.Services;
 using Android.OS;
 using Android.Views;
@@ -39,9 +40,9 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 		{
 			base.OnViewCreated(view, savedInstanceState);
 
-			var ipAddress = Arguments.GetString(ArgumentTargetAddress);
+			var ipAddress = GetConnectionAddress();
 			var machineName = Arguments.GetString(ArgumentTargetMachineName);
-			var ipPort = Arguments.GetInt(ArgumentTargetPort);
+			var ipPort = GetConnectionPort();
 
 			if (!HasBeenResumedBefore)
 				Activity.SetStatusBarTitle($"{ipAddress} - {machineName}");
@@ -50,16 +51,40 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			_agent = GrpcApplicationAgentFactory.Create(ipAddress, ipPort);
 		}
 
-		private Task<List<ButtonElement>> CreateButtons()
+		private int GetConnectionPort()
+		{
+			return Arguments.GetInt(ArgumentTargetPort);
+		}
+
+		private string GetConnectionAddress()
+		{
+			return Arguments.GetString(ArgumentTargetAddress);
+		}
+
+
+		private async Task<List<ButtonElement>> CreateButtons()
 		{
 			var buttons = new List<ButtonElement>();
-			buttons.Add(CreateButton("Audio", true, AudioClicked));
-			buttons.Add(CreateButton("Monitors", true, MonitorClicked));
-			buttons.Add(CreateButton("System state", true, SystemStateClicked));
-			buttons.Add(CreateButton("Input control", true, InputControlClicked));
-			buttons.Add(CreateButton("Programs", true, ProgramsClicked));
+			if (await SocketHelper.IsPortOpenAsync(GetConnectionAddress(), GetConnectionPort(), TimeSpan.FromSeconds(5)))
+			{
+				buttons.Add(CreateButton("Audio", true, AudioClicked));
+				buttons.Add(CreateButton("Monitors", true, MonitorClicked));
+				buttons.Add(CreateButton("System state", true, SystemStateClicked));
+				buttons.Add(CreateButton("Input control", true, InputControlClicked));
+				buttons.Add(CreateButton("Programs", true, ProgramsClicked));
+			}
+			else
+			{
+				var buttonText = $"Unable to connect to {GetConnectionAddress()}:{GetConnectionPort()}";
+				buttons.Add(new ButtonElement()
+				{
+					ButtonText = buttonText,
+					Clickable = true,
+					ButtonAction = () => this.ParentFragmentManager.PopBackStack()
+				});
+			}
 
-			return Task.FromResult(buttons);
+			return buttons;
 		}
 
 		private async void ProgramsClicked()

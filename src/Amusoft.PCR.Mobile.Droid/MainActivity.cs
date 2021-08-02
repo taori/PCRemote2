@@ -32,6 +32,9 @@ using Google.Android.Material.Snackbar;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Java.Lang;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using NLog;
 using NLog.Config;
 using Xamarin.Essentials;
@@ -49,6 +52,9 @@ namespace Amusoft.PCR.Mobile.Droid
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
+			AppCenter.Start("ae5403f8-deb8-41b5-8f6c-ebd2bd41648f", typeof(Crashes), typeof(Analytics));
+			Analytics.TrackEvent("Application launching");
+
 			base.OnCreate(savedInstanceState);
 			AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 			Application.RegisterActivityLifecycleCallbacks(ActivityLifecycleCallbacks.Instance);
@@ -84,6 +90,8 @@ namespace Amusoft.PCR.Mobile.Droid
 				transaction.DisallowAddToBackStack();
 				transaction.Commit();
 			}
+
+			Analytics.TrackEvent("Application started");
 		}
 
 		private void UpdateLoaderPanel(object sender, int e)

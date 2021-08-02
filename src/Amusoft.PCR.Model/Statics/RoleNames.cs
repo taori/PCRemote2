@@ -23,5 +23,7 @@
 		public const string FunctionFocusWindow = "function-focusWindow";
 		public const string FunctionLaunchProgram = "function-launchProgram";
 		public const string FunctionAddNewProgram = "function-addNewProgram";
+		public const string FunctionReadClipboard = "function-readClipboard";
+		public const string FunctionWriteClipboard = "function-writeClipboard";
 	}
 }

@@ -24,6 +24,22 @@ service DesktopIntegrationService {
 	rpc LaunchProgram (.Amusoft.PCR.Grpc.Common.LaunchProgramRequest) returns (.Amusoft.PCR.Grpc.Common.LaunchProgramResponse) {}
 	rpc GetHostCommands (.Amusoft.PCR.Grpc.Common.GetHostCommandRequest) returns (.Amusoft.PCR.Grpc.Common.GetHostCommandResponse) {}
 	rpc InvokeHostCommand (.Amusoft.PCR.Grpc.Common.InvokeHostCommandRequest) returns (.Amusoft.PCR.Grpc.Common.InvokeHostCommandResponse) {}
+	rpc GetClipboard (.Amusoft.PCR.Grpc.Common.GetClipboardRequest) returns (.Amusoft.PCR.Grpc.Common.GetClipboardResponse) {}
+	rpc SetClipboard (.Amusoft.PCR.Grpc.Common.SetClipboardRequest) returns (.Amusoft.PCR.Grpc.Common.SetClipboardResponse) {}
+}
+
+message GetClipboardRequest {
+	string requestee = 1;
+}
+message GetClipboardResponse {
+	string content = 1;
+}
+message SetClipboardRequest {
+	string content = 1;
+	string requestee = 2;
+}
+message SetClipboardResponse {
+	bool success = 1;
 }
 
 message AuthenticateRequest {}

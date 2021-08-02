@@ -48,7 +48,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 			}
 		}
 
-		private void ProcessExitListenerManagerOnProcessExited(object? sender, int e)
+		private void ProcessExitListenerManagerOnProcessExited(object sender, int e)
 		{
 			Log.Info("Parent process {Id} shut down - exiting program", e);
 			Shutdown(0);
@@ -71,7 +71,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 		private bool TryLaunchInteropChannel()
 		{
 			_namedPipeServer = new NamedPipeServer(Globals.NamedPipeChannel);
-			DesktopIntegrationService.BindService(_namedPipeServer.ServiceBinder, new WindowsInteropServiceImplementation());
+			DesktopIntegrationService.BindService(_namedPipeServer.ServiceBinder, new WindowsDesktopIntegrationService());
 
 			try
 			{

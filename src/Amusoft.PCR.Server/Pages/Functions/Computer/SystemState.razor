@@ -1,7 +1,7 @@
 ﻿@page "/functions/computer/systemState"
 @using Amusoft.PCR.Server.Dependencies
 @using Amusoft.PCR.Blazor
-@inject IInteropService _interopService
+@inject IUserContextChannel _userContextChannel
 
 <Title Headline="System state" WindowTitle="System state"></Title>
 
@@ -10,23 +10,23 @@
 <h6>Immediate controls</h6>
 <div class="container">
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.LockWorkStation())">Lock Screen</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _userContextChannel.LockWorkStation())">Lock Screen</Button>
 	</div>
 
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.AbortShutdown())" ButtonTheme="@ButtonThemeKind.Primary">Abort Shutdown</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _userContextChannel.AbortShutdown())" ButtonTheme="@ButtonThemeKind.Primary">Abort Shutdown</Button>
 	</div>
 
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Shutdown(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@ButtonThemeKind.Danger">Shutdown</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _userContextChannel.Shutdown(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@ButtonThemeKind.Danger">Shutdown</Button>
 	</div>
 
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Restart(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@ButtonThemeKind.Danger">Restart</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _userContextChannel.Restart(TimeSpan.FromMinutes(1), _closeApplications))" ButtonTheme="@ButtonThemeKind.Danger">Restart</Button>
 	</div>
 
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Hibernate())">Hibernate</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _userContextChannel.Hibernate())">Hibernate</Button>
 	</div>
 </div>
 
@@ -37,10 +37,10 @@
 		<LabeledTime @bind-Value="_shutdownDelay"></LabeledTime>
 	</div>
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Shutdown(_shutdownDelay, _closeApplications))">Shutdown with @_shutdownDelay delay</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _userContextChannel.Shutdown(_shutdownDelay, _closeApplications))">Shutdown with @_shutdownDelay delay</Button>
 	</div>
 	<div class="row mb-3 mb-xl-2">
-		<Button CssClass="col-xl-4" OnClick="(() => _interopService.Restart(_shutdownDelay, _closeApplications))">Restart with @_shutdownDelay delay</Button>
+		<Button CssClass="col-xl-4" OnClick="(() => _userContextChannel.Restart(_shutdownDelay, _closeApplications))">Restart with @_shutdownDelay delay</Button>
 	</div>
 </div>
 

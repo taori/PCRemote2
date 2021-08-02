@@ -1,10 +1,10 @@
 ﻿@page "/functions/audioMenu/volumeControl"
 @using Amusoft.PCR.Server.Dependencies
-@inject IInteropService _interopService
+@inject IUserContextChannel _userContextChannel
 
 <Title Headline="Volumecontrol" WindowTitle="Volumecontrol"></Title>
 
-<Button OnClick="(() => _interopService.ToggleMute())">Toggle mute</Button>
+<Button OnClick="(() => _userContextChannel.ToggleMute())">Toggle mute</Button>
 <h5 class="mt-3">Master volume: @_desiredMasterVolume</h5>
 <div>
 	<LabeledRange MinValue="0" MaxValue="100" Step="1" Value="_desiredMasterVolume" ValueChanged="OnMasterVolumeChanged"></LabeledRange>
@@ -16,12 +16,12 @@
 	private async Task OnMasterVolumeChanged(int value)
 	{
 		_desiredMasterVolume = value;
-		await _interopService.SetMasterVolume(_desiredMasterVolume);
+		await _userContextChannel.SetMasterVolume(_desiredMasterVolume);
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		_desiredMasterVolume = await _interopService.GetMasterVolume();
+		_desiredMasterVolume = await _userContextChannel.GetMasterVolume();
 		await base.OnInitializedAsync();
 	}
 

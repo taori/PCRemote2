@@ -38,21 +38,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 			HostSelectionDataSource.Instance.ItemClicked -= InstanceOnItemClicked;
 			HostSelectionDataSource.Instance.ItemClicked += InstanceOnItemClicked;
-
-			HandleForceBroadcastButton(view);
-		}
-
-		private void HandleForceBroadcastButton(View view)
-		{
-			var button = view.FindViewById<Button>(Resource.Id.button1);
-			button.Click += ButtonOnClick;
-			HideButton(button);
-		}
-
-		[Conditional("RELEASE")]
-		private void HideButton(Button button)
-		{
-			button.Visibility = ViewStates.Gone;
 		}
 
 		public void OnRefresh()
@@ -79,33 +64,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 				transaction.Commit();
 			}
-
-			// var fragment = new HostControlFragment();
-			// var bundle = new Bundle();
-			// bundle.PutString(HostControlFragment.ArgumentTargetAddress, e.EndPoint.Address.ToString());
-			// fragment.Arguments = bundle;
-			// using (var transaction = ParentFragmentManager.BeginTransaction())
-			// {
-			// 	transaction.AddToBackStack(null);
-			// 	transaction.SetCustomAnimations(Resource.Animation.enter_from_right, Resource.Animation.exit_to_left, Resource.Animation.enter_from_left, Resource.Animation.exit_to_right);
-			// 	transaction.Replace(Resource.Id.content_display_frame, fragment);
-			//
-			// 	transaction.Commit();
-			// }
-		}
-
-		private static void SendBroadcastMessage()
-		{
-			using var client = new UdpClient();
-			client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-			client.ExclusiveAddressUse = false;
-			var bytes = Encoding.UTF8.GetBytes(GrpcHandshakeFormatter.Write("TestMachine", new[] { 55863 }));
-			client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 55863));
-		}
-
-		private void ButtonOnClick(object sender, EventArgs e)
-		{
-			SendBroadcastMessage();
 		}
 	}
 }

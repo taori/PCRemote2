@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
+using Amusoft.PCR.Mobile.Droid.Helpers;
+using Android.App;
+using Android.Widget;
 using Google.Protobuf.Collections;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
@@ -16,6 +19,7 @@ using NLog;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 {
+
 	public class GrpcApplicationAgent : IDisposable
 	{
 		private readonly GrpcChannel _channel;
@@ -54,6 +58,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 			{
 				GrpcRequestObserver.NotifyCallRunning();
 				return await functionCall(_client);
+			}
+			catch (RpcException e) when (e.StatusCode == StatusCode.PermissionDenied)
+			{
+				ToastHelper.Display(Application.Context, "Permission denied", ToastLength.Long);
+				return defaultValue;
 			}
 			catch (Exception e)
 			{
@@ -144,6 +153,16 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 		public async Task<IList<GetHostCommandResponseItem>> GetHostCommandsAsync(TimeSpan timeout)
 		{
 			return await SecuredCallAsync(async (d) => (await d.GetHostCommandsAsync(new GetHostCommandRequest(), deadline: DateTime.UtcNow.Add(timeout))).Results as IList<GetHostCommandResponseItem>, GetHostCommandsAsyncEmpty);
+		}
+
+		public async Task<string> GetClipboardAsync(TimeSpan timeout, string requestee)
+		{
+			return await SecuredCallAsync(async (d) => (await d.GetClipboardAsync(new GetClipboardRequest(){ Requestee = requestee}, deadline: DateTime.UtcNow.Add(timeout))).Content, default);
+		}
+
+		public async Task<bool> SetClipboardAsync(TimeSpan timeout, string requestee, string content)
+		{
+			return await SecuredCallAsync(async (d) => (await d.SetClipboardAsync(new SetClipboardRequest(){ Requestee = requestee, Content = content}, deadline: DateTime.UtcNow.Add(timeout))).Success, false);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using Amusoft.PCR.Grpc.Common;
@@ -41,6 +42,18 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		{
 			ClearPortListeners();
 			BuildListenersFromStorage();
+			AddDebugEndpoint();
+		}
+
+		[Conditional("DEBUG")]
+		private void AddDebugEndpoint()
+		{
+			_dataItems.Add(new ServerDataItem()
+			{
+				EndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.135"), 5001),
+				HttpsPorts = new []{ 5001 },
+				MachineName = "Debug Endpoint"
+			});
 		}
 
 		private async void BuildListenersFromStorage()
