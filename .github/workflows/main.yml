@@ -1,16 +1,22 @@
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
+
   push:
-    branches: [ master ]
-    paths: "src/*"
+    branches:
+      - master 
+    paths: 
+      - "src/*"
+      
   pull_request:
-    paths: "src/*"
+    branches: 
+      - master
+    paths: 
+      - "src/*"
     
-  # Allows you to run this workflow manually from the Actions tab
+  # manual trigger
   workflow_dispatch:
+  
 env:
   ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
   ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
