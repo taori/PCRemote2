@@ -45,7 +45,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			var ipPort = GetConnectionPort();
 
 			if (!HasBeenResumedBefore)
-				Activity.SetStatusBarTitle($"{ipAddress} - {machineName}");
+				Activity.SetStatusBarTitle($"{machineName}");
 
 			_agent?.Dispose();
 			_agent = GrpcApplicationAgentFactory.Create(ipAddress, ipPort);

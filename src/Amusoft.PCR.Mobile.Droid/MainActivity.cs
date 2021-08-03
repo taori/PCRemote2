@@ -15,9 +15,13 @@ using Amusoft.PCR.Mobile.Droid.Domain.Networking;
 using Amusoft.PCR.Mobile.Droid.Domain.Server;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl;
+using Amusoft.PCR.Mobile.Droid.Domain.Settings;
+using Amusoft.PCR.Mobile.Droid.Extensions;
+using Amusoft.PCR.Mobile.Droid.Helpers;
 using Amusoft.PCR.Mobile.Droid.Services;
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -32,6 +36,7 @@ using Google.Android.Material.Snackbar;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Java.Lang;
+using Java.Net;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -40,7 +45,9 @@ using NLog.Config;
 using Xamarin.Essentials;
 using Environment = System.Environment;
 using FragmentManager = AndroidX.Fragment.App.FragmentManager;
+using Path = System.IO.Path;
 using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
+using Uri = Android.Net.Uri;
 
 namespace Amusoft.PCR.Mobile.Droid
 {
@@ -75,6 +82,8 @@ namespace Amusoft.PCR.Mobile.Droid
 			var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
 			SetSupportActionBar(toolbar);
 
+			SetupGitCommitInfo();
+
 			var drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
 			var toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open,
 				Resource.String.navigation_drawer_close);
@@ -92,6 +101,42 @@ namespace Amusoft.PCR.Mobile.Droid
 			}
 
 			Analytics.TrackEvent("Application started");
+		}
+
+		private void SetupGitCommitInfo()
+		{
+			var navView = FindViewById<NavigationView>(Resource.Id.nav_view);
+			if (navView == null)
+				return;
+
+			var textViewVersion = navView.GetHeaderView(0).FindViewById<TextView>(Resource.Id.drawer_header_text_line2);
+			if (textViewVersion == null)
+				return;
+			
+			textViewVersion.SetTextColor(Color.LightBlue);
+			textViewVersion.Text = GetCommitId().Substring(0, 20) + " ...";
+			textViewVersion.Clickable = true;
+			textViewVersion.Click += CommitClicked;
+		}
+
+		private string GetCommitId()
+		{
+			using var stream = Resources.OpenRawResource(Resource.Raw.gitcommitid);
+			using var streamReader = new StreamReader(stream, Encoding.UTF8);
+
+			return streamReader.ReadToEnd();
+		}
+
+		private async void CommitClicked(object sender, EventArgs e)
+		{
+			if (await DialogHelper.Prompt(this, "Question",
+				"Navigate to repository state of this application?", "Yes", "No") == true)
+			{
+				var id = GetCommitId();
+				var uri = $"https://github.com/taori/PCRemote2/tree/{id}";
+				var browserIntent = new Intent(Intent.ActionView, Uri.Parse(uri));
+				StartActivity(browserIntent);
+			}
 		}
 
 		private void UpdateLoaderPanel(object sender, int e)
@@ -140,26 +185,28 @@ namespace Amusoft.PCR.Mobile.Droid
 
 		public override bool OnCreateOptionsMenu(IMenu menu)
 		{
-			MenuInflater.Inflate(Resource.Menu.menu_main, menu);
-			return true;
+			// MenuInflater.Inflate(Resource.Menu.menu_main, menu);
+			return false;
 		}
 
-		public override bool OnOptionsItemSelected(IMenuItem item)
+		public bool OnNavigationItemSelected(IMenuItem item)
 		{
 			int id = item.ItemId;
-			if (id == Resource.Id.action_settings)
+			
+			if (id == Resource.Id.nav_issues)
 			{
-				var root = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-				var path = Path.Combine(root, "logs", "nlog.csv");
-				if (File.Exists(path))
+				DialogHelper.Prompt(this, "Question",
+					"Go to GitHub issues?", "Yes", "No").ContinueWith(prev =>
 				{
-					File.Delete(path);
-				}
-
-				return true;
+					if (prev.Result == true)
+					{
+						var uri = "https://github.com/taori/PCRemote2/issues";
+						var browserIntent = new Intent(Intent.ActionView, Uri.Parse(uri));
+						StartActivity(browserIntent);
+					}
+				});
 			}
-
-			if (id == Resource.Id.action_view_logs)
+			else if (id == Resource.Id.nav_logs)
 			{
 				using (var transaction = SupportFragmentManager.BeginTransaction())
 				{
@@ -168,46 +215,19 @@ namespace Amusoft.PCR.Mobile.Droid
 					transaction.SetTransition(AndroidX.Fragment.App.FragmentTransaction.TransitFragmentFade);
 					transaction.Commit();
 				}
-
-				return true;
 			}
-
-			if (id == Resource.Id.action_clear_storage)
+			else if (id == Resource.Id.nav_settings)
 			{
-				SecureStorage.RemoveAll();
-				return true;
-			}
-
-			return base.OnOptionsItemSelected(item);
-		}
-
-		public bool OnNavigationItemSelected(IMenuItem item)
-		{
-			int id = item.ItemId;
-
-			if (id == Resource.Id.nav_camera)
-			{
-				// Handle the camera action
-			}
-			else if (id == Resource.Id.nav_gallery)
-			{
+				using (var transaction = SupportFragmentManager.BeginTransaction())
+				{
+					transaction.ReplaceContentAnimated(new SettingsFragment());
+					transaction.Commit();
+				}
 
 			}
-			else if (id == Resource.Id.nav_slideshow)
+			else if (id == Resource.Id.nav_update)
 			{
-
-			}
-			else if (id == Resource.Id.nav_manage)
-			{
-
-			}
-			else if (id == Resource.Id.nav_share)
-			{
-
-			}
-			else if (id == Resource.Id.nav_send)
-			{
-
+				ToastHelper.Display(this, "Not implemented yet", ToastLength.Short);
 			}
 
 			DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
