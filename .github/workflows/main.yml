@@ -6,11 +6,11 @@ on:
     branches:
       - master 
     paths: 
-      - "src/*"
+      - src/*
       
   pull_request:
     paths: 
-      - "src/*"
+      - src/*
     
   # manual trigger
   workflow_dispatch:
