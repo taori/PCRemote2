@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
 using Amusoft.PCR.Mobile.Droid.Extensions;
+using Amusoft.PCR.Mobile.Droid.Helpers;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -53,7 +54,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 
 		private async void HibernateOnClick(object sender, EventArgs e)
 		{
-			await _agent.DesktopClient.HibernateAsync(TimeSpan.FromSeconds(5));
+			var result = await _agent.DesktopClient.HibernateAsync(TimeSpan.FromSeconds(5));
+			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
 		}
 
 		private void ProgressBarOnClick(object sender, EventArgs e)
@@ -63,22 +65,26 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 
 		private async void LockWorkstationOnClick(object sender, EventArgs e)
 		{
-			await _agent.DesktopClient.LockWorkStationAsync(TimeSpan.FromSeconds(5));
+			var result = await _agent.DesktopClient.LockWorkStationAsync(TimeSpan.FromSeconds(5));
+			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
 		}
 
 		private async void RestartOnClick(object sender, EventArgs e)
 		{
-			await _agent.DesktopClient.RestartAsync(TimeSpan.FromSeconds(5), false, TimeSpan.FromSeconds(60));
+			var result = await _agent.DesktopClient.RestartAsync(TimeSpan.FromSeconds(5), false, TimeSpan.FromSeconds(60));
+			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
 		}
 
 		private async void AbortOnClick(object sender, EventArgs e)
 		{
-			await _agent.DesktopClient.AbortShutDownAsync(TimeSpan.FromSeconds(5));
+			var result = await _agent.DesktopClient.AbortShutDownAsync(TimeSpan.FromSeconds(5));
+			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
 		}
 
 		private async void ShutdownOnClick(object sender, EventArgs e)
 		{
-			await _agent.DesktopClient.ShutDownDelayedAsync(TimeSpan.FromSeconds(5), false, TimeSpan.FromSeconds(60));
+			var result = await _agent.DesktopClient.ShutDownDelayedAsync(TimeSpan.FromSeconds(5), false, TimeSpan.FromSeconds(60));
+			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
 		}
 	}
 }

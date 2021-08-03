@@ -206,6 +206,10 @@
       <Project>{ebf797bf-5aaa-4741-8b31-54d3b74811bc}</Project>
       <Name>Amusoft.PCR.Grpc.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Amusoft.Toolkit.UI\Amusoft.Toolkit.UI.csproj">
+      <Project>{45728065-d70d-4400-947c-a69171652ed9}</Project>
+      <Name>Amusoft.Toolkit.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\login_view.xml">

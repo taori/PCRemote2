@@ -6,6 +6,8 @@ using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
 using Amusoft.PCR.Mobile.Droid.Extensions;
+using Amusoft.PCR.Mobile.Droid.Helpers;
+using Android.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 {
@@ -48,6 +50,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 					if (await _agent.DesktopClient.KillProcessByIdAsync(TimeSpan.FromSeconds(5), item.ProcessId))
 					{
 						this.DataSource.RemoveAt(scopedIndex);
+						ToastHelper.DisplaySuccess(Context, true, ToastLength.Short);
+					}
+					else
+					{
+						ToastHelper.DisplaySuccess(Context, false, ToastLength.Short);
 					}
 				};
 

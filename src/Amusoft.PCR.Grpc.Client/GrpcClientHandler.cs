@@ -84,7 +84,7 @@ namespace Amusoft.PCR.Grpc.Client
 						Log.Info("Updating token store");
 						await AuthenticationSurface.UpdateTokenStoreAsync(authResponseResult);
 
-						Log.Debug("Updating accessToken to {Token}", authResponseResult.AccessToken);
+						Log.Debug("Updating accessToken");
 						request.Headers.Remove("Authorization");
 						request.Headers.Add("Authorization", "Bearer " + authResponseResult.AccessToken);
 
@@ -133,7 +133,7 @@ namespace Amusoft.PCR.Grpc.Client
 					Log.Info("Updating token store");
 					await AuthenticationSurface.UpdateTokenStoreAsync(authResponseResult);
 
-					Log.Debug("Updating accessToken to {Token}", authResponseResult.AccessToken);
+					Log.Debug("Updating accessToken");
 					request.Headers.Remove("Authorization");
 					request.Headers.Add("Authorization", "Bearer " + authResponseResult.AccessToken);
 
