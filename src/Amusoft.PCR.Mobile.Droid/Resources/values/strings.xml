@@ -18,6 +18,7 @@
     <string name="button_monitor_off">Turn off</string>
     <string name="button_kill_process">Kill process</string>
     <string name="button_start_program">Start program</string>
+    <string name="button_hibernate">Hibernate</string>
 	<string name="label_user">User</string>
 	<string name="label_password">Password</string>
 </resources>

@@ -29,6 +29,26 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			Logger = logger;
 		}
 
+		[Authorize(Roles = RoleNames.FunctionReadClipboard)]
+		public override async Task<GetClipboardResponse> GetClipboard(GetClipboardRequest request, ServerCallContext context)
+		{
+			var result = await InteropService.GetClipboardAsync(request.Requestee);
+			return new GetClipboardResponse()
+			{
+				Content = result
+			};
+		}
+
+		[Authorize(Roles = RoleNames.FunctionWriteClipboard)]
+		public override async Task<SetClipboardResponse> SetClipboard(SetClipboardRequest request, ServerCallContext context)
+		{
+			var result = await InteropService.SetClipboardAsync(request.Requestee, request.Content);
+			return new SetClipboardResponse()
+			{
+				Success = result
+			};
+		}
+
 		[Authorize]
 		public override Task<AuthenticateResponse> Authenticate(AuthenticateRequest request, ServerCallContext context)
 		{

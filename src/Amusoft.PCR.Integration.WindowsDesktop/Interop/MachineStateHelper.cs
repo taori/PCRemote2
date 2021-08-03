@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 {
@@ -71,13 +72,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 		{
 			try
 			{
-				using (var process = Process.Start("shutdown", "/h /f"))
-				{
-					process.StartInfo.CreateNoWindow = true;
-					process.StartInfo.UseShellExecute = true;
-					process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-				}
-
+				Application.SetSuspendState(PowerState.Hibernate, false, false);
 				return true;
 			}
 			catch (Exception e)
