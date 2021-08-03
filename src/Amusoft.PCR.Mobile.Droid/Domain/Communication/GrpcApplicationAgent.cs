@@ -76,6 +76,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 			}
 		}
 
+		public async Task<bool> HibernateAsync(TimeSpan timeout)
+		{
+			return await SecuredCallAsync(async (d) => (await d.HibernateAsync(new HibernateRequest(), deadline: DateTime.UtcNow.Add(timeout))).Success, false);
+		}
+
 		public async Task<bool> SendKeysAsync(string message)
 		{
 			return await SecuredCallAsync(async (d) => (await d.SendKeysAsync(new SendKeysRequest(){ Message = message})).Success, false);

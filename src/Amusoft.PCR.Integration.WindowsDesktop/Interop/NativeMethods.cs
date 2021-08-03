@@ -77,19 +77,20 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 
 			private const int WmSyscommand = 0x0112;
 			private const int ScMonitorpower = 0xF170;
-			private const int MonitorShutoff = 2;
-			private const int MouseeventfMove = 0x0001;
+			private const int MonitorShutoff = 0x0002;
+			private const int MouseEventfMove = 0x0001;
+			private const int Broadcast = 0xffff;
 
 			public static void Off()
 			{
-				SendMessage(GetProcessPointer(), WmSyscommand, (IntPtr)ScMonitorpower, (IntPtr)MonitorShutoff);
+				SendMessage((IntPtr)Broadcast, WmSyscommand, (IntPtr)ScMonitorpower, (IntPtr)MonitorShutoff);
 			}
 
 			public static void On()
 			{
-				mouse_event(MouseeventfMove, 0, 1, 0, UIntPtr.Zero);
+				mouse_event(MouseEventfMove, 0, 1, 0, UIntPtr.Zero);
 				Thread.Sleep(40);
-				mouse_event(MouseeventfMove, 0, -1, 0, UIntPtr.Zero);
+				mouse_event(MouseEventfMove, 0, -1, 0, UIntPtr.Zero);
 			}
 		}
 	}

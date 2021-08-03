@@ -23,10 +23,31 @@ namespace Amusoft.PCR.Server.Domain.IPC
 
 		public BackendIntegrationService(IUserContextChannel interopService, ILogger<BackendIntegrationService> logger, ApplicationDbContext dbContext, IAuthorizationService authorizationService)
 		{
+			//
 			_dbContext = dbContext;
 			_authorizationService = authorizationService;
 			InteropService = interopService;
 			Logger = logger;
+		}
+
+		[Authorize(Roles = RoleNames.FunctionReadClipboard)]
+		public override async Task<GetClipboardResponse> GetClipboard(GetClipboardRequest request, ServerCallContext context)
+		{
+			var result = await InteropService.GetClipboardAsync(request.Requestee);
+			return new GetClipboardResponse()
+			{
+				Content = result
+			};
+		}
+
+		[Authorize(Roles = RoleNames.FunctionWriteClipboard)]
+		public override async Task<SetClipboardResponse> SetClipboard(SetClipboardRequest request, ServerCallContext context)
+		{
+			var result = await InteropService.SetClipboardAsync(request.Requestee, request.Content);
+			return new SetClipboardResponse()
+			{
+				Success = result
+			};
 		}
 
 		[Authorize]

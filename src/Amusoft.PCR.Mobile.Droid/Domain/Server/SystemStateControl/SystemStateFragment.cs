@@ -21,12 +21,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 		private ProgressBar _progressBar;
 		private Button _abort;
 		private Button _shutdown;
+		private Button _hibernate;
 
 		public SystemStateFragment(GrpcApplicationAgent agent)
 		{
 			_agent = agent;
-			// processes
-			// launch program
 		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -42,12 +41,19 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 			_shutdown = view.FindViewById<Button>(Resource.Id.button_shutdown);
 			_restart = view.FindViewById<Button>(Resource.Id.button_restart);
 			_abort = view.FindViewById<Button>(Resource.Id.button_abort);
-			
+			_hibernate = view.FindViewById<Button>(Resource.Id.button_hibernate);
+
+			_hibernate.Click += HibernateOnClick;
 			_shutdown.Click += ShutdownOnClick;
 			_abort.Click += AbortOnClick;
 			_restart.Click += RestartOnClick;
 			_lockWorkstation.Click += LockWorkstationOnClick;
 			_progressBar.Visibility = ViewStates.Gone;
+		}
+
+		private async void HibernateOnClick(object sender, EventArgs e)
+		{
+			await _agent.DesktopClient.HibernateAsync(TimeSpan.FromSeconds(5));
 		}
 
 		private void ProgressBarOnClick(object sender, EventArgs e)
