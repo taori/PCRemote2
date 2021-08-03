@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
+using Amusoft.PCR.Mobile.Droid.Helpers;
 using Android.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
@@ -34,14 +35,22 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			return Task.FromResult(buttonElements);
 		}
 
-		private async Task TrySendInput(string message)
+		private async Task<bool> TrySendInput(string message)
 		{
 #if DEBUG
 			await Task.Delay(3000);
 #endif
 
-			if(!await _agent.DesktopClient.SendKeysAsync(message))
-				Toast.MakeText(Context, "Error", ToastLength.Short)!.Show();
+			if (await _agent.DesktopClient.SendKeysAsync(message))
+			{
+				ToastHelper.DisplaySuccess(Context, true, ToastLength.Short);
+				return true;
+			}
+			else
+			{
+				ToastHelper.DisplaySuccess(Context, false, ToastLength.Long);
+				return false;
+			}
 		}
 
 		private async Task MuteClicked()

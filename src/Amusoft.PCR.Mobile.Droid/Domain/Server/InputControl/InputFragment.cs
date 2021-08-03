@@ -15,7 +15,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 
 		public InputFragment(GrpcApplicationAgent agent)
 		{
-			// send input
 			_agent = agent;
 		}
 

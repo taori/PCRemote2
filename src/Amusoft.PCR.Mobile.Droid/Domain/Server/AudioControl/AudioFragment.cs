@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
+using Amusoft.PCR.Mobile.Droid.Helpers;
+using Amusoft.Toolkit.UI;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -43,7 +45,19 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl
 
 		private async void ToggleMuteClicked(object sender, EventArgs e)
 		{
-			await _agent.DesktopClient.ToggleMuteAsync(TimeSpan.FromSeconds(5));
+			var result = await _agent.DesktopClient.ToggleMuteAsync(TimeSpan.FromSeconds(5));
+			switch (result)
+			{
+				case null:
+					ToastHelper.Display(Context, "Error", ToastLength.Short);
+					break;
+				case true:
+					ToastHelper.Display(Context, "Muted", ToastLength.Short);
+					break;
+				case false:
+					ToastHelper.Display(Context, "Unmuted", ToastLength.Short);
+					break;
+			}
 		}
 
 		private async void SeekBarOnProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
@@ -57,7 +71,13 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl
 
 			Log.Debug("Setting master volume to {Value} FromUser: {FromUser}", progress, e.FromUser);
 			if (e.FromUser)
-				await _agent.DesktopClient.SetMasterVolumeAsync(TimeSpan.FromSeconds(5), progress);
+			{
+				Debouncer.Debounce(nameof(AudioFragment) + nameof(SeekBarOnProgressChanged), async () =>
+				{
+					await _agent.DesktopClient.SetMasterVolumeAsync(TimeSpan.FromSeconds(5), progress);
+					ToastHelper.Display(Context, "Volume updated", ToastLength.Short);
+				}, TimeSpan.FromSeconds(2));
+			}
 		}
 	}
 }

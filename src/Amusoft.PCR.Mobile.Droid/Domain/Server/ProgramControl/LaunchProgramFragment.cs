@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
+using Amusoft.PCR.Mobile.Droid.Helpers;
 using Android.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
@@ -32,7 +33,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 				{
 					Clickable = true,
 					ButtonText = command.Title,
-					ButtonAction = async () => await _agent.DesktopClient.InvokeHostCommand(TimeSpan.FromSeconds(5), command.CommandId)
+					ButtonAction = async () =>
+					{
+						var result = await _agent.DesktopClient.InvokeHostCommand(TimeSpan.FromSeconds(5), command.CommandId);
+						ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
+					}
 				});
 			}
 

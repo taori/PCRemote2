@@ -23,7 +23,6 @@ namespace Amusoft.PCR.Server.Domain.IPC
 
 		public BackendIntegrationService(IUserContextChannel interopService, ILogger<BackendIntegrationService> logger, ApplicationDbContext dbContext, IAuthorizationService authorizationService)
 		{
-			//
 			_dbContext = dbContext;
 			_authorizationService = authorizationService;
 			InteropService = interopService;

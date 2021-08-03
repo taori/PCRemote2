@@ -1,6 +1,7 @@
 ﻿using System;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
+using Amusoft.PCR.Mobile.Droid.Helpers;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -35,12 +36,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.MonitorControl
 
 		private async void MonitorOnOnClick(object sender, EventArgs e)
 		{
-			await _agent.DesktopClient.MonitorOnAsync(TimeSpan.FromSeconds(5));
+			var result = await _agent.DesktopClient.MonitorOnAsync(TimeSpan.FromSeconds(5));
+			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
 		}
 
 		private async void MonitorOffOnClick(object sender, EventArgs e)
 		{
-			await _agent.DesktopClient.MonitorOffAsync(TimeSpan.FromSeconds(5));
+			var result = await _agent.DesktopClient.MonitorOffAsync(TimeSpan.FromSeconds(5));
+			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
 		}
 	}
 }

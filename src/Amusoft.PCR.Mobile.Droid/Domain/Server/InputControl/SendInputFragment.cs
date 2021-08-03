@@ -31,7 +31,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 		{
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
-				transaction.SetStatusBarTitle("Browser Video");
+				transaction.SetStatusBarTitle("Video player");
 				transaction.ReplaceContentAnimated(new BrowserVideoPlayerFragment(_agent));
 				transaction.Commit();
 			}

@@ -31,8 +31,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 		private Task<List<ButtonElement>> Generate()
 		{
 			var buttons = new List<ButtonElement>();
-			buttons.Add(new ButtonElement(true, "Get host clipboard", async () => await GetHostClipboard()));
-			buttons.Add(new ButtonElement(true, "Set host clipboard", async () => await SetHostClipboard()));
+			buttons.Add(new ButtonElement(true, "Copy from host", async () => await GetHostClipboard()));
+			buttons.Add(new ButtonElement(true, "Copy to host", async () => await SetHostClipboard()));
 #if DEBUG
 			buttons.Add(new ButtonElement(true, "Tell clipboard", async () => await TellClipboard()));
 #endif
@@ -62,7 +62,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			{
 				
 				var result = await _agent.DesktopClient.SetClipboardAsync(TimeSpan.FromMinutes(1), GetRemoteName(), content);
-				ToastHelper.Display(Context, result ? "success" : "error", ToastLength.Short);
+				ToastHelper.Display(Context, result ? "Host clipboard updated" : "error", ToastLength.Short);
 			}
 			catch (RpcException e) when (e.StatusCode == StatusCode.PermissionDenied)
 			{
@@ -99,6 +99,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			{
 				var content = await _agent.DesktopClient.GetClipboardAsync(TimeSpan.FromMinutes(1), GetRemoteName());
 				cm.PrimaryClip = ClipData.NewPlainText("Host clipboard", content);
+				ToastHelper.Display(Context, "Clipboard updated", ToastLength.Short);
 			}
 			catch (RpcException e) when (e.StatusCode == StatusCode.PermissionDenied)
 			{

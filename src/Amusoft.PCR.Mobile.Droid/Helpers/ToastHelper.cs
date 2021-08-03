@@ -9,5 +9,10 @@ namespace Amusoft.PCR.Mobile.Droid.Helpers
 		{
 			Toast.MakeText(context, message, duration).Show();
 		}
+
+		public static void DisplaySuccess(Context context, bool success, ToastLength toastLength)
+		{
+			Display(context, success ? "OK" : "Error", toastLength);
+		}
 	}
 }

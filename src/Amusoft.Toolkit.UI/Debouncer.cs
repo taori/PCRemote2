@@ -8,14 +8,14 @@ namespace Amusoft.Toolkit.UI
 {
 	public static class Debouncer
 	{
-		static ConcurrentDictionary<string, CancellationTokenSource> _tokens = new ConcurrentDictionary<string, CancellationTokenSource>();
+		static readonly ConcurrentDictionary<string, CancellationTokenSource> Tokens = new ConcurrentDictionary<string, CancellationTokenSource>();
 
 		public static void Debounce(string uniqueKey, Action action, TimeSpan delay)
 		{
 			Debug.WriteLine($"Current Thread: {Thread.CurrentThread.ManagedThreadId}");
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
-			var token = _tokens.AddOrUpdate(uniqueKey,
+			var token = Tokens.AddOrUpdate(uniqueKey,
 				(key) =>  new CancellationTokenSource(),
 				(key, existingToken) => 
 				{
@@ -31,7 +31,7 @@ namespace Amusoft.Toolkit.UI
 				{
 					Debug.WriteLine($"Current Thread: {Thread.CurrentThread.ManagedThreadId}");
 					action();
-					_tokens.TryRemove(uniqueKey, out _);
+					Tokens.TryRemove(uniqueKey, out _);
 					// cts.Dispose();
 				}
 			}, token.Token, TaskContinuationOptions.None, scheduler);
