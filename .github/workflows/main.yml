@@ -9,9 +9,11 @@ on:
       - src/*
       
   pull_request:
-    paths: 
-      - src/*
-    
+    types: 
+      - opened
+      - reopened
+      - synchronize
+      
   # manual trigger
   workflow_dispatch:
   
