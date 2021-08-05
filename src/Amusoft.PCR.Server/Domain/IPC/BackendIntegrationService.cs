@@ -264,5 +264,11 @@ namespace Amusoft.PCR.Server.Domain.IPC
 				Success = success
 			};
 		}
+
+		[AllowAnonymous]
+		public override Task<GetHostNameResponse> GetHostName(GetHostNameRequest request, ServerCallContext context)
+		{
+			return Task.FromResult(new GetHostNameResponse() {Content = Environment.MachineName});
+		}
 	}
 }

@@ -26,6 +26,13 @@ service DesktopIntegrationService {
 	rpc InvokeHostCommand (.Amusoft.PCR.Grpc.Common.InvokeHostCommandRequest) returns (.Amusoft.PCR.Grpc.Common.InvokeHostCommandResponse) {}
 	rpc GetClipboard (.Amusoft.PCR.Grpc.Common.GetClipboardRequest) returns (.Amusoft.PCR.Grpc.Common.GetClipboardResponse) {}
 	rpc SetClipboard (.Amusoft.PCR.Grpc.Common.SetClipboardRequest) returns (.Amusoft.PCR.Grpc.Common.SetClipboardResponse) {}
+	rpc GetHostName (.Amusoft.PCR.Grpc.Common.GetHostNameRequest) returns (.Amusoft.PCR.Grpc.Common.GetHostNameResponse) {}
+}
+
+message GetHostNameRequest {
+}
+message GetHostNameResponse {
+	string content = 1;
 }
 
 message GetClipboardRequest {
