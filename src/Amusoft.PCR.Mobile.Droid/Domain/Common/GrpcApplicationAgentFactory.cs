@@ -10,6 +10,17 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(GrpcApplicationAgentFactory));
 
+		public static GrpcApplicationAgent Create(string addressAndPort)
+		{
+			var seperatorIndex = addressAndPort.IndexOf(':');
+			var address = addressAndPort.Substring(0, seperatorIndex);
+			var port = addressAndPort.Substring(seperatorIndex + 1);
+			if (!int.TryParse(port, out var parsedPort))
+				throw new Exception($"Invalid port {port}");
+
+			return Create(address, parsedPort);
+		}
+
 		public static GrpcApplicationAgent Create(string ipAddress, int port)
 		{
 			var uriString = $"https://{ipAddress}:{port}";

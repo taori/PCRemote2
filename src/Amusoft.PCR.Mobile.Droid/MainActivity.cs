@@ -63,8 +63,13 @@ namespace Amusoft.PCR.Mobile.Droid
 			Analytics.TrackEvent("Application launching");
 
 			base.OnCreate(savedInstanceState);
+			
 			AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 			Application.RegisterActivityLifecycleCallbacks(ActivityLifecycleCallbacks.Instance);
+			
+			ApplicationContext.RegisterReceiver(AbortBroadcastReceiver.Instance, new IntentFilter(AbortBroadcastReceiver.ActionKindHibernate));
+			ApplicationContext.RegisterReceiver(AbortBroadcastReceiver.Instance, new IntentFilter(AbortBroadcastReceiver.ActionKindRestart));
+			ApplicationContext.RegisterReceiver(AbortBroadcastReceiver.Instance, new IntentFilter(AbortBroadcastReceiver.ActionKindShutdown));
 
 			NLog.LogManager.Configuration = new XmlLoggingConfiguration("assets/nlog.config");
 			Xamarin.Essentials.Platform.Init(this, savedInstanceState);
@@ -76,7 +81,7 @@ namespace Amusoft.PCR.Mobile.Droid
 			GrpcRequestObserver.CallRunning += UpdateLoaderPanel;
 			GrpcRequestObserver.CallFinished += UpdateLoaderPanel;
 
-			NotificationHelper.CreateNotificationChannel(this);
+			NotificationHelper.SetupNotificationChannels();
 			AddBackgroundServices(this);
 
 			var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);

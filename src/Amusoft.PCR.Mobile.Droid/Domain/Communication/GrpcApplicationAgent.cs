@@ -33,6 +33,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 
 		public SimpleDesktopClient DesktopClient { get; }
 
+		public string Address => _channel.Target;
+
 		private DesktopIntegrationService.DesktopIntegrationServiceClient _desktopIntegrationClient;
 
 		public void Dispose()
@@ -173,6 +175,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 		public async Task<bool> SetClipboardAsync(TimeSpan timeout, string requestee, string content)
 		{
 			return await SecuredCallAsync(async (d) => (await d.SetClipboardAsync(new SetClipboardRequest(){ Requestee = requestee, Content = content}, deadline: DateTime.UtcNow.Add(timeout))).Success, false);
+		}
+
+		public async Task<string> GetHostNameAsync(TimeSpan timeout)
+		{
+			return await SecuredCallAsync(async (d) => (await d.GetHostNameAsync(new GetHostNameRequest(), deadline: DateTime.UtcNow.Add(timeout))).Content, null);
 		}
 	}
 }

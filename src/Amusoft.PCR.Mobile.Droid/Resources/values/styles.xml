@@ -1,20 +1,35 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Dark" />
+
+    <style name="SpinnerTimePickerDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+	    <item name="android:dialogTheme">@style/TimeSpinnerDialogTheme</item>
+	    <item name="android:timePickerStyle">@style/SpinnerTimePicker</item>
+	    <item name="android:textColor">@color/colorAccent</item>
+	    <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="TimeSpinnerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+	    <item name="android:timePickerStyle">@style/SpinnerTimePicker</item>
+    </style>
+
+    <style name="SpinnerTimePicker" parent="@android:style/Widget.Material.Light.TimePicker">
+	    <item name="android:timePickerMode">spinner</item>
+    </style>
 
 </resources>
