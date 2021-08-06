@@ -16,6 +16,7 @@ using Amusoft.PCR.Mobile.Droid.Domain.Server;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl;
 using Amusoft.PCR.Mobile.Droid.Domain.Settings;
+using Amusoft.PCR.Mobile.Droid.Domain.Updates;
 using Amusoft.PCR.Mobile.Droid.Extensions;
 using Amusoft.PCR.Mobile.Droid.Helpers;
 using Amusoft.PCR.Mobile.Droid.Services;
@@ -82,7 +83,6 @@ namespace Amusoft.PCR.Mobile.Droid
 			GrpcRequestObserver.CallFinished += UpdateLoaderPanel;
 
 			NotificationHelper.SetupNotificationChannels();
-			AddBackgroundServices(this);
 
 			var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
 			SetSupportActionBar(toolbar);
@@ -152,23 +152,6 @@ namespace Amusoft.PCR.Mobile.Droid
 			}
 		}
 
-		private void AddBackgroundServices(MainActivity mainActivity)
-		{
-		}
-
-		private static void AddBackgroundService(MainActivity mainActivity, Type type)
-		{
-			var intent = new Intent(mainActivity, type);
-			if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.O)
-			{
-				mainActivity.StartForegroundService(intent);
-			}
-			else
-			{
-				mainActivity.StartService(intent);
-			}
-		}
-
 		public override void OnBackPressed()
 		{
 			if (BackStackHandler.PopCall())
@@ -232,7 +215,11 @@ namespace Amusoft.PCR.Mobile.Droid
 			}
 			else if (id == Resource.Id.nav_update)
 			{
-				ToastHelper.Display(this, "Not implemented yet", ToastLength.Short);
+				using (var transaction = SupportFragmentManager.BeginTransaction())
+				{
+					transaction.ReplaceContentAnimated(new UpdateFragment());
+					transaction.Commit();
+				}
 			}
 
 			DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);

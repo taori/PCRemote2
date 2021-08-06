@@ -42,7 +42,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.MonitorControl
 
 		private async void MonitorOffOnClick(object sender, EventArgs e)
 		{
-			var result = await _agent.DesktopClient.MonitorOffAsync(TimeSpan.FromSeconds(5));
+			var result = await _agent.DesktopClient.MonitorOffAsync(TimeSpan.FromSeconds(10));
 			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
 		}
 	}
