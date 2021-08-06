@@ -60,7 +60,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl
 			}
 		}
 
-		private async void SeekBarOnProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
+		private void SeekBarOnProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
 		{
 			const int step = 5;
 			var progress = e.Progress;
