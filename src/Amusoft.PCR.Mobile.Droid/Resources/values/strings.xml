@@ -32,6 +32,8 @@
     <string name="button_kill_process">Kill process</string>
     <string name="button_start_program">Start program</string>
     <string name="button_hibernate">Hibernate</string>
+    <string name="button_update_from_github">Update from GitHub</string>
+    <string name="button_goto_latest_release">Go to latest release</string>
 	<string name="label_user">User</string>
 	<string name="label_password">Password</string>
 </resources>

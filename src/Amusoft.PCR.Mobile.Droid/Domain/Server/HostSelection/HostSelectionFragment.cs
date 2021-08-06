@@ -56,7 +56,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			bundle.PutString(HostControlFragment.ArgumentTargetMachineName, e.MachineName);
 			fragment.Arguments = bundle;
 
-			using (var transaction = ParentFragmentManager.BeginTransaction())
+			using (var transaction = Activity.SupportFragmentManager.BeginTransaction())
 			{
 				transaction.AddToBackStack(null);
 				transaction.SetCustomAnimations(Resource.Animation.enter_from_right, Resource.Animation.exit_to_left, Resource.Animation.enter_from_left, Resource.Animation.exit_to_right);
