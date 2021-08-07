@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model;
@@ -269,6 +271,18 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		public override Task<GetHostNameResponse> GetHostName(GetHostNameRequest request, ServerCallContext context)
 		{
 			return Task.FromResult(new GetHostNameResponse() {Content = Environment.MachineName});
+		}
+
+		[Authorize(Roles = RoleNames.FunctionWakeOnLan)]
+		public override Task<GetNetworkMacAddressesResponse> GetNetworkMacAddresses(GetNetworkMacAddressesRequest request, ServerCallContext context)
+		{
+			var response = new GetNetworkMacAddressesResponse();
+			var interfaces = NetworkInterface.GetAllNetworkInterfaces()
+				.Where(d => d.OperationalStatus == OperationalStatus.Up
+				            && d.NetworkInterfaceType == NetworkInterfaceType.Ethernet);
+			response.Results.AddRange(interfaces.Select(d => d.GetPhysicalAddress().ToString()).Select(d => new GetNetworkMacAddressesResponseItem(){ MacAddress = d}));
+
+			return Task.FromResult(response);
 		}
 	}
 }
