@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(WakeOnLanManager));
 
+		private static readonly WakeOnLanMacStorage Storage = new WakeOnLanMacStorage();
+
 		public static async Task<MacPackage> GetMacPackageAsync(GrpcApplicationAgent agent)
 		{
 			Log.Debug("Building Mac package");
@@ -26,40 +29,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan
 			return macPackage;
 		}
 
-		public static async Task<MacPackage[]> GetDefinitionsAsync()
+		public static async Task<List<MacPackage>> GetDefinitionsAsync()
 		{
-			var path = GetWolClientPath();
-			if (!File.Exists(path))
-				return Array.Empty<MacPackage>();
-
-			var content = await File.ReadAllTextAsync(path);
-			return JsonConvert.DeserializeObject<MacPackage[]>(content);
+			return await Storage.LoadAsync();
 		}
 
-		public static async Task SaveDefinitionAsync(MacPackage package)
+		public static async Task UpdateDefinitionAsync(MacPackage package)
 		{
-			var packages = (await GetDefinitionsAsync()).ToDictionary(d => d.HostName);
-			if (packages.ContainsKey(package.HostName))
-			{
-				Log.Debug("Updating package for {HostName}", package.HostName);
-				packages[package.HostName] = package;
-			}
-			else
-			{
-				Log.Debug("Adding package for {HostName}", package.HostName);
-				packages.Add(package.HostName, package);
-			}
-
-			var path = GetWolClientPath();
-			var packagesArray = packages.Select(d => d.Value).ToArray();
-
-			Log.Debug("Saving packages");
-			await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(packagesArray));
-		}
-
-		private static string GetWolClientPath()
-		{
-			return Path.Combine(FileSystem.CacheDirectory, "wol-clients.json");
+			await Storage.AddOrUpdateAsync(package);
 		}
 	}
 }

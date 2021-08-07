@@ -4,7 +4,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl;
+using Amusoft.PCR.Mobile.Droid.Extensions;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -21,6 +23,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		
 		private RecyclerView _recyclerView;
 		private SwipeRefreshLayout _swipeRefreshLayout;
+		private Button _wakeUpButton;
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
@@ -36,8 +39,21 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			_swipeRefreshLayout = view.FindViewById<SwipeRefreshLayout>(Resource.Id.swipeRefreshLayout1);
 			_swipeRefreshLayout.SetOnRefreshListener(this);
 
+			_wakeUpButton = view.FindViewById<Button>(Resource.Id.button_wake_up_host);
+			_wakeUpButton.Click += WakeUpButtonOnClick;
+
 			HostSelectionDataSource.Instance.ItemClicked -= InstanceOnItemClicked;
 			HostSelectionDataSource.Instance.ItemClicked += InstanceOnItemClicked;
+		}
+
+		private void WakeUpButtonOnClick(object sender, EventArgs e)
+		{
+			using (var transaction = Activity.SupportFragmentManager.BeginTransaction())
+			{
+				transaction.SetStatusBarTitle("Wake on LAN");
+				transaction.ReplaceContentAnimated(new WakeOnLanFragment());
+				transaction.Commit();
+			}
 		}
 
 		public void OnRefresh()

@@ -57,7 +57,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 		private async void UpdateWolClient(GrpcApplicationAgent agent)
 		{
 			var package = await WakeOnLanManager.GetMacPackageAsync(agent);
-			await WakeOnLanManager.SaveDefinitionAsync(package);
+			await WakeOnLanManager.UpdateDefinitionAsync(package);
 		}
 
 		private int GetConnectionPort()

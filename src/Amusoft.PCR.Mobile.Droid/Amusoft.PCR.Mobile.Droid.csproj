@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomControls\LoaderPanel.cs" />
+    <Compile Include="Domain\Common\AsyncButtonListFragment.cs" />
     <Compile Include="Domain\Common\BackStackHandler.cs" />
     <Compile Include="Domain\Common\ButtonListFragment.cs" />
     <Compile Include="Domain\Common\GrpcApplicationAgentFactory.cs" />
@@ -85,6 +86,8 @@
     <Compile Include="Domain\Communication\GrpcApplicationAgent.cs" />
     <Compile Include="Domain\Communication\LoginDialog.cs" />
     <Compile Include="Domain\Features\WakeOnLan\MacPackage.cs" />
+    <Compile Include="Domain\Features\WakeOnLan\WakeOnLanMacStorage.cs" />
+    <Compile Include="Domain\Features\WakeOnLan\WakeOnLanFragment.cs" />
     <Compile Include="Domain\Features\WakeOnLan\WakeOnLanManager.cs" />
     <Compile Include="Domain\Log\LogFragment.cs" />
     <Compile Include="Domain\Networking\UdpBroadcastReceiver.cs" />
@@ -122,6 +125,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ActivityLifecycleCallbacks.cs" />
     <Compile Include="Toolkit\AsyncWorker.cs" />
+    <Compile Include="Toolkit\SerializedStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\nlog.config" />
