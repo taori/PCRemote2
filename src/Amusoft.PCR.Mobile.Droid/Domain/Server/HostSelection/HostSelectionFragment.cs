@@ -24,7 +24,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
-			return inflater.Inflate(Resource.Layout.serverSelection, container, false);
+			return inflater.Inflate(Resource.Layout.server_selection_main, container, false);
 		}
 
 		public override void OnViewCreated(View view, Bundle savedInstanceState)

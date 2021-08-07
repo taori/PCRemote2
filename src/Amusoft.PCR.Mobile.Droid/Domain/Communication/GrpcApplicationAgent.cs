@@ -181,5 +181,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 		{
 			return await SecuredCallAsync(async (d) => (await d.GetHostNameAsync(new GetHostNameRequest(), deadline: DateTime.UtcNow.Add(timeout))).Content, null);
 		}
+
+		private static readonly IList<GetNetworkMacAddressesResponseItem> GetNetworkMacAddressesAsyncEmpty = new List<GetNetworkMacAddressesResponseItem>();
+		public async Task<IList<GetNetworkMacAddressesResponseItem>> GetNetworkMacAddressesAsync(TimeSpan timeout)
+		{
+			return await SecuredCallAsync(async (d) => (await d.GetNetworkMacAddressesAsync(new GetNetworkMacAddressesRequest(), deadline: DateTime.UtcNow.Add(timeout))).Results as IList<GetNetworkMacAddressesResponseItem>, GetNetworkMacAddressesAsyncEmpty);
+		}
 	}
 }

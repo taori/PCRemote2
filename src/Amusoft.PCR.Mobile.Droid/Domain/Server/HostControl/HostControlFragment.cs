@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Client;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
+using Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.MonitorControl;
@@ -49,6 +50,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 
 			_agent?.Dispose();
 			_agent = GrpcApplicationAgentFactory.Create(ipAddress, ipPort);
+
+			UpdateWolClient(_agent);
+		}
+
+		private async void UpdateWolClient(GrpcApplicationAgent agent)
+		{
+			var package = await WakeOnLanManager.GetMacPackageAsync(agent);
+			await WakeOnLanManager.SaveDefinitionAsync(package);
 		}
 
 		private int GetConnectionPort()
@@ -60,7 +69,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 		{
 			return Arguments.GetString(ArgumentTargetAddress);
 		}
-
 
 		private async Task<List<ButtonElement>> CreateButtons()
 		{

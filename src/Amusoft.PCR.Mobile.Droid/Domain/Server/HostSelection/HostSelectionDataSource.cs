@@ -158,7 +158,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
 		{
 			var inflater = LayoutInflater.FromContext(parent.Context);
-			var view = inflater.Inflate(Resource.Layout.serverSelectionItem, parent, false);
+			var view = inflater.Inflate(Resource.Layout.server_selection_item, parent, false);
 
 			var viewHolder = new SelectServerFragmentDataSourceItem(view);
 			return viewHolder;

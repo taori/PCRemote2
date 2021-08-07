@@ -208,6 +208,7 @@ namespace Amusoft.PCR.Mobile.Droid
 			{
 				using (var transaction = SupportFragmentManager.BeginTransaction())
 				{
+					transaction.SetStatusBarTitle("Settings");
 					transaction.ReplaceContentAnimated(new SettingsFragment());
 					transaction.Commit();
 				}
@@ -217,6 +218,7 @@ namespace Amusoft.PCR.Mobile.Droid
 			{
 				using (var transaction = SupportFragmentManager.BeginTransaction())
 				{
+					transaction.SetStatusBarTitle("Update");
 					transaction.ReplaceContentAnimated(new UpdateFragment());
 					transaction.Commit();
 				}
