@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amusoft.PCR.Mobile.Droid.Domain.Common;
+using Amusoft.PCR.Mobile.Droid.Helpers;
+using Android.Widget;
 using NLog;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan
@@ -15,7 +17,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan
 			var storage = await WakeOnLanManager.GetDefinitionsAsync();
 			foreach (var package in storage)
 			{
-				items.Add(new ButtonElement(true, package.HostName, async () => await ButtonAction(package) ));
+				items.Add(new ButtonElement(true, $"Wake {package.HostName}",async () => await ButtonAction(package) ));
 			}
 
 			return items;
@@ -29,6 +31,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan
 				Log.Debug("Waking up physical address {Id}", address);
 				await Amusoft.Toolkit.Networking.WakeOnLan.UsingAddressAsync(address);
 			}
+
+			ToastHelper.Display(Context, $"Wake On LAN for {package.HostName} sent", ToastLength.Long);
 		}
 	}
 }
