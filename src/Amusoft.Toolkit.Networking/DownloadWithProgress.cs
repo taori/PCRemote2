@@ -3,9 +3,8 @@ using System.Buffers;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Amusoft.PCR.Mobile.Droid.Domain.Updates;
 
-namespace Amusoft.PCR.Mobile.Droid.Toolkit
+namespace Amusoft.Toolkit.Networking
 {
 	public delegate void DownloadProgressHandler(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage);
 
@@ -26,7 +25,7 @@ namespace Amusoft.PCR.Mobile.Droid.Toolkit
 		}
 	}
 
-	public class HttpClientDownloadWithProgress
+	internal class HttpClientDownloadWithProgress
 	{
 		private readonly HttpClient _httpClient;
 		private readonly string _destinationFilePath;

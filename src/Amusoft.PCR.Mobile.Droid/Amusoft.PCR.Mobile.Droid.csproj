@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomControls\LoaderPanel.cs" />
+    <Compile Include="Domain\Common\AsyncButtonListFragment.cs" />
     <Compile Include="Domain\Common\BackStackHandler.cs" />
     <Compile Include="Domain\Common\ButtonListFragment.cs" />
     <Compile Include="Domain\Common\GrpcApplicationAgentFactory.cs" />
@@ -84,6 +85,10 @@
     <Compile Include="Domain\Communication\AuthenticationSurface.cs" />
     <Compile Include="Domain\Communication\GrpcApplicationAgent.cs" />
     <Compile Include="Domain\Communication\LoginDialog.cs" />
+    <Compile Include="Domain\Features\WakeOnLan\MacPackage.cs" />
+    <Compile Include="Domain\Features\WakeOnLan\WakeOnLanMacStorage.cs" />
+    <Compile Include="Domain\Features\WakeOnLan\WakeOnLanFragment.cs" />
+    <Compile Include="Domain\Features\WakeOnLan\WakeOnLanManager.cs" />
     <Compile Include="Domain\Log\LogFragment.cs" />
     <Compile Include="Domain\Networking\UdpBroadcastReceiver.cs" />
     <Compile Include="Domain\Server\AudioControl\AudioFragment.cs" />
@@ -120,7 +125,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ActivityLifecycleCallbacks.cs" />
     <Compile Include="Toolkit\AsyncWorker.cs" />
-    <Compile Include="Toolkit\DownloadWithProgress.cs" />
+    <Compile Include="Toolkit\SerializedStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\nlog.config" />
@@ -228,6 +233,10 @@
       <Project>{ebf797bf-5aaa-4741-8b31-54d3b74811bc}</Project>
       <Name>Amusoft.PCR.Grpc.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Amusoft.Toolkit.Networking\Amusoft.Toolkit.Networking.csproj">
+      <Project>{bd9342f1-1b51-4388-a93b-8f5370d5cf36}</Project>
+      <Name>Amusoft.Toolkit.Networking</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Amusoft.Toolkit.UI\Amusoft.Toolkit.UI.csproj">
       <Project>{45728065-d70d-4400-947c-a69171652ed9}</Project>
       <Name>Amusoft.Toolkit.UI</Name>
@@ -249,12 +258,12 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\serverSelection.xml">
+    <AndroidResource Include="Resources\layout\server_selection_main.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\serverSelectionItem.xml">
+    <AndroidResource Include="Resources\layout\server_selection_item.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -782,6 +791,7 @@
   <ItemGroup>
     <AndroidResource Include="Resources\xml\file_provider_paths.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <PropertyGroup>
     <GitCommitIdFile>$(ProjectDir)Resources\raw\gitcommitid.txt</GitCommitIdFile>

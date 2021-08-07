@@ -2,6 +2,7 @@
 Remote controller for your own PC
 
 ## Features
+  - Wake on LAN
 
 ### Volume Control 
   - Mute Toggle

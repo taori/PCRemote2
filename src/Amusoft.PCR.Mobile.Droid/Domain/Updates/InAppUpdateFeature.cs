@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Amusoft.PCR.Mobile.Droid.Helpers;
 using Amusoft.PCR.Mobile.Droid.Toolkit;
+using Amusoft.Toolkit.Networking;
 using Android.Content;
 using Android.Net;
 using Android.Widget;
