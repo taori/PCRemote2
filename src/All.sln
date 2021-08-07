@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Integration.Win
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Grpc.Common", "Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj", "{EBF797BF-5AAA-4741-8B31-54D3B74811BC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploymentScripts", "deploymentScripts", "{DD935416-C8CA-41E9-A95F-6ED449B5198A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployment", "deployment", "{DD935416-C8CA-41E9-A95F-6ED449B5198A}"
 	ProjectSection(SolutionItems) = preProject
 		..\deploy\buildAndCopy.ps1 = ..\deploy\buildAndCopy.ps1
 		..\deploy\createSelfSignedCertificate.ps1 = ..\deploy\createSelfSignedCertificate.ps1
@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Grpc.Client", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.App.Console", "Amusoft.PCR.App.Console\Amusoft.PCR.App.Console.csproj", "{7AA0DC77-3F0B-48F3-8EEB-F059BC884AD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.Toolkit.Networking", "Amusoft.Toolkit.Networking\Amusoft.Toolkit.Networking.csproj", "{BD9342F1-1B51-4388-A93B-8F5370D5CF36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.Toolkit.Networking", "Amusoft.Toolkit.Networking\Amusoft.Toolkit.Networking.csproj", "{BD9342F1-1B51-4388-A93B-8F5370D5CF36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
