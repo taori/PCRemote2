@@ -46,6 +46,10 @@
 	<!-- remove by Id key -->
 
 	<xsl:key
+		name="ServerExe"
+		match="wix:Component[ substring( wix:File/@Source, string-length( wix:File/@Source ) - 21 ) = 'Amusoft.PCR.Server.exe' ]"
+		use="@Id" />
+	<xsl:key
 		name="SettingsToRemove"
 		match="wix:Component[ substring( wix:File/@Source, string-length( wix:File/@Source ) - 15 ) = 'appsettings.json' ]"
 		use="@Id" />
@@ -58,7 +62,10 @@
 		name="NLogToRemove"
 		match="wix:Component[ substring( wix:File/@Source, string-length( wix:File/@Source ) - 10 ) = 'nlog.config' ]"
 		use="@Id" />
-
+	
+	
+	<xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'ServerExe', @Id ) ]" />
+	
 	<xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'SettingsToRemove', @Id ) ]" />
 	<xsl:template match="*[ self::wix:Component or self::wix:ComponentRef ][ key( 'DevSettingsToRemove', @Id ) ]" />
 

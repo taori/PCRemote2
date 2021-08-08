@@ -23,6 +23,7 @@
 			<ComponentGroupRef Id="WinIntegrationComponents" />
 			<ComponentGroupRef Id="WinIntegrationComponentsGenerated" />
 			<ComponentRef Id="RegistrySetValues"/>
+			<ComponentRef Id="BackendServerExe"/>
 		</Feature>
 	</Product>
 
@@ -32,8 +33,8 @@
 	<Fragment>
 		<Component Id="RegistrySetValues" Guid="CCA1011E-0C44-4111-9089-A4F5D49D3D51" Win64="yes" Directory="WEBFOLDER">
 			<RegistryKey Root="HKLM" Key="SOFTWARE\Amusoft\PC Remote 2" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-				<RegistryValue 
-					Type="string" 
+				<RegistryValue
+					Type="string"
 					Name="InstallLocation"
 					Value="[INSTALLFOLDER]"/>
 				<RegistryValue
@@ -41,6 +42,37 @@
 					Name="Version"
 					Value="$(var.ProductVersion)"/>
 			</RegistryKey>
+		</Component>
+		<Component Id='BackendServerExe' Guid='*' Directory='WEBFOLDER'>
+
+			<File Id='BackendServer' Name='BackendServer' Source='$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.exe' KeyPath='yes'/>
+
+			<ServiceInstall Name='BackendServerExeInstall'
+							Type='ownProcess'
+							Start='auto'
+			                Account="LocalSystem"
+			                DisplayName="Amusoft PC Remote 2"
+			                Id="Amusoft.PCR.Server"
+			                Description="Backend service required for PC Remote to interact with this computer"
+			                Vital="yes"
+			                ErrorControl="critical">
+
+				<ServiceConfig xmlns='http://schemas.microsoft.com/wix/UtilExtension'
+					FirstFailureActionType="restart"
+					SecondFailureActionType="restart"
+					ThirdFailureActionType="none"
+					ResetPeriodInDays="1" 
+					ServiceName="Amusoft.PCR.Server"
+					RebootMessage="PC Remote 2 requires a reboot"
+					RestartServiceDelayInSeconds="180"
+				/>
+			</ServiceInstall>
+
+			<ServiceControl Id="Amusoft.PCR.Server.Control"
+							Name="Amusoft.PCR.Server.Control"
+			                Remove="both"
+			                Start="install"
+			                Stop="both"/>
 		</Component>
 	</Fragment>
 

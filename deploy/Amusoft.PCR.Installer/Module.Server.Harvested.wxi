@@ -26,9 +26,6 @@
             <Component Id="cmp42A6BCAB5DF17DA67C1FC1E36975FA64" Guid="*">
                 <File Id="fil4934813D0ADEE285EF00BC56286AD167" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.dll" />
             </Component>
-            <Component Id="cmp6F6712481C7707A6D089EDCDEFE612E7" Guid="*">
-                <File Id="filC133488D6B70FB42667FBEC51D8CB850" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.exe" />
-            </Component>
             <Component Id="cmpFE0D53DD31D23568BF4C57BCCA5B481F" Guid="*">
                 <File Id="fil139C7C90965DE03ED34078010E92E98E" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.pdb" />
             </Component>
@@ -686,7 +683,6 @@
             <ComponentRef Id="cmpCE2744DC926875CDE31422F96C092103" />
             <ComponentRef Id="cmp4EF8B5D4B9CD806814112F0E852C6154" />
             <ComponentRef Id="cmp42A6BCAB5DF17DA67C1FC1E36975FA64" />
-            <ComponentRef Id="cmp6F6712481C7707A6D089EDCDEFE612E7" />
             <ComponentRef Id="cmpFE0D53DD31D23568BF4C57BCCA5B481F" />
             <ComponentRef Id="cmp4F7E19FFBC57984E487C3DAF5DC6A18A" />
             <ComponentRef Id="cmp13DCAC84E7679FB6183B1A56CEE70F11" />
