@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<?define Manufacturer = "Amusoft" ?>
+	<?define ProductName = "PC Remote 2" ?>
+	<?define ProductVersion = "1.0.0.0" ?>
+
+	<Product Id="BE8150DB-D86F-45A0-9070-F4CE0F6D984C"
+				 Name="$(var.ProductName)"
+				 Language="1033"
+				 Version="$(var.ProductVersion)"
+				 Manufacturer="$(var.Manufacturer)"
+				 UpgradeCode="de4ddeff-2caf-4c46-b9ff-52a37586069a">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64"/>
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+		<Feature Id="ProductFeature" Title="PC Remote 2" Level="1">
+			<ComponentGroupRef Id="WebComponents" />
+			<ComponentGroupRef Id="IntegrationWin" />
+			<ComponentRef Id="RegistrySetValues"/>
+		</Feature>
+	</Product>
+
+	<?include IncludesOfWeb.wxs ?>
+	<?include IncludesOfIntegrationWin.wxs ?>
+
+	<Fragment>
+		<Component Id="RegistrySetValues" Guid="CCA1011E-0C44-4111-9089-A4F5D49D3D51" Win64="yes" Directory="WEBFOLDER">
+			<RegistryKey Root="HKLM" Key="SOFTWARE\Amusoft\PC Remote 2" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+				<RegistryValue 
+					Type="string" 
+					Name="InstallLocation"
+					Value="[INSTALLFOLDER]"/>
+				<RegistryValue
+					Type="string"
+					Name="Version"
+					Value="$(var.ProductVersion)"/>
+			</RegistryKey>
+		</Component>
+	</Fragment>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFiles64Folder">
+				<Directory Id="INSTALLFOLDER" Name="Amusoft">
+					<Directory Id="PRODUCTNAMEFOLDER" Name="PC Remote 2">
+						<Directory Id="LOGSFOLDER" Name="logs"></Directory>
+						<Directory Id="WEBFOLDER" Name="web"></Directory>
+						<Directory Id="WININTEGRATIONFOLDER" Name="win-integration"></Directory>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+
+</Wix>

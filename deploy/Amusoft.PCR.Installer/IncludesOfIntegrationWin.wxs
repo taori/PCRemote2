@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+	<Fragment>
+		<ComponentGroup Id="IntegrationWin" Directory="WININTEGRATIONFOLDER" >
+			<Component Win64="yes" NeverOverwrite="yes">
+				<File Source="$(var.SolutionDir)Amusoft.PCR.Integration.WindowsDesktop\/nlog.config" Name="nlog.config" Id="F27BF75352AC4A7AAFA09F966A737D62"></File>
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+
+</Include>
