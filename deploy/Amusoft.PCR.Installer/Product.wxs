@@ -11,19 +11,23 @@
 				 Manufacturer="$(var.Manufacturer)"
 				 UpgradeCode="de4ddeff-2caf-4c46-b9ff-52a37586069a">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64"/>
+		<!-- <Icon Id="Company.ico" SourceFile="..\Tools\Company\Images\Company.ico" /> -->
+		<!-- <Property Id="ARPPRODUCTICON" Value="Company.ico" /> -->
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate EmbedCab="yes" />
 
 		<Feature Id="ProductFeature" Title="PC Remote 2" Level="1">
 			<ComponentGroupRef Id="WebComponents" />
-			<ComponentGroupRef Id="IntegrationWin" />
+			<ComponentGroupRef Id="WebComponentsGenerated" />
+			<ComponentGroupRef Id="WinIntegrationComponents" />
+			<ComponentGroupRef Id="WinIntegrationComponentsGenerated" />
 			<ComponentRef Id="RegistrySetValues"/>
 		</Feature>
 	</Product>
 
-	<?include IncludesOfWeb.wxs ?>
-	<?include IncludesOfIntegrationWin.wxs ?>
+	<?include Module.Server.wxi ?>
+	<?include Module.Int.Win.wxi ?>
 
 	<Fragment>
 		<Component Id="RegistrySetValues" Guid="CCA1011E-0C44-4111-9089-A4F5D49D3D51" Win64="yes" Directory="WEBFOLDER">

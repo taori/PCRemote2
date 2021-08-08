@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
+	<?include Module.Server.Harvested.wxi ?>
+
 	<Fragment>
 		<ComponentGroup Id="WebComponents" Directory="WEBFOLDER" >
 			<Component Win64="yes" NeverOverwrite="yes">

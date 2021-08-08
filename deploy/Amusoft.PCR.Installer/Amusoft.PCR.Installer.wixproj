@@ -18,10 +18,19 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
+  <PropertyGroup>
+    <SuppressIces>ICE80;ICE60</SuppressIces>
+  </PropertyGroup>
   <ItemGroup>
-    <None Include="IncludesOfWeb.wxs" />
-    <None Include="IncludesOfIntegrationWin.wxs" />
+    <Content Include="Module.Int.Win.Harvested.wxi" />
+    <Content Include="Module.Server.Harvested.wxi" />
+    <Content Include="Module.Server.wxi" />
+    <Content Include="Module.Int.Win.wxi" />
     <Compile Include="Product.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Module.Int.Win.Harvested.xslt" />
+    <Content Include="Module.Server.Harvested.xslt" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
@@ -33,6 +42,14 @@
     </Exec>
     <Exec Command="dotnet publish $(SolutionDir)Amusoft.PCR.Integration.WindowsDesktop\Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o $(SolutionDir)..\artifacts\msi\win-integration">
     </Exec>
+    <Message Importance="High" Text="Building Server.Harvested" />
+    <HeatDirectory NoLogo="True" SuppressAllWarnings="False" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="True" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Server.Harvested.wxi" SuppressFragments="True" SuppressUniqueIds="False" Directory="$(SolutionDir)..\artifacts\msi\web\" ComponentGroupName="WebComponentsGenerated" KeepEmptyDirectories="True" PreprocessorVariable="var.SolutionDir" SuppressCom="False" SuppressRootDirectory="True" Transforms="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Server.Harvested.xslt" SuppressRegistry="True" DirectoryRefId="WEBFOLDER" />
+    <Message Importance="High" Text="Building Server.Harvested" />
+    <HeatDirectory NoLogo="True" SuppressAllWarnings="False" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="True" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Int.Win.Harvested.wxi" SuppressFragments="True" SuppressUniqueIds="False" Directory="$(SolutionDir)..\artifacts\msi\win-integration\" ComponentGroupName="WinIntegrationComponentsGenerated" KeepEmptyDirectories="True" PreprocessorVariable="var.SolutionDir" SuppressCom="False" SuppressRootDirectory="True" Transforms="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Int.Win.Harvested.xslt" SuppressRegistry="True" DirectoryRefId="WININTEGRATIONFOLDER" />
+    <!--	
+    <Exec Command="'%WIX%bin\heat' dir '$(SolutionDir)artifacts\msi\web' -nologo -sfrag -suid -ag -srd -dir WEBFOLDER -out $(SolutionDir)deploy\Amusoft.PCR.Installer\WEBFOLDERHARVEST.wxs -cg WebComponents -dr INSTALLLOCATION -var var.WebDeploySourceDir">
+    </Exec>
+	-->
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
