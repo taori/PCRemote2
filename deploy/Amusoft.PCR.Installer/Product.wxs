@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util='http://schemas.microsoft.com/wix/UtilExtension'>
 	<?define Manufacturer = "Amusoft" ?>
 	<?define ProductName = "PC Remote 2" ?>
 	<?define ProductVersion = "1.0.0.0" ?>
@@ -10,7 +10,9 @@
 				 Version="$(var.ProductVersion)"
 				 Manufacturer="$(var.Manufacturer)"
 				 UpgradeCode="de4ddeff-2caf-4c46-b9ff-52a37586069a">
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64"/>
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"  Platform="x64"/>
+		<!-- <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64" AdminImage="yes" InstallPrivileges="elevated"/> -->
+
 		<!-- <Icon Id="Company.ico" SourceFile="..\Tools\Company\Images\Company.ico" /> -->
 		<!-- <Property Id="ARPPRODUCTICON" Value="Company.ico" /> -->
 
@@ -22,9 +24,33 @@
 			<ComponentGroupRef Id="WebComponentsGenerated" />
 			<ComponentGroupRef Id="WinIntegrationComponents" />
 			<ComponentGroupRef Id="WinIntegrationComponentsGenerated" />
+			<ComponentGroupRef Id="DeploymentComponents" />
+			<ComponentGroupRef Id="EnvironmentSetupComponent" />
 			<ComponentRef Id="RegistrySetValues"/>
 			<ComponentRef Id="BackendServerExe"/>
 		</Feature>
+
+		<Property Id="POWERSHELLEXE">
+			<RegistrySearch Id="POWERSHELLEXE"
+			                Type="raw"
+			                Root="HKLM"
+			                Key="SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell"
+			                Name="Path" />
+		</Property>
+		<Condition Message="This application requires Windows PowerShell.">
+			<![CDATA[Installed OR POWERSHELLEXE]]>
+		</Condition>
+
+		<SetProperty Id="RunCertGeneratorScript"
+		             Before="RunCertGeneratorScript"
+		             Sequence="execute"
+		             Value="&quot;[POWERSHELLEXE]&quot; -Version 3.0 -NoProfile -NonInteractive -InputFormat None -ExecutionPolicy Bypass -Command &quot;&amp; '[#SELFSIGNCERT.PS1]' '[DEPLOYMENT]\server.pfx' ; exit $$($Error.Count)&quot;" />
+
+		<CustomAction Id="RunCertGeneratorScript" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no" />
+
+		<InstallExecuteSequence>
+			<Custom Action="RunCertGeneratorScript" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
+		</InstallExecuteSequence>
 	</Product>
 
 	<?include Module.Server.wxi ?>
@@ -36,40 +62,39 @@
 				<RegistryValue
 					Type="string"
 					Name="InstallLocation"
-					Value="[INSTALLFOLDER]"/>
+					Value="[INSTALLDIRECTORY]"/>
 				<RegistryValue
 					Type="string"
 					Name="Version"
 					Value="$(var.ProductVersion)"/>
 			</RegistryKey>
 		</Component>
-		<Component Id='BackendServerExe' Guid='*' Directory='WEBFOLDER'>
+		<Component Id='BackendServerExe' Guid='7B39D2A5-140F-452D-BAEC-0B965A15CCC9' Directory='WEBFOLDER'>
 
-			<File Id='BackendServer' Name='BackendServer' Source='$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.exe' KeyPath='yes'/>
+			<File Id='BackendServer' Name='Amusoft.PCR.Server.exe' Vital='yes' Source='$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.exe' KeyPath='yes'/>
 
-			<ServiceInstall Name='BackendServerExeInstall'
+			<ServiceInstall Name='PCR2'
 							Type='ownProcess'
 							Start='auto'
 			                Account="LocalSystem"
 			                DisplayName="Amusoft PC Remote 2"
-			                Id="Amusoft.PCR.Server"
+			                Id="PCR2.Install"
 			                Description="Backend service required for PC Remote to interact with this computer"
-			                Vital="yes"
-			                ErrorControl="critical">
+			                Vital="yes" ErrorControl="critical">
 
-				<ServiceConfig xmlns='http://schemas.microsoft.com/wix/UtilExtension'
+				<util:ServiceConfig
 					FirstFailureActionType="restart"
 					SecondFailureActionType="restart"
 					ThirdFailureActionType="none"
-					ResetPeriodInDays="1" 
-					ServiceName="Amusoft.PCR.Server"
+					ResetPeriodInDays="1"
+					ServiceName="PCR2"
 					RebootMessage="PC Remote 2 requires a reboot"
 					RestartServiceDelayInSeconds="180"
 				/>
 			</ServiceInstall>
 
-			<ServiceControl Id="Amusoft.PCR.Server.Control"
-							Name="Amusoft.PCR.Server.Control"
+			<ServiceControl Id="PCR2.Control"
+							Name="PCR2"
 			                Remove="both"
 			                Start="install"
 			                Stop="both"/>
@@ -77,13 +102,31 @@
 	</Fragment>
 
 	<Fragment>
+		<ComponentGroup Directory="PRODUCTNAMEFOLDER" Id="EnvironmentSetupComponent">
+			<Component Id="LogFolderPermission" Guid="28E978B1-B037-4DDA-AEC0-6B2C1D235FD9">
+				<CreateFolder>
+					<util:PermissionEx User="Users" GenericAll="yes" />
+				</CreateFolder>
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Directory="DEPLOYMENT" Id="DeploymentComponents">
+			<Component Win64="yes" NeverOverwrite="yes" Id="SELFSIGNCERT.PS1">
+				<File Id="SELFSIGNCERT.PS1" Source="$(var.SolutionDir)..\deploy\createSelfSignedCertificate.ps1" Name="createSelfSignedCertificate.ps1" ></File>
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+
+	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFiles64Folder">
 				<Directory Id="INSTALLFOLDER" Name="Amusoft">
 					<Directory Id="PRODUCTNAMEFOLDER" Name="PC Remote 2">
-						<Directory Id="LOGSFOLDER" Name="logs"></Directory>
-						<Directory Id="WEBFOLDER" Name="web"></Directory>
-						<Directory Id="WININTEGRATIONFOLDER" Name="win-integration"></Directory>
+						<Directory Id="DEPLOYMENT" Name="deployment"></Directory>
+						<Directory Id="WEBFOLDER" Name="web"/>
+						<Directory Id="WININTEGRATIONFOLDER" Name="win-integration"/>
 					</Directory>
 				</Directory>
 			</Directory>
