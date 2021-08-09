@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util='http://schemas.microsoft.com/wix/UtilExtension'>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" 
+     xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension"
+     xmlns:util='http://schemas.microsoft.com/wix/UtilExtension'>
 	<?define Manufacturer = "Amusoft" ?>
 	<?define ProductName = "PC Remote 2" ?>
 	<?define ProductVersion = "1.0.0.0" ?>
@@ -72,6 +74,16 @@
 		<Component Id='BackendServerExe' Guid='7B39D2A5-140F-452D-BAEC-0B965A15CCC9' Directory='WEBFOLDER'>
 
 			<File Id='BackendServer' Name='Amusoft.PCR.Server.exe' Vital='yes' Source='$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.exe' KeyPath='yes'/>
+
+			<fire:FirewallException 
+				Name='Amusoft PC Remote 2 Server'
+				Id='BackendServerFirewall'
+				Port='5001'
+				Protocol='tcp'
+				Profile='all'
+				Scope='localSubnet'
+				IgnoreFailure='no'
+				Description='Amusoft PC Remote 2 Server'/>
 
 			<ServiceInstall Name='PCR2'
 							Type='ownProcess'
