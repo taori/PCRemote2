@@ -62,7 +62,7 @@
 				<RegistryValue
 					Type="string"
 					Name="InstallLocation"
-					Value="[INSTALLDIRECTORY]"/>
+					Value="[INSTALLFOLDER]\PC Remote 2"/>
 				<RegistryValue
 					Type="string"
 					Name="Version"
