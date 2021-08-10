@@ -8,26 +8,33 @@ on:
     paths: 
       - src/*
       
-  pull_request:
+  pull_request:    
     types: 
       - opened
       - reopened
-      - synchronize
+      - synchronize   
       
   # manual trigger
   workflow_dispatch:
+    inputs:
+      buildConfiguration:
+        required: true
+        description: "Configuration for build processes"
+        default: 'Release'
+      productVersion:
+        required: true
+        description: "Version for Release numbers"
+        default: '1.0.0'
   
 env:
-  ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
-  ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-  ANDROID_KEY_PASS: ${{ secrets.ANDROID_KEY_PASS }}
-  ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
   WS: ${{ github.workspace }}
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  Windows:
+
+
+  Android:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2      
@@ -41,7 +48,9 @@ jobs:
         name: Load android keystore
         run: |
           echo -n "$ANDROID_KEYSTORE" > "$WS\android.keystore.encoded"
-          base64 --decode "$WS\android.keystore.encoded" > "$WS\android.keystore"  
+          base64 --decode "$WS\android.keystore.encoded" > "$WS\android.keystore"            
+        env:
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
           
       - shell: pwsh
         name: Build APK
@@ -49,6 +58,10 @@ jobs:
           msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:minimal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\android" /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$env:ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$env:ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="$env:WS\android.keystore" /p:AndroidSigningStorePass="$env:ANDROID_KEYSTORE_PASS"
           Remove-Item "$env:WS\android.keystore.encoded"
           Remove-Item "$env:WS\android.keystore"
+        env:          
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASS: ${{ secrets.ANDROID_KEY_PASS }}
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
               
       - shell: bash
         name: Remove excess android files
@@ -57,7 +70,19 @@ jobs:
           find artifacts/android/ -name '*-Signed.apk' -exec cp "{}" artifacts/apk/ \;
           rm -rf artifacts/android/
           mv artifacts/apk/amusoft.pcr.mobile.droid-Signed.apk artifacts/apk/amusoft.pcr.mobile.droid.apk
-                           
+          
+          
+          
+  Windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2      
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1.0.2
+        with:
+          # Version of Visual Studio to search; defaults to latest if not specified
+          vs-version: 16.9
+                                        
       - shell: pwsh
         name: Build server
         run: |
