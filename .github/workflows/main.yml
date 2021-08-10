@@ -73,12 +73,11 @@ jobs:
       - shell: pwsh
         name: Compile MSI using WiX Installer
         run: |
-          msbuild src/WixBuild.sln /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
-          #msbuild deploy/Amusoft.PCR.Installer/Amusoft.PCR.Installer.wixproj /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
+          msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=Release src/WixBuild.sln 
         
       - name: Display structure of msi-compiled
         shell: bash
-        run: ls -R artifacts/msi-compiled
+        run: ls -R artifacts/
   
    #  - name: Upload a Build Artifact
    #    uses: actions/upload-artifact@v2.2.4
@@ -109,7 +108,13 @@ jobs:
   #   - name: Display structure of downloaded files
   #     shell: bash
   #     run: ls -R artifacts/
-              
+
+      - name: Check release asset existance
+        id: check_files
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "artifacts/apk/amusoft.pcr.mobile.droid.apk, artifacts/msi-compiled/Release/Amusoft PC Remote 2.msi"
+          
       - name: Create GitHub release
         uses: actions/create-release@v1
         id: create_release
@@ -146,7 +151,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           #asset_path: ${{ github.workspace }}/downloads/artifacts/amusoft.pcr.mobile.droid.apk
-          asset_path: artifacts/msi-compiled/Amusoft PC Remote 2.msi
+          asset_path: artifacts/msi-compiled/Release/Amusoft PC Remote 2.msi
           asset_name: Amusoft PC Remote 2.msi
           asset_content_type: application/octet-stream
 
