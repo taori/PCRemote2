@@ -78,6 +78,15 @@ jobs:
           rm -rf artifacts/android/
           mv artifacts/apk/amusoft.pcr.mobile.droid-Signed.apk artifacts/apk/amusoft.pcr.mobile.droid.apk
           
+          
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: apk
+          path: "artifacts/apk/amusoft.pcr.mobile.droid.apk"          
+          if-no-files-found: error
+          retention-days: 1 
+          
                     
   Windows:    
     runs-on: windows-latest
@@ -93,9 +102,16 @@ jobs:
       - shell: pwsh
         name: Build server
         run: |
-          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c Release -o artifacts/msi/web
-          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o artifacts/msi/win-integration
- 
+          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c Release -o artifacts/server/web
+          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o artifacts/server/win-integration
+                    
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: server
+          path: "artifacts/server/"          
+          if-no-files-found: error
+          retention-days: 1    
    
 
   InstallerWindows:    
@@ -109,6 +125,24 @@ jobs:
         with:
           # Version of Visual Studio to search; defaults to latest if not specified
           vs-version: 16.9
+                    
+      - name: Download APK Artifact
+        uses: actions/download-artifact@v2.0.10
+        with:
+          name: apk
+          #path: artifacts/msi/web/wwwroot/downloads/   
+          path: tmp/apk/
+          
+      - name: Download APK Artifact
+        uses: actions/download-artifact@v2.0.10
+        with:
+          name: server
+          #path: artifacts/msi/web/wwwroot/downloads/   
+          path: tmp/server/
+                    
+      - name: Display folder structure
+        shell: bash
+        run: ls -R tmp/
           
       - shell: bash
         name: Move APK to Server content directory
