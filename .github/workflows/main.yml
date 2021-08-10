@@ -53,6 +53,7 @@ jobs:
       - shell: bash
         name: Remove excess android files
         run: |
+          mkdir artifacts/apk/
           find artifacts/android/ -name '*-Signed.apk' -exec cp "{}" artifacts/apk/ \;
           rm -rf artifacts/android/
                     
