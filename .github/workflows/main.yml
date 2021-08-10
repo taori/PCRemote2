@@ -46,6 +46,7 @@ jobs:
     steps:
       
       - name: Set env
+        shell: bash
         if: github.event.inputs.productVersion == '1.0.0'
         run: |
           kind="CI"
@@ -54,11 +55,13 @@ jobs:
           echo "RELEASE_VERSION=$(echo merge)" >> $GITHUB_ENV
         
       - name: Set env
+        shell: bash
         run: |
           merge="Release - ${RELEASE_VERSION}"
           echo "RELEASE_VERSION=$(echo merge)" >> $GITHUB_ENV
         
       - name: Tell RELEASE_VERSION
+        shell: bash
         run: echo "$RELEASE_VERSION
         
       - uses: actions/github-script@v2
