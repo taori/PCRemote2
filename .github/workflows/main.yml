@@ -64,10 +64,10 @@ jobs:
           dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c Release -o artifacts/msi/web
           dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o artifacts/msi/win-integration
                     
-      - shell: pwsh
+      - shell: bash
         name: Move APK to Server content directory
         run: |
-          Copy-Item artifacts/apk/amusoft.pcr.mobile.droid.apk -Destination artifacts/msi/web/wwwroot/downloads/
+          cp artifacts/apk/amusoft.pcr.mobile.droid.apk -Destination artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
                 
       - shell: pwsh
         name: Compile MSI
@@ -100,9 +100,9 @@ jobs:
   #       #path: ${{ github.workspace }}/downloads/
   #       path: artifacts/msi/web/wwwroot/downloads/          
          
-      - name: Display structure of downloaded files
-        shell: bash
-        run: ls -R artifacts/
+  #   - name: Display structure of downloaded files
+  #     shell: bash
+  #     run: ls -R artifacts/
               
       - name: release
         uses: actions/create-release@v1
@@ -127,7 +127,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           #asset_path: ${{ github.workspace }}/downloads/artifacts/amusoft.pcr.mobile.droid.apk
-          asset_path: artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
+          asset_path: artifacts/apk/amusoft.pcr.mobile.droid.apk
           asset_name: amusoft.pcr.mobile.droid.apk
           asset_content_type: application/vnd.android.package-archive
 
