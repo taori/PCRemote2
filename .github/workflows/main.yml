@@ -168,7 +168,7 @@ jobs:
         name: Compile MSI using WiX Installer
         run: |
           $newProductContent = (Get-Content -path deploy\Amusoft.PCR.Installer\Product.wxs -Raw) -replace 'ProductVersion = "1.0.1"','ProductVersion = "${{ github.event.inputs.productVersion }}"' | Set-Content -Path deploy\Amusoft.PCR.Installer\Product.wxs        
-          msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln /p:AssemblyVersion${{ github.event.inputs.productVersion }}
+          msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln /p:AssemblyVersion=${{ github.event.inputs.productVersion }}
       #/p:OFFICIAL_WIX_BUILD="$env:WS\MSI_SNK_B64.snk"
             
    #  - shell : bash
