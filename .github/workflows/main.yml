@@ -80,13 +80,16 @@ jobs:
           name: apk
           # Destination path
           #path: ${{ github.workspace }}/downloads/
-          path: artifacts/msi/web/wwwroot/downloads/
-          
-          
+          path: artifacts/msi/web/wwwroot/downloads/          
+         
+      - name: Display structure of downloaded files
+        shell: bash
+        run: ls -R artifacts/
+      
       - shell: pwsh
         name: Rename APK
         run: |
-          Rename-Item artifacts/msi/web/wwwroot/downloads/artifacts/amusoft.pcr.mobile.droid-Signed.apk artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
+          Rename-Item artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid-Signed.apk artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
         
       - name: release
         uses: actions/create-release@v1
