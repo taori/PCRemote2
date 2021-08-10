@@ -73,8 +73,13 @@ jobs:
       - shell: pwsh
         name: Compile MSI using WiX Installer
         run: |
-          msbuild deploy/Amusoft.PCR.Installer/Amusoft.PCR.Installer.wixproj /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
+          msbuild src/WixBuild.sln /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
+          #msbuild deploy/Amusoft.PCR.Installer/Amusoft.PCR.Installer.wixproj /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
         
+      - name: Display structure of msi-compiled
+        shell: bash
+        run: ls -R artifacts/msi-compiled
+  
    #  - name: Upload a Build Artifact
    #    uses: actions/upload-artifact@v2.2.4
    #    with:
