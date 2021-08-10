@@ -58,7 +58,7 @@ jobs:
                     
       - name: Display structure of downloaded files
         shell: bash
-        run: ls -R artifacts/android/
+        run: ls -R artifacts/apk/
           
       - shell: pwsh
         name: Build Server
