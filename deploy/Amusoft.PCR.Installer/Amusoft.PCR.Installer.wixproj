@@ -22,6 +22,7 @@
     <SuppressIces>ICE80;ICE60</SuppressIces>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="CustomActions.wxi" />
     <Content Include="WixUI_InstallDirCustomDialog.wxi" />
     <Content Include="EnvironmentConfiguration.wxi" />
@@ -54,6 +55,7 @@
     </WixExtension>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Properties" />
     <Folder Include="Resources" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +83,12 @@
     <Message Importance="High" Text="Running HEAT" />
     <HeatDirectory NoLogo="True" SuppressAllWarnings="False" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="True" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Server.Harvested.wxi" SuppressFragments="True" SuppressUniqueIds="False" Directory="$(SolutionDir)..\artifacts\msi\web\" ComponentGroupName="WebComponentsGenerated" KeepEmptyDirectories="True" PreprocessorVariable="var.SolutionDir" SuppressCom="False" SuppressRootDirectory="True" Transforms="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Server.Harvested.xslt" SuppressRegistry="True" DirectoryRefId="WEBFOLDER" />
     <HeatDirectory NoLogo="True" SuppressAllWarnings="False" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="True" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Int.Win.Harvested.wxi" SuppressFragments="True" SuppressUniqueIds="False" Directory="$(SolutionDir)..\artifacts\msi\win-integration\" ComponentGroupName="WinIntegrationComponentsGenerated" KeepEmptyDirectories="True" PreprocessorVariable="var.SolutionDir" SuppressCom="False" SuppressRootDirectory="True" Transforms="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Int.Win.Harvested.xslt" SuppressRegistry="True" DirectoryRefId="WININTEGRATIONFOLDER" />
+  </Target>
+   <Target Name="SignBundleEngine">
+    <Exec Command="Signtool.exe sign /a &quot;@(SignBundleEngine)&quot;" />
+  </Target>
+  <Target Name="SignBundle">
+    <Exec Command="Signtool.exe sign /a &quot;@(SignBundle)&quot;" />
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
