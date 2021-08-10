@@ -70,26 +70,27 @@ jobs:
           mkdir -p artifacts/msi/web/wwwroot/downloads/
           cp artifacts/apk/amusoft.pcr.mobile.droid.apk artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
               
-      - shell : bash
-        name: Load MSI signing key
-        run: |
-          echo -n "$MSI_SNK_B64" > "$WS\MSI_SNK_B64.encoded"
-          base64 --decode "$WS\MSI_SNK_B64.encoded" > "$WS\MSI_SNK_B64.snk"  
-        env:
-          MSI_SNK_B64: ${{ secrets.MSI_SNK_B64 }}          
+   #  - shell : bash
+   #    name: Load MSI signing key
+   #    run: |
+   #      echo -n "$MSI_SNK_B64" > "$WS\MSI_SNK_B64.encoded"
+   #      base64 --decode "$WS\MSI_SNK_B64.encoded" > "$WS\MSI_SNK_B64.snk"  
+   #    env:
+   #      MSI_SNK_B64: ${{ secrets.MSI_SNK_B64 }}          
           
       - shell: pwsh
         name: Compile MSI using WiX Installer
         run: |
-          msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=Release src/WixBuild.sln /p:OFFICIAL_WIX_BUILD="$env:WS\MSI_SNK_B64.snk"
+          msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=Release src/WixBuild.sln
+      #/p:OFFICIAL_WIX_BUILD="$env:WS\MSI_SNK_B64.snk"
                     
-      - shell : bash
-        name: Remove MSI signing keys
-        run: |
-          rm $WS\MSI_SNK_B64.encoded
-          rm $WS\MSI_SNK_B64.snk
-        env:
-          MSI_SNK_B64: ${{ secrets.MSI_SNK_B64 }}   
+   #  - shell : bash
+   #    name: Remove MSI signing keys
+   #    run: |
+   #      rm $WS\MSI_SNK_B64.encoded
+   #      rm $WS\MSI_SNK_B64.snk
+   #    env:
+   #      MSI_SNK_B64: ${{ secrets.MSI_SNK_B64 }}   
         
    #  - name: Display structure of msi-compiled
    #    shell: bash
