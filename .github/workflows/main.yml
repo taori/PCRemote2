@@ -17,14 +17,21 @@ on:
   # manual trigger
   workflow_dispatch:
     inputs:
+    
       buildConfiguration:
         required: true
         description: "Configuration for build processes"
         default: 'Release'
+        
       productVersion:
         required: true
         description: "Version for Release numbers"
         default: '1.0.0'
+        
+      createRelease:
+        required: true
+        description: "Version for Release numbers"
+        default: "false"
   
 env:
   WS: ${{ github.workspace }}
@@ -32,7 +39,6 @@ env:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
 
   Android:
     runs-on: windows-latest
@@ -73,8 +79,9 @@ jobs:
           
           
           
-  Windows:
+  Windows:    
     runs-on: windows-latest
+    needs: [Android]
     steps:
       - uses: actions/checkout@v2      
       - name: setup-msbuild
@@ -88,7 +95,14 @@ jobs:
         run: |
           dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c Release -o artifacts/msi/web
           dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o artifacts/msi/win-integration
-                    
+ 
+   
+
+  InstallerWindows:    
+    runs-on: windows-latest
+    needs: [Windows, Android]
+    steps:     
+    
       - shell: bash
         name: Move APK to Server content directory
         run: |
@@ -108,7 +122,13 @@ jobs:
         run: |
           msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=Release src/WixBuild.sln
       #/p:OFFICIAL_WIX_BUILD="$env:WS\MSI_SNK_B64.snk"
-                    
+          
+  GitHubRelease:    
+    runs-on: windows-latest
+    if: github.event.inputs.createRelease == "1"
+    needs: [InstallerWindows]
+    steps:
+                     
    #  - shell : bash
    #    name: Remove MSI signing keys
    #    run: |
@@ -196,5 +216,3 @@ jobs:
           asset_path: artifacts/msi-compiled/Release/Amusoft PC Remote 2.msi
           asset_name: Amusoft PC Remote 2.msi
           asset_content_type: application/octet-stream
-
-          
