@@ -38,7 +38,7 @@ jobs:
           vs-version: 16.9
                     
       - shell : bash
-        name: load keystore
+        name: Load android keystore
         run: |
           echo -n "$ANDROID_KEYSTORE" > "$WS\android.keystore.encoded"
           base64 --decode "$WS\android.keystore.encoded" > "$WS\android.keystore"  
@@ -59,7 +59,7 @@ jobs:
           mv artifacts/apk/amusoft.pcr.mobile.droid-Signed.apk artifacts/apk/amusoft.pcr.mobile.droid.apk
                            
       - shell: pwsh
-        name: Build Server
+        name: Build server
         run: |
           dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c Release -o artifacts/msi/web
           dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o artifacts/msi/win-integration
@@ -67,10 +67,10 @@ jobs:
       - shell: bash
         name: Move APK to Server content directory
         run: |
-          cp artifacts/apk/amusoft.pcr.mobile.droid.apk -Destination artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
+          cp artifacts/apk/amusoft.pcr.mobile.droid.apk artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
                 
       - shell: pwsh
-        name: Compile MSI
+        name: Compile MSI using WiX Installer
         run: |
           msbuild deploy/Amusoft.PCR.Installer/Amusoft.PCR.Installer.csproj /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
         
@@ -82,7 +82,7 @@ jobs:
    #      if-no-files-found: error
    #      retention-days: 14              
           
-      - name: version
+      - name: Create release version
         #run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
         #run: echo "::set-output name=version::release-${{ github.sha }}"        
         shell: pwsh
@@ -104,7 +104,7 @@ jobs:
   #     shell: bash
   #     run: ls -R artifacts/
               
-      - name: release
+      - name: Create GitHub release
         uses: actions/create-release@v1
         id: create_release
         with:
@@ -120,7 +120,8 @@ jobs:
       #  shell: bash
       #  run: ls -R $GITHUB_WORKSPACE/downloads/
           
-      - id: upload-release-asset 
+      - id: upload-release-asset-apk
+        name: Upload APK
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -130,5 +131,17 @@ jobs:
           asset_path: artifacts/apk/amusoft.pcr.mobile.droid.apk
           asset_name: amusoft.pcr.mobile.droid.apk
           asset_content_type: application/vnd.android.package-archive
+                    
+      - id: upload-release-asset-msi
+        name: Upload MSI
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          #asset_path: ${{ github.workspace }}/downloads/artifacts/amusoft.pcr.mobile.droid.apk
+          asset_path: artifacts/msi-compiled/Amusoft PC Remote 2.msi
+          asset_name: Amusoft PC Remote 2.msi
+          asset_content_type: application/octet-stream
 
           
