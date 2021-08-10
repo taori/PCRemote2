@@ -67,6 +67,7 @@ jobs:
       - shell: bash
         name: Move APK to Server content directory
         run: |
+          mkdir -p artifacts/msi/web/wwwroot/downloads/
           cp artifacts/apk/amusoft.pcr.mobile.droid.apk artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
                 
       - shell: pwsh
