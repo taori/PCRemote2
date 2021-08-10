@@ -53,8 +53,8 @@ jobs:
       - shell: bash
         name: Remove excess android files
         run: |
+          find artifacts/android ! -name '*-Signed.apk' -type d -exec rm -rf {} +
           find artifacts/android ! -name '*-Signed.apk' -type f -exec rm -f {} +
-          find artifacts/android ! -name '*-Signed.apk' -type d -exec rm -d -r {} +
                     
       - name: Display structure of downloaded files
         shell: bash
