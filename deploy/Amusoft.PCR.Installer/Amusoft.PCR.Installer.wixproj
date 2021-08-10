@@ -10,12 +10,12 @@
     <OutputType>Package</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <OutputPath>..\..\artifacts\msi-compiled\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <OutputPath>..\..\artifacts\msi-compiled\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup>
@@ -71,17 +71,22 @@
   <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
   </Target>
-  <Target Name="BeforeBuild">
+  <Target Name="BuildMsiArtifacts" BeforeTargets="Rebuild">
     <Exec Command="dotnet publish $(SolutionDir)Amusoft.PCR.Server\Amusoft.PCR.Server.csproj -c Release -o $(SolutionDir)..\artifacts\msi\web">
     </Exec>
     <Exec Command="dotnet publish $(SolutionDir)Amusoft.PCR.Integration.WindowsDesktop\Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o $(SolutionDir)..\artifacts\msi\win-integration">
     </Exec>
+  </Target>
+  <Target Name="BeforeBuild">
     <Message Importance="High" Text="Running HEAT" />
-    
     <HeatDirectory NoLogo="True" SuppressAllWarnings="False" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="True" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Server.Harvested.wxi" SuppressFragments="True" SuppressUniqueIds="False" Directory="$(SolutionDir)..\artifacts\msi\web\" ComponentGroupName="WebComponentsGenerated" KeepEmptyDirectories="True" PreprocessorVariable="var.SolutionDir" SuppressCom="False" SuppressRootDirectory="True" Transforms="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Server.Harvested.xslt" SuppressRegistry="True" DirectoryRefId="WEBFOLDER" />
-	
     <HeatDirectory NoLogo="True" SuppressAllWarnings="False" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="True" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Int.Win.Harvested.wxi" SuppressFragments="True" SuppressUniqueIds="False" Directory="$(SolutionDir)..\artifacts\msi\win-integration\" ComponentGroupName="WinIntegrationComponentsGenerated" KeepEmptyDirectories="True" PreprocessorVariable="var.SolutionDir" SuppressCom="False" SuppressRootDirectory="True" Transforms="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Int.Win.Harvested.xslt" SuppressRegistry="True" DirectoryRefId="WININTEGRATIONFOLDER" />
-
+  </Target>
+  <Target Name="SignBundleEngine">
+    <Exec Command="Signtool.exe sign /a &quot;@(SignBundleEngine)&quot;" />
+  </Target>
+  <Target Name="SignBundle">
+    <Exec Command="Signtool.exe sign /a &quot;@(SignBundle)&quot;" />
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
