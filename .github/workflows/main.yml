@@ -56,26 +56,31 @@ jobs:
           mkdir artifacts/apk/
           find artifacts/android/ -name '*-Signed.apk' -exec cp "{}" artifacts/apk/ \;
           rm -rf artifacts/android/
-                    
-      - name: Display structure of downloaded files
-        shell: bash
-        run: ls -R artifacts/apk/
-          
+          mv artifacts/apk/amusoft.pcr.mobile.droid-Signed.apk artifacts/apk/amusoft.pcr.mobile.droid.apk
+                           
       - shell: pwsh
         name: Build Server
         run: |
           dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c Release -o artifacts/msi/web
           dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o artifacts/msi/win-integration
-          
+                    
+      - shell: pwsh
+        name: Move APK to Server content directory
+        run: |
+          Copy-Item artifacts/apk/amusoft.pcr.mobile.droid.apk -Destination artifacts/msi/web/wwwroot/downloads/
                 
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: apk
-          path: "**/*-Signed.apk"          
-          if-no-files-found: error
-          retention-days: 14     
-          
+      - shell: pwsh
+        name: Compile MSI
+        run: |
+          msbuild deploy/Amusoft.PCR.Installer/Amusoft.PCR.Installer.csproj /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
+        
+   #  - name: Upload a Build Artifact
+   #    uses: actions/upload-artifact@v2.2.4
+   #    with:
+   #      name: apk
+   #      path: "**/*-Signed.apk"          
+   #      if-no-files-found: error
+   #      retention-days: 14              
           
       - name: version
         #run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
@@ -86,24 +91,19 @@ jobs:
           echo "::set-output name=version::ci-release-$trimmedSha"  
         id: version
           
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v2.0.10
-        with:
-          # Artifact name
-          name: apk
-          # Destination path
-          #path: ${{ github.workspace }}/downloads/
-          path: artifacts/msi/web/wwwroot/downloads/          
+  #   - name: Download a Build Artifact
+  #     uses: actions/download-artifact@v2.0.10
+  #     with:
+  #       # Artifact name
+  #       name: apk
+  #       # Destination path
+  #       #path: ${{ github.workspace }}/downloads/
+  #       path: artifacts/msi/web/wwwroot/downloads/          
          
       - name: Display structure of downloaded files
         shell: bash
         run: ls -R artifacts/
-      
-      - shell: pwsh
-        name: Rename APK
-        run: |
-          Rename-Item artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid-Signed.apk artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
-        
+              
       - name: release
         uses: actions/create-release@v1
         id: create_release
