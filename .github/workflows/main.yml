@@ -73,7 +73,7 @@ jobs:
       - shell: pwsh
         name: Compile MSI using WiX Installer
         run: |
-          msbuild deploy/Amusoft.PCR.Installer/Amusoft.PCR.Installer.csproj /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
+          msbuild deploy/Amusoft.PCR.Installer/Amusoft.PCR.Installer.wixproj /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
         
    #  - name: Upload a Build Artifact
    #    uses: actions/upload-artifact@v2.2.4
