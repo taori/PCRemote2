@@ -36,13 +36,41 @@ on:
 env:
   WS: ${{ github.workspace }}
   BUILDCONFIGURATION : ${{ github.event.inputs.buildConfiguration }}
-
+  RELEASE_VERSION : ${{ github.event.inputs.productVersion }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+
+  Test:
+    runs-on: windows-latest
+    steps:
+      
+      - name: Set env
+        if: github.event.inputs.productVersion == '1.0.0'
+        run: |
+          kind = "CI"
+          sha = $(echo $GITHUB_SHA | cut -c 1-27)
+          merge = "${kind}-${sha}"
+          echo "RELEASE_VERSION=$(echo merge)" >> $GITHUB_ENV
+        
+      - name: Set env
+        run: |
+          merge = "Release - ${RELEASE_VERSION}"
+          echo "RELEASE_VERSION=$(echo merge)" >> $GITHUB_ENV
+        
+      - name: Tell RELEASE_VERSION
+        run: echo "$RELEASE_VERSION
+        
+      - uses: actions/github-script@v2
+        id: stop
+        with:
+          script: |
+              return 'stop'
+          result-encoding: string
           
   Android:
     runs-on: windows-latest
+    needs: Test
     steps:
             
       - uses: actions/checkout@v2      
@@ -89,6 +117,7 @@ jobs:
           
                     
   Windows:    
+    needs: Test
     runs-on: windows-latest
     steps:
             
@@ -213,7 +242,8 @@ jobs:
         with:
           files: "artifacts/apk/amusoft.pcr.mobile.droid.apk, artifacts/msi/Amusoft PC Remote 2.msi"
           
-      - name: Create release version
+      - name: Create release version CI
+        if: ${{ github.event.inputs.productVersion }} == '1.0.0'
         id: version
         #run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
         #run: echo "::set-output name=version::release-${{ github.sha }}"        
@@ -221,6 +251,10 @@ jobs:
         run: |
           $trimmedSha = $("${{ github.sha }}").Substring(0,27)
           echo "::set-output name=version::ci-release-$trimmedSha"
+          
+          
+      - name: Set env
+        run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
           
       - name: Create GitHub release
         uses: actions/create-release@v1
