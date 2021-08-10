@@ -4,7 +4,7 @@
      xmlns:util='http://schemas.microsoft.com/wix/UtilExtension'>
 	<?define Manufacturer = "Amusoft" ?>
 	<?define ProductName = "PC Remote 2" ?>
-	<?define ProductVersion = "1.0.0.0" ?>
+	<?define ProductVersion = "1.0.1" ?>
 
 	<Product Id="BE8150DB-D86F-45A0-9070-F4CE0F6D984C"
 				 Name="$(var.ProductName)"
@@ -27,7 +27,7 @@
 		<Icon Id="Company.ico" SourceFile="$(var.SolutionDir)..\deploy\Amusoft.PCR.Installer\Resources\Launcher.ico" />
 		<Property Id="ARPPRODUCTICON" Value="Company.ico" />
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" />
 		<MediaTemplate EmbedCab="yes" />
 
 		<Feature Id="ProductFeature" Title="PC Remote 2" Level="1">
@@ -61,17 +61,17 @@
 
 		<CustomAction Id='UpdateAppSettingsAction_SetProperties' 
 		              Property='UpdateAppSettingsAction'
-		              Value='Port=[CUSTOM_PORT]'/>
+		              Value='Port=[CUSTOM_PORT];AppSettingsPath=[#SERVER_APPSETTINGS]'/>
 		<CustomAction Id='UpdateAppSettingsAction' DllEntry='UpdateAppSettings' Execute='deferred' Impersonate='no' Return='check'
 		              BinaryKey='CustomBinary' />
-		<CustomAction Id='VerifyConfigurationAction' DllEntry='VerifyConfiguration' Execute='immediate' Impersonate='no' Return='check'
+		<CustomAction Id='VerifyConfigurationAction' DllEntry='VerifyConfiguration' Execute='immediate' Return='check'
 		              BinaryKey='CustomBinary' />
 
 		<InstallExecuteSequence>
 			<Custom Action="RunCertGeneratorScript" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
 
-			<Custom Action='UpdateAppSettingsAction_SetProperties' Before='UpdateAppSettingsAction'></Custom>
-			<Custom Action='UpdateAppSettingsAction' Before='RunCertGeneratorScript'></Custom>
+			<Custom Action='UpdateAppSettingsAction_SetProperties' Before='UpdateAppSettingsAction'><![CDATA[NOT Installed]]></Custom>
+			<Custom Action='UpdateAppSettingsAction' Before='RunCertGeneratorScript'><![CDATA[NOT Installed]]></Custom>
 		</InstallExecuteSequence>
 	</Product>
 

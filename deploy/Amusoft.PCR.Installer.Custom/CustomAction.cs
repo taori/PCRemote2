@@ -2,6 +2,7 @@ using Microsoft.Deployment.WindowsInstaller;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -24,8 +25,20 @@ namespace Amusoft.PCR.Installer.Custom
 			if (!int.TryParse(port, out var parsedPort))
 				return ActionResult.Failure;
 
-			session.Log($"Begin CustomAction1 {parsedPort}");
+			if (!session.CustomActionData.TryGetValue("AppSettingsPath", out var appsettingsPath))
+				return ActionResult.Failure;
 
+			try
+			{
+				var content = File.ReadAllText(appsettingsPath, Encoding.UTF8);
+				File.WriteAllText(appsettingsPath, content.Replace("https://*:5001", $"https://*:{port}"));
+			}
+			catch (Exception e)
+			{
+				session.Log(e.ToString());
+				return ActionResult.Failure;
+			}
+			
 			return ActionResult.Success;
 		}
 

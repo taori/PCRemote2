@@ -4,7 +4,7 @@
 	<Fragment>
 
 		<Property Id="WIXUI_INSTALLDIR" Value="PRODUCTNAMEFOLDER" />
-		<Property Id="ConfigurationIsValid" Value="0" />
+		<Property Id="ConfigurationIsValid" Value="1" />
 
 		<UI Id="Amusoft_InstallDir">
 			<TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />

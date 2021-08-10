@@ -7,8 +7,8 @@
 			<Dialog Id="ConfigurationDlg" Width="370" Height="270">
 
 				<Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" >
-					<Condition Action="disable"><![CDATA[ConfigurationIsValid <> "1"]]></Condition>
-					<Condition Action="enable">ConfigurationIsValid = "1"</Condition>
+					<!-- <Condition Action="disable"><![CDATA[ConfigurationIsValid <> "1"]]></Condition> -->
+					<!-- <Condition Action="enable">ConfigurationIsValid = "1"</Condition> -->
 				</Control>
 				<Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
 				<Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
@@ -22,10 +22,8 @@
 				<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
 
 				<Control Id="Hint" Type="Text" X="26" Y="60" Width="250" Height="16" Transparent="yes" Text="Application Port"/>
-				<Control Id="ConfigurationPort" Type="Edit" X="26" Y="76" Width="40" Height="16" Property="CUSTOM_PORT">
-					<Publish Event="DoAction" Value="VerifyConfigurationAction">
-						<![CDATA[ConfigurationIsValid = "1"]]>
-					</Publish>
+				<Control Id="ConfigurationPort" Type="MaskedEdit" X="26" Y="76" Width="40" Height="16" Property="CUSTOM_PORT" Text="#####" Sunken="yes">
+					<Publish Event="DoAction" Value="VerifyConfigurationAction">1</Publish>
 				</Control>
 
 			</Dialog>
