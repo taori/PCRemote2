@@ -39,10 +39,11 @@ env:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
-  BuildSetup:  
+          
+  Android:
     runs-on: windows-latest
     steps:
+            
       - uses: actions/checkout@v2      
       - name: setup-msbuild
         uses: microsoft/setup-msbuild@v1.0.2
@@ -50,11 +51,6 @@ jobs:
           # Version of Visual Studio to search; defaults to latest if not specified
           vs-version: 16.9
           
-  Android:
-    runs-on: windows-latest
-    needs: [BuildSetup]
-    steps:
-                    
       - shell : bash
         name: Load android keystore
         run: |
@@ -84,10 +80,16 @@ jobs:
           
                     
   Windows:    
-    needs: [BuildSetup]
     runs-on: windows-latest
     steps:
-                                        
+            
+      - uses: actions/checkout@v2      
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1.0.2
+        with:
+          # Version of Visual Studio to search; defaults to latest if not specified
+          vs-version: 16.9
+          
       - shell: pwsh
         name: Build server
         run: |
@@ -101,6 +103,13 @@ jobs:
     needs: [Windows, Android]
     steps:     
     
+      - uses: actions/checkout@v2      
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1.0.2
+        with:
+          # Version of Visual Studio to search; defaults to latest if not specified
+          vs-version: 16.9
+          
       - shell: bash
         name: Move APK to Server content directory
         run: |
