@@ -30,8 +30,8 @@ on:
         
       createRelease:
         required: true
-        description: "Provide GitHub release?: true/false"
-        default: "false"
+        description: "Provide GitHub release?: 1/0"
+        default: "0"
   
 env:
   WS: ${{ github.workspace }}
