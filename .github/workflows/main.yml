@@ -244,12 +244,11 @@ jobs:
         id: create_release
         with:
           draft: false
-          prerelease: false
+          prerelease: startsWith( ${{ env.RELEASE_VERSION }}, 'ci-')
           release_name: ${{ env.RELEASE_VERSION }}
           tag_name: ${{ env.RELEASE_VERSION }}
-          #body_path: CHANGELOG.md
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}         
           
       #- name: Display structure of downloaded files
       #  shell: bash
