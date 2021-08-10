@@ -52,13 +52,13 @@ jobs:
           kind="CI"
           sha=$(echo $GITHUB_SHA | cut -c 1-27)
           merge="${kind}-${sha}"
-          echo "RELEASE_VERSION=$(echo merge)" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$(echo $merge)" >> $GITHUB_ENV
         
       - name: Set env
         shell: bash
         run: |
           merge="Release - ${RELEASE_VERSION}"
-          echo "RELEASE_VERSION=$(echo merge)" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$(echo $merge)" >> $GITHUB_ENV
         
       - name: Tell RELEASE_VERSION
         shell: bash
