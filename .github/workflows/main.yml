@@ -30,7 +30,7 @@ on:
         
       createRelease:
         required: true
-        description: "Version for Release numbers"
+        description: "Provide GitHub release?: true/false"
         default: "false"
   
 env:
@@ -40,7 +40,7 @@ env:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 
-  Android:
+  BuildSetup:  
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2      
@@ -49,6 +49,11 @@ jobs:
         with:
           # Version of Visual Studio to search; defaults to latest if not specified
           vs-version: 16.9
+          
+  Android:
+    runs-on: windows-latest
+    needs: [BuildSetup]
+    steps:
                     
       - shell : bash
         name: Load android keystore
@@ -77,18 +82,11 @@ jobs:
           rm -rf artifacts/android/
           mv artifacts/apk/amusoft.pcr.mobile.droid-Signed.apk artifacts/apk/amusoft.pcr.mobile.droid.apk
           
-          
-          
+                    
   Windows:    
+    needs: [BuildSetup]
     runs-on: windows-latest
-    needs: [Android]
     steps:
-      - uses: actions/checkout@v2      
-      - name: setup-msbuild
-        uses: microsoft/setup-msbuild@v1.0.2
-        with:
-          # Version of Visual Studio to search; defaults to latest if not specified
-          vs-version: 16.9
                                         
       - shell: pwsh
         name: Build server
@@ -125,7 +123,7 @@ jobs:
           
   GitHubRelease:    
     runs-on: windows-latest
-    if: github.event.inputs.createRelease == "1"
+    if: github.event.inputs.createRelease == '1'
     needs: [InstallerWindows]
     steps:
                      
