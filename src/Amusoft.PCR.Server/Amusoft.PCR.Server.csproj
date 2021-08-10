@@ -9,6 +9,7 @@
 		<IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
 		<TypeScriptToolsVersion>4.2</TypeScriptToolsVersion>
 		<WarningsAsErrors>CS8509</WarningsAsErrors>
+		<ApplicationIcon>Launcher.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>

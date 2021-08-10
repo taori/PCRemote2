@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Integration.Win
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Grpc.Common", "Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj", "{EBF797BF-5AAA-4741-8B31-54D3B74811BC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploymentScripts", "deploymentScripts", "{DD935416-C8CA-41E9-A95F-6ED449B5198A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployment", "deployment", "{DD935416-C8CA-41E9-A95F-6ED449B5198A}"
 	ProjectSection(SolutionItems) = preProject
 		..\deploy\buildAndCopy.ps1 = ..\deploy\buildAndCopy.ps1
 		..\deploy\createSelfSignedCertificate.ps1 = ..\deploy\createSelfSignedCertificate.ps1
@@ -36,7 +36,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Grpc.Client", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.App.Console", "Amusoft.PCR.App.Console\Amusoft.PCR.App.Console.csproj", "{7AA0DC77-3F0B-48F3-8EEB-F059BC884AD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.Toolkit.Networking", "Amusoft.Toolkit.Networking\Amusoft.Toolkit.Networking.csproj", "{BD9342F1-1B51-4388-A93B-8F5370D5CF36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.Toolkit.Networking", "Amusoft.Toolkit.Networking\Amusoft.Toolkit.Networking.csproj", "{BD9342F1-1B51-4388-A93B-8F5370D5CF36}"
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Amusoft.PCR.Installer", "..\deploy\Amusoft.PCR.Installer\Amusoft.PCR.Installer.wixproj", "{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.PCR.Installer.Custom", "..\deploy\Amusoft.PCR.Installer.Custom\Amusoft.PCR.Installer.Custom.csproj", "{57E8F255-C0F3-4910-A310-9C25EB9125E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -282,6 +286,30 @@ Global
 		{BD9342F1-1B51-4388-A93B-8F5370D5CF36}.Release|x64.Build.0 = Release|Any CPU
 		{BD9342F1-1B51-4388-A93B-8F5370D5CF36}.Release|x86.ActiveCfg = Release|Any CPU
 		{BD9342F1-1B51-4388-A93B-8F5370D5CF36}.Release|x86.Build.0 = Release|Any CPU
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|iPhone.ActiveCfg = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|iPhoneSimulator.ActiveCfg = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|x64.ActiveCfg = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|x86.ActiveCfg = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|x86.Build.0 = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|Any CPU.ActiveCfg = Release|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|iPhone.ActiveCfg = Release|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|iPhoneSimulator.ActiveCfg = Release|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|x64.ActiveCfg = Release|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|x86.ActiveCfg = Release|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|x86.Build.0 = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|iPhone.ActiveCfg = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|iPhoneSimulator.ActiveCfg = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|x64.ActiveCfg = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|x86.ActiveCfg = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|x86.Build.0 = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|Any CPU.ActiveCfg = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|iPhone.ActiveCfg = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|iPhoneSimulator.ActiveCfg = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|x64.ActiveCfg = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|x86.ActiveCfg = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -298,6 +326,8 @@ Global
 		{76D7ED59-4C31-4CDA-955E-4E14770F2B27} = {199D4AAE-1BA6-4652-83C2-D9C44F2D6118}
 		{7AA0DC77-3F0B-48F3-8EEB-F059BC884AD5} = {610C5EC5-598B-47FB-AE5B-46CC0119A84E}
 		{BD9342F1-1B51-4388-A93B-8F5370D5CF36} = {51C2B24A-E3C6-412C-8B6C-AEE39C496BA7}
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0} = {DD935416-C8CA-41E9-A95F-6ED449B5198A}
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3} = {DD935416-C8CA-41E9-A95F-6ED449B5198A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22FDAE23-8E3E-4C6A-8F44-C7393EFE8D2C}
