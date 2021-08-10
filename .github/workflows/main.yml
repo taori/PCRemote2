@@ -73,7 +73,7 @@ jobs:
       - shell: pwsh
         name: Compile MSI using WiX Installer
         run: |
-          msbuild src/WixBuild.sln /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
+          msbuild /verbosity:minimal /t:"Build" /bl /p:Configuration=Release src/WixBuild.sln 
           #msbuild deploy/Amusoft.PCR.Installer/Amusoft.PCR.Installer.wixproj /verbosity:minimal /restore /t:"Build" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\msi-compiled" 
         
       - name: Display structure of msi-compiled
