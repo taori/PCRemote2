@@ -36,23 +36,26 @@ jobs:
         with:
           # Version of Visual Studio to search; defaults to latest if not specified
           vs-version: 16.9
+          
+      - shell: pwsh
+        name: Build Server
+        run: |
+          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c Release -o artifacts/msi/web
+          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o artifacts/msi/win-integration
+          
       - shell : bash
         name: load keystore
         run: |
           echo -n "$ANDROID_KEYSTORE" > "$WS\android.keystore.encoded"
-          base64 --decode "$WS\android.keystore.encoded" > "$WS\android.keystore"      
+          base64 --decode "$WS\android.keystore.encoded" > "$WS\android.keystore"  
+          
       - shell: pwsh
         name: Build APK
         run: |
           msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:minimal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts" /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$env:ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$env:ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="$env:WS\android.keystore" /p:AndroidSigningStorePass="$env:ANDROID_KEYSTORE_PASS"
           Remove-Item "$env:WS\android.keystore.encoded"
           Remove-Item "$env:WS\android.keystore"
-        
-      - shell: pwsh
-        name: Build Server
-        run: |
-          msbuild src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj /verbosity:minimal /restore /p:Configuration=Release 
-        
+                
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
@@ -69,6 +72,21 @@ jobs:
           $trimmedSha = $("${{ github.sha }}").Substring(0,27)
           echo "::set-output name=version::ci-release-$trimmedSha"  
         id: version
+          
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v2.0.10
+        with:
+          # Artifact name
+          name: apk
+          # Destination path
+          #path: ${{ github.workspace }}/downloads/
+          path: artifacts/msi/web/wwwroot/downloads/
+          
+          
+      - shell: pwsh
+        name: Rename APK
+        run: |
+          Rename-Item artifacts/msi/web/wwwroot/downloads/artifacts/amusoft.pcr.mobile.droid-Signed.apk artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
         
       - name: release
         uses: actions/create-release@v1
@@ -82,14 +100,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v2.0.10
-        with:
-          # Artifact name
-          name: apk
-          # Destination path
-          path: ${{ github.workspace }}/downloads/
-          
       #- name: Display structure of downloaded files
       #  shell: bash
       #  run: ls -R $GITHUB_WORKSPACE/downloads/
@@ -100,8 +110,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ${{ github.workspace }}/downloads/artifacts/amusoft.pcr.mobile.droid-Signed.apk
-          asset_name: amusoft.pcr.mobile.droid-Signed.apk
+          #asset_path: ${{ github.workspace }}/downloads/artifacts/amusoft.pcr.mobile.droid.apk
+          asset_path: artifacts/msi/web/wwwroot/downloads/amusoft.pcr.mobile.droid.apk
+          asset_name: amusoft.pcr.mobile.droid.apk
           asset_content_type: application/vnd.android.package-archive
 
           
