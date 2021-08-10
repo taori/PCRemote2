@@ -62,7 +62,7 @@ jobs:
         
       - name: Tell RELEASE_VERSION
         shell: bash
-        run: echo "$RELEASE_VERSION
+        run: echo $RELEASE_VERSION
         
       - uses: actions/github-script@v2
         id: stop
