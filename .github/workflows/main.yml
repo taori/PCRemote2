@@ -102,8 +102,8 @@ jobs:
       - shell: pwsh
         name: Build server
         run: |
-          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/web
-          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/win-integration
+          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/web /property:Version=${{ github.event.inputs.productVersion }}
+          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/win-integration /property:Version=${{ github.event.inputs.productVersion }}
                     
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2.2.4
@@ -167,7 +167,8 @@ jobs:
       - shell: pwsh
         name: Compile MSI using WiX Installer
         run: |
-          msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln
+          $newProductContent = (Get-Content -path deploy\Amusoft.PCR.Installer\Product.wxs -Raw) -replace 'ProductVersion = "1.0.1"','ProductVersion = "${{ github.event.inputs.productVersion }}"' | Set-Content -Path deploy\Amusoft.PCR.Installer\Product.wxs        
+          msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln /p:AssemblyVersion${{ github.event.inputs.productVersion }}
       #/p:OFFICIAL_WIX_BUILD="$env:WS\MSI_SNK_B64.snk"
             
    #  - shell : bash
@@ -255,6 +256,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: artifacts/msi/Release/Amusoft PC Remote 2.msi
+          asset_path: artifacts/msi/Amusoft PC Remote 2.msi
           asset_name: Amusoft PC Remote 2.msi
           asset_content_type: application/octet-stream
