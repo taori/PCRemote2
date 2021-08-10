@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Amusoft.PCR.Installer", "..\deploy\Amusoft.PCR.Installer\Amusoft.PCR.Installer.wixproj", "{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.PCR.Installer.Custom", "..\deploy\Amusoft.PCR.Installer.Custom\Amusoft.PCR.Installer.Custom.csproj", "{57E8F255-C0F3-4910-A310-9C25EB9125E3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|x64.ActiveCfg = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|x86.ActiveCfg = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Debug|x86.Build.0 = Debug|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|Any CPU.ActiveCfg = Release|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|x64.ActiveCfg = Release|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|x86.ActiveCfg = Release|x86
+		{A07C4BFF-7BDA-483D-ABFD-ADC0D8F9D5F0}.Release|x86.Build.0 = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|x64.ActiveCfg = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|x86.ActiveCfg = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Debug|x86.Build.0 = Debug|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|Any CPU.ActiveCfg = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|x64.ActiveCfg = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|x86.ActiveCfg = Release|x86
+		{57E8F255-C0F3-4910-A310-9C25EB9125E3}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E3E3EE4D-0297-47CB-84D3-1A8AA6AA8767}
+	EndGlobalSection
+EndGlobal
