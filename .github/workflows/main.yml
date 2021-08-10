@@ -77,7 +77,7 @@ jobs:
         
       - name: Display structure of msi-compiled
         shell: bash
-        run: ls -R artifacts/
+        run: ls -R artifacts/msi-compiled/
   
    #  - name: Upload a Build Artifact
    #    uses: actions/upload-artifact@v2.2.4
