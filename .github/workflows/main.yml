@@ -48,14 +48,14 @@ jobs:
       - name: Set env
         if: github.event.inputs.productVersion == '1.0.0'
         run: |
-          kind = "CI"
-          sha = $(echo $GITHUB_SHA | cut -c 1-27)
-          merge = "${kind}-${sha}"
+          kind="CI"
+          sha=$(echo $GITHUB_SHA | cut -c 1-27)
+          merge="${kind}-${sha}"
           echo "RELEASE_VERSION=$(echo merge)" >> $GITHUB_ENV
         
       - name: Set env
         run: |
-          merge = "Release - ${RELEASE_VERSION}"
+          merge="Release - ${RELEASE_VERSION}"
           echo "RELEASE_VERSION=$(echo merge)" >> $GITHUB_ENV
         
       - name: Tell RELEASE_VERSION
