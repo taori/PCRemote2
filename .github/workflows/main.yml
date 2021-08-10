@@ -49,12 +49,12 @@ jobs:
           msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:minimal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\android" /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$env:ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$env:ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="$env:WS\android.keystore" /p:AndroidSigningStorePass="$env:ANDROID_KEYSTORE_PASS"
           Remove-Item "$env:WS\android.keystore.encoded"
           Remove-Item "$env:WS\android.keystore"
-                    
+              
+              # find artifacts/android/ ! -name '*-Signed.apk' -type d -exec rm -rf {} +
       - shell: bash
         name: Remove excess android files
         run: |
-          find artifacts/android ! -name '*-Signed.apk' -type d -exec rm -rf {} +
-          find artifacts/android ! -name '*-Signed.apk' -type f -exec rm -f {} +
+          find artifacts/android/ ! -name '*-Signed.apk' -type f -exec rm -f {} +
                     
       - name: Display structure of downloaded files
         shell: bash
