@@ -27,7 +27,7 @@ env:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  Android:
+  Windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2      
@@ -36,13 +36,7 @@ jobs:
         with:
           # Version of Visual Studio to search; defaults to latest if not specified
           vs-version: 16.9
-          
-      - shell: pwsh
-        name: Build Server
-        run: |
-          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c Release -o artifacts/msi/web
-          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o artifacts/msi/win-integration
-          
+                    
       - shell : bash
         name: load keystore
         run: |
@@ -55,11 +49,23 @@ jobs:
           msbuild src/Amusoft.PCR.Mobile.Droid/Amusoft.PCR.Mobile.Droid.csproj /verbosity:minimal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath="$env:WS\artifacts\android" /p:AndroidKeyStore=true /p:AndroidSigningKeyAlias="$env:ANDROID_KEY_ALIAS" /p:AndroidSigningKeyPass="$env:ANDROID_KEY_PASS" /p:AndroidSigningKeyStore="$env:WS\android.keystore" /p:AndroidSigningStorePass="$env:ANDROID_KEYSTORE_PASS"
           Remove-Item "$env:WS\android.keystore.encoded"
           Remove-Item "$env:WS\android.keystore"
-          Get-ChildItem artifacts\android -Exclude "*-Signed.apk" -Recurse | Remove-Item
+                    
+      - shell: bash
+        name: Remove excess android files
+        run: |
+          find artifacts/android ! -name '*-Signed.apk' -type f -exec rm -f {} +
+          find artifacts/android ! -name '*-Signed.apk' -type d -exec rm -d -r {} +
                     
       - name: Display structure of downloaded files
         shell: bash
         run: ls -R artifacts/android/
+          
+      - shell: pwsh
+        name: Build Server
+        run: |
+          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c Release -o artifacts/msi/web
+          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o artifacts/msi/win-integration
+          
                 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.4
