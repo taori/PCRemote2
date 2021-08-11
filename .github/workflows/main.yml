@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       
-      - name: Set env
+      - name: Set env CI
         shell: bash
         if: github.event.inputs.productVersion == '1.0.0'
         run: |
@@ -54,11 +54,11 @@ jobs:
           merge="${kind}-Release-${sha}"
           echo "RELEASE_VERSION=$(echo $merge)" >> $GITHUB_ENV
         
-      - name: Set env
+      - name: Set env Workflow Dispatch
         shell: bash
         if: github.event.inputs.productVersion != '1.0.0'
         run: |
-          merge="Release ${RELEASE_VERSION}"
+          merge="${{ env.RELEASE_VERSION }}"
           echo "RELEASE_VERSION=$(echo $merge)" >> $GITHUB_ENV
         
       - name: Tell RELEASE_VERSION
@@ -128,8 +128,10 @@ jobs:
       - shell: pwsh
         name: Build server
         run: |
-          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/web /property:Version=${{ github.event.inputs.productVersion }}
-          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/win-integration /property:Version=${{ github.event.inputs.productVersion }}
+          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/web /property:Version=$env:PRODUCT_VERSION
+          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/win-integration /property:Version=$env:PRODUCT_VERSION
+        env:
+          PRODUCT_VERSION: ${{ github.event.inputs.productVersion }}
                     
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2.2.4
