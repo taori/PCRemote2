@@ -51,6 +51,8 @@ jobs:
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
           $version = "Release $env:PV"
           echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
+        env: 
+          PV : ${{ github.event.inputs.productVersion }}
           
 #  RELEASE_VERSION : ${{ github.event.inputs.productVersion }}
         
