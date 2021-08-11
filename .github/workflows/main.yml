@@ -44,6 +44,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       
+      
+      - name: Tell Event
+        shell: bash
+        run: echo $GITHUB_EVENT_NAME
+        
       - name: Environment CI Build
         shell: pwsh
         if: ${{ github.event.inputs.productVersion == '1.0.0' }}
