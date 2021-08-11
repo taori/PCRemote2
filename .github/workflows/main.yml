@@ -54,7 +54,7 @@ jobs:
         
       - name: Environment CI Build
         shell: pwsh
-        if: ${{ github.event.inputs.productVersion == '1.0.0' }}
+        if: ${{ github.event.inputs.productVersion == '1.0.0' || ( $GITHUB_EVENT_NAME == 'pull_request' && $GITHUB_BASE_REF == 'master' ) }}
         run: |          
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
           $version = "CI-Release-$sha"
