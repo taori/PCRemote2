@@ -46,20 +46,23 @@ jobs:
       
       - name: Set env CI
         shell: bash
-        if: github.event.inputs.productVersion == '1.0.0'
-        run: |
-          $sha = ([string]"${{github.sha}}").Substring(0,26)
-          echo "RELEASE_VERSION=CI-Release-$sha" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+        if: ${{ github.event.inputs.productVersion == '1.0.0' }}
+        run: |          
+          $sha = ([string]"${{ github.sha }}").Substring(0,26)
+          $version = "Release $env:PV"
+          echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
           
 #  RELEASE_VERSION : ${{ github.event.inputs.productVersion }}
         
       - name: Set env Workflow Dispatch
         shell: pwsh
-        if: github.event.inputs.productVersion != '1.0.0'
+        if: ${{ github.event.inputs.productVersion != '1.0.0' }}
         run: |        
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
-          $version = "Release ${{ github.event.inputs.productVersion }}"
+          $version = "Release $env:PV"
           echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
+        env: 
+          PV : ${{ github.event.inputs.productVersion }}
         
       - name: Tell RELEASE_VERSION
         shell: bash
