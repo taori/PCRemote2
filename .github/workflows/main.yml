@@ -57,7 +57,7 @@ jobs:
         shell: pwsh
         if: github.event.inputs.productVersion != '1.0.0'
         run: |        
-          $sha = ([string]${{ github.sha }}).Substring(0,26)
+          $sha = ([string]"${{ github.sha }}").Substring(0,26)
           echo "RELEASE_VERSION=Release ${{ github.event.inputs.productVersion }}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
         
       - name: Tell RELEASE_VERSION
