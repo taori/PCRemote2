@@ -44,19 +44,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       
-      - name: Set env CI
+      - name: Environment CI Build
         shell: pwsh
         if: ${{ github.event.inputs.productVersion == '1.0.0' }}
         run: |          
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
-          $version = "Release $env:PV"
+          $version = "CI-Release-$sha"
           echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
-        env: 
-          PV : ${{ github.event.inputs.productVersion }}
-          
-#  RELEASE_VERSION : ${{ github.event.inputs.productVersion }}
-        
-      - name: Set env Workflow Dispatch
+                  
+      - name: Environment Workflow Dispatch Build
         shell: pwsh
         if: ${{ github.event.inputs.productVersion != '1.0.0' }}
         run: |        
