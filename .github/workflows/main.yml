@@ -244,7 +244,7 @@ jobs:
         id: create_release
         with:
           draft: false
-          prerelease: startsWith( ${{ env.RELEASE_VERSION }}, 'ci-')
+          prerelease: startsWith( '$RELEASE_VERSION', 'CI-')
           release_name: ${{ env.RELEASE_VERSION }}
           tag_name: ${{ env.RELEASE_VERSION }}
         env:
