@@ -45,7 +45,7 @@ jobs:
     steps:
       
       - name: Set env CI
-        shell: bash
+        shell: pwsh
         if: ${{ github.event.inputs.productVersion == '1.0.0' }}
         run: |          
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
