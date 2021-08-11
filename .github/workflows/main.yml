@@ -36,7 +36,6 @@ on:
 env:
   WS: ${{ github.workspace }}
   BUILDCONFIGURATION : ${{ github.event.inputs.buildConfiguration }}
-  RELEASE_VERSION : ${{ github.event.inputs.productVersion }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -49,21 +48,25 @@ jobs:
         shell: bash
         if: github.event.inputs.productVersion == '1.0.0'
         run: |
-          kind="CI"
-          sha=$(echo $GITHUB_SHA | cut -c 1-27)
-          merge="${kind}-Release-${sha}"
-          echo "RELEASE_VERSION=$(echo $merge)" >> $GITHUB_ENV
+          $sha = ([string]${{github.sha}}).Substring(0,26)
+          echo "RELEASE_VERSION=CI-Release-$sha" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+          
+#  RELEASE_VERSION : ${{ github.event.inputs.productVersion }}
         
       - name: Set env Workflow Dispatch
-        shell: bash
+        shell: pwsh
         if: github.event.inputs.productVersion != '1.0.0'
-        run: |
-          merge="${{ env.RELEASE_VERSION }}"
-          echo "RELEASE_VERSION=$(echo $merge)" >> $GITHUB_ENV
+        run: |        
+          $sha = ([string]${{ github.sha }}).Substring(0,26)
+          echo "RELEASE_VERSION=Release ${{ github.event.inputs.productVersion }}" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
         
       - name: Tell RELEASE_VERSION
         shell: bash
         run: echo $RELEASE_VERSION
+        
+      - name: stop
+        run: exit 1
+          
           
   Android:
     runs-on: windows-latest
