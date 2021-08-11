@@ -23,38 +23,39 @@
 			<fire:FirewallException
 				Name='Amusoft PC Remote 2 Server'
 				Id='BackendServerFirewall'
-				Port='5001'
+				Port='[CUSTOM_PORT]'
 				Protocol='tcp'
 				Profile='all'
 				Scope='localSubnet'
 				IgnoreFailure='no'
 				Description='Amusoft PC Remote 2 Server'/>
-
-			<ServiceInstall Name='PCR2'
+ 
+			<ServiceInstall Name='$(var.ServiceName)'
 							Type='ownProcess'
 							Start='auto'
-			                Account="LocalSystem"
 			                DisplayName="Amusoft PC Remote 2"
+							Account="LocalSystem"
 			                Id="PCR2.Install"
-			                Description="Backend service required for PC Remote to interact with this computer"
+			                Description="$(var.ServiceDescription)"
 			                Vital="yes" ErrorControl="critical">
-
+			
 				<util:ServiceConfig
 					FirstFailureActionType="restart"
 					SecondFailureActionType="restart"
 					ThirdFailureActionType="none"
 					ResetPeriodInDays="1"
-					ServiceName="PCR2"
+					ServiceName="$(var.ServiceName)"
 					RebootMessage="PC Remote 2 requires a reboot"
 					RestartServiceDelayInSeconds="180"
 				/>
 			</ServiceInstall>
 
-			<ServiceControl Id="PCR2.Control"
-							Name="PCR2"
+			<ServiceControl Id="PCR2.Control.Stop"
+			                Name="$(var.ServiceName)"
+							Start="install"
+			                Stop="both"
 			                Remove="both"
-			                Start="install"
-			                Stop="both"/>
+			                Wait="yes" />
 		</Component>
 	</Fragment>
 
