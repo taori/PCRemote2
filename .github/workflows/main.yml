@@ -43,9 +43,8 @@ jobs:
   SetupEnvironment:
     runs-on: ubuntu-latest
     steps:
-      
-      
-      - name: Tell Event
+            
+      - name: Tell Environment Information
         shell: bash
         run: |
           echo "event: $GITHUB_EVENT_NAME"
@@ -74,9 +73,8 @@ jobs:
         shell: bash
         run: echo $RELEASE_VERSION
         
-      - name: stop
-        run: exit 1
-          
+     # - name: stop
+     #   run: exit 1
           
   Android:
     runs-on: windows-latest
