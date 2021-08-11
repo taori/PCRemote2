@@ -59,7 +59,7 @@ jobs:
         run: |        
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
           $version = "Release ${{ github.event.inputs.productVersion }}"
-          Write-Output "::set-env name=RELEASE_VERSION::$version"
+          echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
         
       - name: Tell RELEASE_VERSION
         shell: bash
