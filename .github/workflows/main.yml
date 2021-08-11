@@ -153,7 +153,6 @@ jobs:
           path: "artifacts/server/"          
           if-no-files-found: error
           retention-days: 1    
-   
 
   BuildCompletes:    
     runs-on: windows-latest
@@ -259,7 +258,7 @@ jobs:
         id: create_release
         with:
           draft: false
-          prerelease: startsWith( '$RELEASE_VERSION', 'CI-')
+          prerelease: ${{ startsWith( '$RELEASE_VERSION', 'CI-') }}
           release_name: $RELEASE_VERSION
           tag_name: $RELEASE_VERSION
         env:
