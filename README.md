@@ -56,3 +56,7 @@ You can also list the host processes and kill processes, in case task manager is
 ## Remote Client support:
 - Android
 - Browser
+
+## Installation guide
+- install dotnet runtime for desktop + server apps from here https://dotnet.microsoft.com/download/dotnet/5.0/runtime
+- pick a release of your choice here: https://www.github.com/taori/PCRemote2/releases/

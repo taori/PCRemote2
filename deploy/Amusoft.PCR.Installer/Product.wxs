@@ -5,15 +5,18 @@
 	<?define Manufacturer = "Amusoft" ?>
 	<?define ProductName = "PC Remote 2" ?>
 	<?define ProductVersion = "1.0.1" ?>
+	<?define ServiceName = "PCR2" ?>
+	<?define ServiceDescription = "Backend service required for PC Remote to interact with this computer" ?>
+	<?define DisplayName = "Amusoft PC Remote 2" ?>
 
-	<Product Id="BE8150DB-D86F-45A0-9070-F4CE0F6D984C"
+	<Product Id="*"
 				 Name="$(var.ProductName)"
 				 Language="1033"
 				 Version="$(var.ProductVersion)"
 				 Manufacturer="$(var.Manufacturer)"
 				 UpgradeCode="de4ddeff-2caf-4c46-b9ff-52a37586069a">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64"/>
-		<!-- <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64" AdminImage="yes" InstallPrivileges="elevated"/> -->
+		<!-- <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" <Platform="x64" AdminImage="yes" InstallPrivileges="elevated"/> -->
 
         <UIRef Id="Amusoft_InstallDir" />
 
@@ -28,6 +31,7 @@
 		<Property Id="ARPPRODUCTICON" Value="Company.ico" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" />
+
 		<MediaTemplate EmbedCab="yes" />
 
 		<Feature Id="ProductFeature" Title="PC Remote 2" Level="1">
@@ -64,14 +68,57 @@
 		              Value='Port=[CUSTOM_PORT];AppSettingsPath=[#SERVER_APPSETTINGS]'/>
 		<CustomAction Id='UpdateAppSettingsAction' DllEntry='UpdateAppSettings' Execute='deferred' Impersonate='no' Return='check'
 		              BinaryKey='CustomBinary' />
+
 		<CustomAction Id='VerifyConfigurationAction' DllEntry='VerifyConfiguration' Execute='immediate' Return='check'
 		              BinaryKey='CustomBinary' />
+		
+		<CustomAction Id='StartServiceAction_SetProperties' 
+		              Property='StartServiceAction'
+		              Value='ServiceName=$(var.ServiceName);'/>
+		<CustomAction Id='StartServiceAction' DllEntry='StartService' Execute='deferred' Impersonate='no' Return='check'
+		              BinaryKey='CustomBinary' />
 
+		<CustomAction Id='StopServiceAction_SetProperties'
+		              Property='StopServiceAction'
+		              Value='ServiceName=$(var.ServiceName);'/>
+		<CustomAction Id='StopServiceAction' DllEntry='StopService' Execute='deferred' Impersonate='no' Return='check'
+		              BinaryKey='CustomBinary' />
+
+		<CustomAction Id='InstallServiceAction_SetProperties'
+		              Property='InstallServiceAction'
+		              Value='ServiceName=$(var.ServiceName);DisplayName=$(var.DisplayName);ServiceDescription=$(var.ServiceDescription);ResetConfiguration=restart/180/restart/180/restart/180;ServiceExePath=[#BackendServer]'/>
+		<CustomAction Id='InstallServiceAction' DllEntry='InstallService' Execute='deferred' Impersonate='no' Return='check'
+		              BinaryKey='CustomBinary' />
+
+		<CustomAction Id='UninstallServiceAction_SetProperties'
+		              Property='UninstallServiceAction'
+		              Value='ServiceName=$(var.ServiceName);'/>
+		<CustomAction Id='UninstallServiceAction' DllEntry='UninstallService' Execute='deferred' Impersonate='no' Return='check'
+		              BinaryKey='CustomBinary' />
+
+		<!-- https://codingbee.net/wix/wix-the-installation-sequence -->
 		<InstallExecuteSequence>
 			<Custom Action="RunCertGeneratorScript" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
 
 			<Custom Action='UpdateAppSettingsAction_SetProperties' Before='UpdateAppSettingsAction'><![CDATA[NOT Installed]]></Custom>
 			<Custom Action='UpdateAppSettingsAction' Before='RunCertGeneratorScript'><![CDATA[NOT Installed]]></Custom>
+			
+			<!-- <Custom Action='StopServiceAction_SetProperties' Before='StopServiceAction'><![CDATA[(Installed) OR (UPGRADINGPRODUCTCODE)]]></Custom> -->
+			<!-- <Custom Action='StopServiceAction' Before='InstallFiles'><![CDATA[(Installed) OR (UPGRADINGPRODUCTCODE)]]></Custom> -->
+			<!-- -->
+			<!-- <Custom Action='UninstallServiceAction_SetProperties' Before='UninstallServiceAction'><![CDATA[(Installed) AND (REMOVE="ALL")]]></Custom> -->
+			<!-- <Custom Action='UninstallServiceAction' After='StopServiceAction'><![CDATA[(Installed) AND (REMOVE="ALL")]]></Custom> -->
+			<!-- -->
+			<!-- -->
+			<!-- <Custom Action='InstallServiceAction_SetProperties' Before='InstallServiceAction'><![CDATA[NOT Installed]]></Custom> -->
+			<!-- <Custom Action='InstallServiceAction' After='InstallFiles'><![CDATA[NOT Installed]]></Custom> -->
+
+			<!-- <Custom Action='StartServiceAction_SetProperties' Before='StartServiceAction'><![CDATA[(NOT Installed) OR (UPGRADINGPRODUCTCODE)]]></Custom> -->
+			<!-- <Custom Action='StartServiceAction' Before='InstallFinalize'><![CDATA[(NOT Installed) OR (UPGRADINGPRODUCTCODE)]]></Custom> -->
+			<!-- -->
+			<!-- <Custom Action='StopServiceAction_SetProperties' Before='StopServiceAction'><![CDATA[(INSTALLED AND (UPGRADINGPRODUCTCODE) OR (REMOVE="ALL"))]]></Custom> -->
+			<!-- <Custom Action='StopServiceAction' After='InstallInitialize'><![CDATA[(INSTALLED AND (UPGRADINGPRODUCTCODE) OR (REMOVE="ALL"))]]></Custom> -->
+
 		</InstallExecuteSequence>
 	</Product>
 
