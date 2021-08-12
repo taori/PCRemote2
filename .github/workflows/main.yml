@@ -53,8 +53,11 @@ jobs:
           
       - name: Set Product Version
         shell: pwsh
-        run: |     
-          $value = $env:VS ?? '1.0.0'
+        run: |
+          $value = "$env:VS"
+          if([string]::IsNullOrEmpty("$value") -eq $true){
+            $value = '1.0.0'
+          }
           echo "PRODUCT_VERSION=$value" >> $env:GITHUB_ENV
         env: 
           VS : ${{ github.event.inputs.productVersion }}          
