@@ -200,7 +200,7 @@ jobs:
     
   InstallerWindows:    
     runs-on: windows-latest
-    needs: [BuildCompletes]
+    needs: [BuildCompletes, Environment]
     steps:     
     
       - uses: actions/checkout@v2      
@@ -268,7 +268,7 @@ jobs:
   GitHubRelease:    
     runs-on: windows-latest
     if: github.event.inputs.createRelease == '1'
-    needs: [InstallerWindows]
+    needs: [InstallerWindows, Environment]
     steps:
                                 
       - name: Download artifact apk
