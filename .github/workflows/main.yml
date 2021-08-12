@@ -40,8 +40,13 @@ env:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 
-  SetupEnvironment:
+  Environment:
     runs-on: ubuntu-latest
+    outputs:
+      buildConfiguration : ${{ steps.buildConfiguration.outputs.value1 }}
+      productVersion : ${{ steps.productVersion.outputs.value1 }}
+      releaseVersion : ${{ steps.releaseVersion.outputs.value1 }}
+      
     steps:
             
       - name: Tell Environment Information
@@ -52,6 +57,7 @@ jobs:
           echo "base: $GITHUB_BASE_REF"
           
       - name: Set Product Version
+        id: productVersion
         shell: pwsh
         run: |
           $value = "$env:VS"
@@ -59,6 +65,7 @@ jobs:
             $value = '1.0.0'
           }
           echo "PRODUCT_VERSION=$value" >> $env:GITHUB_ENV
+          echo "::set-output name=value1::$value"          
         env: 
           VS : ${{ github.event.inputs.productVersion }}          
           
@@ -68,7 +75,7 @@ jobs:
         run: |          
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
           $version = "CI-Release-$sha"
-          echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
+          echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV   
                   
       - name: Environment Workflow Dispatch Build
         shell: pwsh
@@ -76,9 +83,28 @@ jobs:
         run: |        
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
           $version = "Release $env:PV"
-          echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
+          echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV  
         env: 
           PV : ${{ github.event.inputs.productVersion }}
+         
+      - name: Set output releaseVersion
+        id : releaseVersion
+        shell: bash
+        run: |
+          echo "::set-output name=value1::$env:RELEASE_VERSION" 
+          
+      - name: Set output buildConfiguration
+        id: buildConfiguration
+        shell: pwsh
+        run: |
+          $value = "$env:INPUT"
+          if([string]::IsNullOrEmpty("$value") -eq $true){
+            $value = '1.0.0'
+          }
+          echo "BUILDCONFIGURATION=$value" >> $env:GITHUB_ENV
+          echo "::set-output name=value1::$value"          
+        env: 
+          INPUT : ${{ github.event.inputs.buildConfiguration }}  
         
       - name: Tell RELEASE_VERSION
         shell: bash
@@ -89,7 +115,7 @@ jobs:
           
   Android:
     runs-on: windows-latest
-    needs: SetupEnvironment
+    needs: Environment
     steps:
             
       - uses: actions/checkout@v2      
@@ -136,7 +162,7 @@ jobs:
           
                     
   Windows:    
-    needs: SetupEnvironment
+    needs: Environment
     runs-on: windows-latest
     steps:
             
@@ -152,7 +178,10 @@ jobs:
         run: |
           dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/web /property:Version=$env:PRODUCT_VERSION
           dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/win-integration /property:Version=$env:PRODUCT_VERSION
-                            
+        env:
+          BUILDCONFIGURATION : ${{needs.Environment.outputs.buildConfiguration}}
+          PRODUCT_VERSION : ${{needs.Environment.outputs.productVersion}}
+          
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2.2.4
         with:
@@ -217,6 +246,8 @@ jobs:
           $newProductContent = (Get-Content -path deploy\Amusoft.PCR.Installer\Product.wxs -Raw) -replace 'ProductVersion = "1.0.1"','ProductVersion = "$env:PRODUCT_VERSION' | Set-Content -Path deploy\Amusoft.PCR.Installer\Product.wxs        
           msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln /p:AssemblyVersion=${{ github.event.inputs.productVersion }}
       #/p:OFFICIAL_WIX_BUILD="$env:WS\MSI_SNK_B64.snk"
+        env:          
+          PRODUCT_VERSION : ${{needs.Environment.outputs.productVersion}}
             
    #  - shell : bash
    #    name: Remove MSI signing keys
@@ -269,7 +300,8 @@ jobs:
           release_name: $RELEASE_VERSION
           tag_name: $RELEASE_VERSION
         env:
-          GITHUB_TOKEN: ${{ github.token }}         
+          GITHUB_TOKEN: ${{ github.token }}          
+          RELEASE_VERSION : ${{needs.Environment.outputs.releaseVersion}}
           
       #- name: Display structure of downloaded files
       #  shell: bash
