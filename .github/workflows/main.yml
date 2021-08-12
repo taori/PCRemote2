@@ -99,7 +99,7 @@ jobs:
         run: |
           $value = "$env:INPUT"
           if([string]::IsNullOrEmpty("$value") -eq $true){
-            $value = '1.0.0'
+            $value = 'Release'
           }
           echo "BUILDCONFIGURATION=$value" >> $env:GITHUB_ENV
           echo "::set-output name=value1::$value"          
