@@ -261,9 +261,11 @@ jobs:
         uses: actions/upload-artifact@v2.2.4
         with:
           name: server
-          path: "artifacts/msi-compiled/${{ github.event.inputs.buildConfiguration }}/*.msi"          
+          path: "artifacts/msi-compiled/${{ env.BUILDCONFIGURATION }}/*.msi"          
           if-no-files-found: error
-          retention-days: 1           
+          retention-days: 1    
+        env:        
+          BUILDCONFIGURATION : ${{needs.Environment.outputs.buildConfiguration}}
           
   GitHubRelease:    
     runs-on: windows-latest
