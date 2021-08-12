@@ -62,11 +62,6 @@ jobs:
         env: 
           VS : ${{ github.event.inputs.productVersion }}          
           
-      - name: Set Product Version
-        shell: pwsh
-        run: exit 1
-          
-        
       - name: Environment CI Build
         shell: pwsh
         if: ${{ !( github.event_name == 'workflow_dispatch' && github.event.inputs.productVersion != '1.0.0') }}
