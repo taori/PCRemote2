@@ -3,8 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Networking;
+using Amusoft.PCR.Mobile.Droid.Helpers;
+using Amusoft.Toolkit.Networking;
+using Android.App;
+using Android.Media;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
@@ -32,7 +39,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 		public static readonly HostSelectionDataSource Instance = new HostSelectionDataSource();
 
-		private List<UdpBroadcastReceiver> _receivers = new List<UdpBroadcastReceiver>();
+		private List<UdpBroadcastCommunicationChannel> _receivers = new List<UdpBroadcastCommunicationChannel>();
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
 		private List<ServerDataItem> _dataItems = new List<ServerDataItem>();
 
@@ -50,8 +57,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		{
 			_dataItems.Add(new ServerDataItem()
 			{
-				EndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.135"), 8080),
-				HttpsPorts = new []{ 8080 },
+				EndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.135"), 5001),
+				HttpsPorts = new []{ 5001 },
 				MachineName = "Debug Endpoint"
 			});
 		}
@@ -83,9 +90,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		public void BindListener(int portId)
 		{
 			Log.Debug("Binding to port {Id}", portId);
-			var receiver = new UdpBroadcastReceiver(portId);
-			_subscriptions.Add(receiver.MessageReceived.Subscribe(ServerContactReceived));
-			receiver.Start();
+			var receiver = new UdpBroadcastCommunicationChannel(new UdpBroadcastCommunicationChannelSettings(portId));
+			_subscriptions.Add(receiver.MessageReceived
+				.SubscribeOn(SynchronizationContext.Current)
+				.Subscribe(ServerContactReceived));
+			receiver.StartListening(CancellationToken.None);
 			_receivers.Add(receiver);
 		}
 
@@ -111,6 +120,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 				_dataItems[index].LastSeen = DateTime.Now;
 				_dataItems[index].HttpsPorts = message.Ports;
 				_dataItems[index].MachineName = message.MachineName;
+				// MainThread.BeginInvokeOnMainThread(() => NotifyItemChanged(index));
 				NotifyItemChanged(index);
 			}
 			else
@@ -123,6 +133,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 					EndPoint = obj.RemoteEndPoint
 				});
 				Log.Debug("Adding endpoint for {Name}, at address {Endpoint} to {@Ports}", message.MachineName, obj.RemoteEndPoint, message.Ports);
+				// MainThread.BeginInvokeOnMainThread(() => NotifyItemInserted(_dataItems.Count - 1));
 				NotifyItemInserted(_dataItems.Count - 1);
 			}
 		}
@@ -153,6 +164,12 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		{
 			if (sender is SelectServerFragmentDataSourceItem holder)
 			{
+				if (holder.AbsoluteAdapterPosition < 0)
+				{
+					ToastHelper.Display(Application.Context, "Error - Restart application", ToastLength.Short);
+					return;
+				}
+					
 				ItemClicked?.Invoke(null, _dataItems[holder.AbsoluteAdapterPosition]);
 			}
 		}
@@ -188,6 +205,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			}
 
 			public TextView ViewButton { get; }
+		}
+
+		public async Task RequestHostRepliesAsync()
+		{
+			foreach (var channel in _receivers)
+			{
+				await channel.SendAsync(System.Text.Encoding.UTF8.GetBytes("I am looking for a host"));
+			}
 		}
 	}
 }

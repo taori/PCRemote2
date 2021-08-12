@@ -75,7 +75,7 @@ namespace Amusoft.PCR.Server
 		{
 			services.Configure<JwtSettings>(Configuration.GetSection("ApplicationSettings:Jwt"));
 			services.Configure<DesktopIntegrationSettings>(Configuration.GetSection("ApplicationSettings:DesktopIntegration"));
-			services.Configure<LanAddressBroadcastSettings>(Configuration.GetSection("ApplicationSettings:ServerUrlTransmitter"));
+			services.Configure<ClientDiscoverySettings>(Configuration.GetSection("ApplicationSettings:ServerUrlTransmitter"));
 			services.Configure<StaticFileOptions>(options =>
 			{
 				var contentTypeProvider = new FileExtensionContentTypeProvider();

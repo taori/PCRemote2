@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan;
 using Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl;
@@ -44,6 +45,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 			HostSelectionDataSource.Instance.ItemClicked -= InstanceOnItemClicked;
 			HostSelectionDataSource.Instance.ItemClicked += InstanceOnItemClicked;
+
+			OnRefresh();
 		}
 
 		private void WakeUpButtonOnClick(object sender, EventArgs e)
@@ -58,8 +61,13 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 		public void OnRefresh()
 		{
-			HostSelectionDataSource.Instance.NotifyDataSetChanged();
-			_swipeRefreshLayout.Refreshing = false;
+			var taskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+			HostSelectionDataSource.Instance.RequestHostRepliesAsync()
+				.ContinueWith(prev =>
+				{
+					HostSelectionDataSource.Instance.NotifyDataSetChanged();
+					_swipeRefreshLayout.Refreshing = false;
+				}, taskScheduler);
 		}
 
 		private void InstanceOnItemClicked(object sender, HostSelectionDataSource.ServerDataItem e)
