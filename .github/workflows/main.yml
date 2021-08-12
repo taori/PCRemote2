@@ -299,8 +299,8 @@ jobs:
         with:
           draft: false
           prerelease: ${{ startsWith( env.RN, 'CI-') }}
-          release_name: ${{ env.RN }}
-          tag_name: ${{ env.RN }}
+          release_name: "${{ env.RN }}"
+          tag_name: "${{ env.RN }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}          
           RN : ${{needs.Environment.outputs.releaseVersion}}
