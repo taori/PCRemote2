@@ -107,6 +107,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			var index = _dataItems.FindIndex(d => CompareEndpoints(d.EndPoint, obj.RemoteEndPoint));
 			if (index >= 0)
 			{
+				Log.Debug("Updating endpoint for {Name} to {@Ports}", message.MachineName, message.Ports);
 				_dataItems[index].LastSeen = DateTime.Now;
 				_dataItems[index].HttpsPorts = message.Ports;
 				_dataItems[index].MachineName = message.MachineName;
@@ -121,6 +122,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 					LastSeen = DateTime.Now, 
 					EndPoint = obj.RemoteEndPoint
 				});
+				Log.Debug("Adding endpoint for {Name}, at address {Endpoint} to {@Ports}", message.MachineName, obj.RemoteEndPoint, message.Ports);
 				NotifyItemInserted(_dataItems.Count - 1);
 			}
 		}
