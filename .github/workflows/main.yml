@@ -216,7 +216,7 @@ jobs:
           name: apk
           path: artifacts/apk/
           
-      - name: Download APK Artifact
+      - name: Download Server Artifact
         uses: actions/download-artifact@v2.0.10
         with:
           name: server
@@ -243,7 +243,7 @@ jobs:
       - shell: pwsh
         name: Compile MSI using WiX Installer
         run: |
-          $newProductContent = (Get-Content -path deploy\Amusoft.PCR.Installer\Product.wxs -Raw) -replace 'ProductVersion = "1.0.1"','ProductVersion = "$env:PRODUCT_VERSION"' | Set-Content -Path deploy\Amusoft.PCR.Installer\Product.wxs        
+          $newProductContent = (Get-Content -path deploy\Amusoft.PCR.Installer\Product.wxs -Raw) -replace 'ProductVersion = "1.0.1"',"ProductVersion = `"$env:PRODUCT_VERSION`"" | Set-Content -Path deploy\Amusoft.PCR.Installer\Product.wxs        
           msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln /p:AssemblyVersion=${{ github.event.inputs.productVersion }}
         env:          
           PRODUCT_VERSION : ${{needs.Environment.outputs.productVersion}}
