@@ -245,9 +245,9 @@ jobs:
         run: |
           $newProductContent = (Get-Content -path deploy\Amusoft.PCR.Installer\Product.wxs -Raw) -replace 'ProductVersion = "1.0.1"','ProductVersion = "$env:PRODUCT_VERSION"' | Set-Content -Path deploy\Amusoft.PCR.Installer\Product.wxs        
           msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln /p:AssemblyVersion=${{ github.event.inputs.productVersion }}
-      #/p:OFFICIAL_WIX_BUILD="$env:WS\MSI_SNK_B64.snk"
         env:          
           PRODUCT_VERSION : ${{needs.Environment.outputs.productVersion}}
+          BUILDCONFIGURATION : ${{needs.Environment.outputs.buildConfiguration}}
             
    #  - shell : bash
    #    name: Remove MSI signing keys
