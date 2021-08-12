@@ -74,7 +74,7 @@ jobs:
         if: ${{ !( github.event_name == 'workflow_dispatch' && github.event.inputs.productVersion != '1.0.0') }}
         run: |          
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
-          $version = "CI-Release-$sha"
+          $version = "beta-$sha"
           echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV   
                   
       - name: Environment Workflow Dispatch Build
@@ -82,7 +82,7 @@ jobs:
         if: ${{ ( github.event_name == 'workflow_dispatch' && github.event.inputs.productVersion != '1.0.0') }}
         run: |        
           $sha = ([string]"${{ github.sha }}").Substring(0,26)
-          $version = "Release $env:PV"
+          $version = "release-$env:PV"
           echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV  
         env: 
           PV : ${{ github.event.inputs.productVersion }}
