@@ -50,6 +50,18 @@ jobs:
           echo "event: $GITHUB_EVENT_NAME"
           echo "head: $GITHUB_HEAD_REF"
           echo "base: $GITHUB_BASE_REF"
+          
+      - name: Set Product Version
+        shell: pwsh
+        run: |          
+          echo "PRODUCT_VERSION=$env:VS" >> $env:GITHUB_ENV
+        env: 
+          VS : ${{ github.event.inputs.productVersion | '1.0.0' }}          
+          
+      - name: Set Product Version
+        shell: pwsh
+        run: exit 1
+          
         
       - name: Environment CI Build
         shell: pwsh
@@ -141,9 +153,7 @@ jobs:
         run: |
           dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/web /property:Version=$env:PRODUCT_VERSION
           dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/win-integration /property:Version=$env:PRODUCT_VERSION
-        env:
-          PRODUCT_VERSION: ${{ github.event.inputs.productVersion }}
-                    
+                            
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2.2.4
         with:
@@ -205,7 +215,7 @@ jobs:
       - shell: pwsh
         name: Compile MSI using WiX Installer
         run: |
-          $newProductContent = (Get-Content -path deploy\Amusoft.PCR.Installer\Product.wxs -Raw) -replace 'ProductVersion = "1.0.1"','ProductVersion = "${{ github.event.inputs.productVersion }}"' | Set-Content -Path deploy\Amusoft.PCR.Installer\Product.wxs        
+          $newProductContent = (Get-Content -path deploy\Amusoft.PCR.Installer\Product.wxs -Raw) -replace 'ProductVersion = "1.0.1"','ProductVersion = "$env:PRODUCT_VERSION' | Set-Content -Path deploy\Amusoft.PCR.Installer\Product.wxs        
           msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln /p:AssemblyVersion=${{ github.event.inputs.productVersion }}
       #/p:OFFICIAL_WIX_BUILD="$env:WS\MSI_SNK_B64.snk"
             
