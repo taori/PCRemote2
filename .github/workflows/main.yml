@@ -298,12 +298,12 @@ jobs:
         id: create_release
         with:
           draft: false
-          prerelease: ${{ startsWith( '$RELEASE_VERSION', 'CI-') }}
-          release_name: ${{ env.RELEASE_VERSION }}
-          tag_name: ${{ env.RELEASE_VERSION }}
+          prerelease: ${{ startsWith( env.RN, 'CI-') }}
+          release_name: ${{ env.RN }}
+          tag_name: ${{ env.RN }}
         env:
           GITHUB_TOKEN: ${{ github.token }}          
-          RELEASE_VERSION : ${{needs.Environment.outputs.releaseVersion}}
+          RN : ${{needs.Environment.outputs.releaseVersion}}
           
       #- name: Display structure of downloaded files
       #  shell: bash
