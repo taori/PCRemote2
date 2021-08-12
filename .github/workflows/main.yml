@@ -89,7 +89,7 @@ jobs:
          
       - name: Set output releaseVersion
         id : releaseVersion
-        shell: bash
+        shell: pwsh
         run: |
           echo "::set-output name=value1::$env:RELEASE_VERSION" 
           
