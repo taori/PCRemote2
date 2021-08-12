@@ -267,7 +267,7 @@ jobs:
           
   GitHubRelease:    
     runs-on: windows-latest
-    if: github.event.inputs.createRelease == '1'
+    if: ${{ github.event.inputs.createRelease == '1' }}
     needs: [InstallerWindows, Environment]
     steps:
                                 
