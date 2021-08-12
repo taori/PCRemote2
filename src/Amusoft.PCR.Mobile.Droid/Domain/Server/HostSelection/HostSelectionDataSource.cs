@@ -50,8 +50,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		{
 			_dataItems.Add(new ServerDataItem()
 			{
-				EndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.135"), 5001),
-				HttpsPorts = new []{ 5001 },
+				EndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.135"), 8080),
+				HttpsPorts = new []{ 8080 },
 				MachineName = "Debug Endpoint"
 			});
 		}

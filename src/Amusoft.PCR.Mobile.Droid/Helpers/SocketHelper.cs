@@ -20,12 +20,12 @@ namespace Amusoft.PCR.Mobile.Droid.Helpers
 			}
 			catch (ConnectException ce)
 			{
-				Log.Error(ce, "connection exception");
+				Log.Error(ce, $"Error connecting to {ip}:{port}");
 				return false;
 			}
 			catch (Exception ex)
 			{
-				Log.Error(ex, "exception occured");
+				Log.Error(ex, $"Error connecting to {ip}:{port}");
 				return false;
 			}
 		}
