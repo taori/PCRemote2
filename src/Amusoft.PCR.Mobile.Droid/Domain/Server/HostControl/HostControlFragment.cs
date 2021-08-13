@@ -49,7 +49,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 				Activity.SetStatusBarTitle($"{machineName}");
 
 			_agent?.Dispose();
-			_agent = GrpcApplicationAgentFactory.Create(ipAddress, ipPort);
+			_agent = GrpcApplicationAgentFactory.Create(new HostEndpointAddress(ipAddress, ipPort));
 
 			UpdateWolClient(_agent);
 		}

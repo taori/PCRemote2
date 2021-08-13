@@ -38,7 +38,7 @@ namespace Amusoft.PCR.Server.Controllers
 
 			_logger.LogInformation("User {Name} is authenticating", model.User);
 			var authentication = await _jwtTokenService.CreateAuthenticationAsync(model.User, model.Password);
-			if (authentication == null)
+			if (authentication.InvalidCredentials)
 				return StatusCode((int) HttpStatusCode.Forbidden);
 
 			return Json(authentication);
@@ -50,7 +50,7 @@ namespace Amusoft.PCR.Server.Controllers
 		{
 			_logger.LogDebug("Refreshing token for RefreshToken {Token}", model.RefreshToken);
 			var authentication = await _jwtTokenService.RefreshAsync(model.AccessToken, model.RefreshToken);
-			if (authentication == null)
+			if (authentication.InvalidCredentials || authentication.AuthenticationRequired)
 				return StatusCode((int) HttpStatusCode.Forbidden);
 
 			return Json(authentication);

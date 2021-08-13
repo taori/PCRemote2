@@ -211,7 +211,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		{
 			foreach (var channel in _receivers)
 			{
-				await channel.SendAsync(System.Text.Encoding.UTF8.GetBytes("I am looking for a host"));
+				await channel.SendAsync(System.Text.Encoding.UTF8.GetBytes(GrpcHandshakeClientMessage.Message));
 			}
 		}
 	}

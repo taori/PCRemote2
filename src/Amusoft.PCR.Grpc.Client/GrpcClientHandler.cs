@@ -32,8 +32,8 @@ namespace Amusoft.PCR.Grpc.Client
 				var currentAccessToken = await AuthenticationSurface.GetAccessTokenAsync();
 				if (currentAccessToken == null)
 				{
-					Log.Debug("No access token available - authenticating request");
-					return await HandleNoAuthenticationAsync(request, cancellationToken, false);
+					Log.Debug("No access token available - sending request as is");
+					return await base.SendAsync(request, cancellationToken);
 				}
 				else
 				{

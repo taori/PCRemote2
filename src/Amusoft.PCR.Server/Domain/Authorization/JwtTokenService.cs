@@ -51,8 +51,9 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 			var user = await _userManager.FindByNameAsync(userName);
 			if (!await _userManager.CheckPasswordAsync(user, password))
 			{
+				await _userManager.AccessFailedAsync(user);
 				_logger.LogWarning("Failed login attempt for {User}", userName);
-				return null;
+				return new JwtAuthenticationResult() { InvalidCredentials = true };
 			}
 
 			return await CreateAuthenticationResultFromUserAsync(user);

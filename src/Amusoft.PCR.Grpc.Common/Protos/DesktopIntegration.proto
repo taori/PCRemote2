@@ -4,6 +4,8 @@ option csharp_namespace = "Amusoft.PCR.Grpc.Common";
 package Amusoft.PCR.Grpc.Common;
 
 service DesktopIntegrationService {
+	rpc Login(.Amusoft.PCR.Grpc.Common.LoginRequest) returns (.Amusoft.PCR.Grpc.Common.LoginResponse) {}
+	rpc CheckIsAuthenticated (.Amusoft.PCR.Grpc.Common.CheckIsAuthenticatedRequest) returns (.Amusoft.PCR.Grpc.Common.CheckIsAuthenticatedResponse) {}
 	rpc Authenticate (.Amusoft.PCR.Grpc.Common.AuthenticateRequest) returns (.Amusoft.PCR.Grpc.Common.AuthenticateResponse) {}
 	rpc SuicideOnProcessExit (.Amusoft.PCR.Grpc.Common.SuicideOnProcessExitRequest) returns (.Amusoft.PCR.Grpc.Common.SuicideOnProcessExitResponse) {}
 	rpc ToggleMute (ToggleMuteRequest) returns (ToggleMuteReply) {}
@@ -28,6 +30,21 @@ service DesktopIntegrationService {
 	rpc SetClipboard (.Amusoft.PCR.Grpc.Common.SetClipboardRequest) returns (.Amusoft.PCR.Grpc.Common.SetClipboardResponse) {}
 	rpc GetHostName (.Amusoft.PCR.Grpc.Common.GetHostNameRequest) returns (.Amusoft.PCR.Grpc.Common.GetHostNameResponse) {}
 	rpc GetNetworkMacAddresses (.Amusoft.PCR.Grpc.Common.GetNetworkMacAddressesRequest) returns (.Amusoft.PCR.Grpc.Common.GetNetworkMacAddressesResponse) {}
+}
+
+
+message CheckIsAuthenticatedRequest { }
+message CheckIsAuthenticatedResponse {
+	bool result = 1;
+}
+message LoginRequest {
+	string user = 1;
+	string password = 2;
+}
+message LoginResponse {
+	bool invalidCredentials = 1;
+	string accessToken = 2;
+	string refreshToken = 3;
 }
 
 message GetNetworkMacAddressesRequest {}

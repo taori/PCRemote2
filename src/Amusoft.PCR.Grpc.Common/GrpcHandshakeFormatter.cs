@@ -32,6 +32,11 @@ namespace Amusoft.PCR.Grpc.Common
 		}
 	}
 
+	public static class GrpcHandshakeClientMessage
+	{
+		public const string Message = "Client looking for hosts";
+	}
+
 	public readonly struct GrpcHandshakeMessage
 	{
 		public GrpcHandshakeMessage(string machineName, int[] ports)

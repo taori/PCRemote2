@@ -41,7 +41,8 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			_channel = new UdpBroadcastCommunicationChannel(new UdpBroadcastCommunicationChannelSettings(_settings.Value.Port));
-			var receiveHandler = _channel.MessageReceived.Subscribe(async (d) => { await HandleReceive(d); });
+			var receiveHandler = _channel.MessageReceived
+				.Subscribe(async (d) => { await HandleReceive(d); });
 			try
 			{
 				_logger.LogInformation("{Service} is listening on port {Port}", nameof(ClientDiscoveryService), _settings.Value.Port);
@@ -52,17 +53,24 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			catch (OperationCanceledException)
 			{
 				receiveHandler.Dispose();
-				_logger.LogInformation("Channel terminated");
+				_logger.LogInformation("Terminating channel");
 			}
 			catch (Exception e)
 			{
 				receiveHandler.Dispose();
-				_logger.LogError(e, "Channel terminated");
+				_logger.LogError(e, "Terminating channel");
 			}
 		}
 
 		private async Task HandleReceive(UdpReceiveResult received)
 		{
+			var message = Encoding.UTF8.GetString(received.Buffer);
+			if (!string.Equals(message, GrpcHandshakeClientMessage.Message))
+			{
+				_logger.LogDebug("Discarding message - invalid");
+				return;
+			}
+				
 			_logger.LogInformation("Received handshake from [{Address}]", received.RemoteEndPoint);
 			var ports = _settings.Value.PublicHttpsPorts;
 			var replyText = GrpcHandshakeFormatter.Write(Environment.MachineName, ports);
