@@ -29,6 +29,16 @@
 				Scope='localSubnet'
 				IgnoreFailure='no'
 				Description='Amusoft PC Remote 2 Server'/>
+
+			<fire:FirewallException
+				Name='Amusoft PC Remote 2 Server'
+				Id='FirewallClientDiscovery'
+				Port='55863'
+				Protocol='udp'
+				Profile='all'
+				Scope='localSubnet'
+				IgnoreFailure='no'
+				Description='Amusoft PC Remote 2 Client Discovery'/>
  
 			<ServiceInstall Name='$(var.ServiceName)'
 							Type='ownProcess'
