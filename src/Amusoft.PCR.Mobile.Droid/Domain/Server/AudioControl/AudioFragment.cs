@@ -69,7 +69,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl
 			_textView.Text = $"Master volume: {progress}";
 			_seekBar.SetProgress(progress, true);
 
-			Log.Debug("Setting master volume to {Value} FromUser: {FromUser}", progress, e.FromUser);
+			Log.Info("Setting master volume to {Value} FromUser: {FromUser}", progress, e.FromUser);
 			if (e.FromUser)
 			{
 				Debouncer.Debounce(nameof(AudioFragment) + nameof(SeekBarOnProgressChanged), async () =>

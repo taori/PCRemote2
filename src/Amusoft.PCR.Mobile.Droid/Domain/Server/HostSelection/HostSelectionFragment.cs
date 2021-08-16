@@ -74,21 +74,21 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 				}, taskScheduler);
 		}
 
+		private async Task<LoginResponse> GetLoginResponseAsync(GrpcApplicationAgent grpcApplicationAgent, JwtLoginCredentials input)
+		{
+			try
+			{
+				return await grpcApplicationAgent.FullDesktopClient.LoginAsync(new LoginRequest() { User = input.User, Password = input.Password });
+			}
+			catch (RpcException exception)
+			{
+				Log.Error(exception, "Login error");
+				return new LoginResponse() { InvalidCredentials = true };
+			}
+		}
+
 		private async void InstanceOnItemClicked(object sender, HostSelectionDataSource.ServerDataItem e)
 		{
-			async Task<LoginResponse> LoginAsync(GrpcApplicationAgent grpcApplicationAgent, JwtLoginCredentials input)
-			{
-				try
-				{
-					return await grpcApplicationAgent.FullDesktopClient.LoginAsync(new LoginRequest() {User = input.User, Password = input.Password});
-				}
-				catch (RpcException exception)
-				{
-					Log.Error(exception, "Login error");
-					return new LoginResponse() {InvalidCredentials = true};
-				}
-			}
-
 			var endpointAddress = new HostEndpointAddress(e.EndPoint.Address.ToString(), e.HttpsPorts[0]);
 			var agent = GrpcApplicationAgentFactory.Create(endpointAddress);
 			var authenticated = true;
@@ -101,6 +101,13 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			{
 				authenticated = false;
 			}
+			catch (RpcException exception)
+			{
+				Log.Error(exception);
+				ToastHelper.Display(Context, "Failed to check authentication state", ToastLength.Long);
+				authenticated = false;
+			}
+
 			if (!authenticated || !response.Result)
 			{
 				var input = await LoginDialog.GetInputAsync("Authentication required");
@@ -110,7 +117,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 					return;
 				}
 
-				var loginResponse = await LoginAsync(agent, input);
+				var loginResponse = await GetLoginResponseAsync(agent, input);
 				if (loginResponse.InvalidCredentials)
 				{
 					ToastHelper.Display(Context, "Invalid credentials", ToastLength.Long);

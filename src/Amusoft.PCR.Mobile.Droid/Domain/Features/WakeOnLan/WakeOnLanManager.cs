@@ -18,14 +18,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan
 
 		public static async Task<MacPackage> GetMacPackageAsync(GrpcApplicationAgent agent)
 		{
-			Log.Debug("Building Mac package");
+			Log.Trace("Building Mac package");
 			var addresses = await agent.DesktopClient.GetNetworkMacAddressesAsync(TimeSpan.FromSeconds(5));
 			var hostName = await agent.DesktopClient.GetHostNameAsync(TimeSpan.FromSeconds(5));
 			var macPackage = new MacPackage();
 			macPackage.Addresses = addresses.Select(d => d.MacAddress).ToArray();
 			macPackage.HostName = hostName;
 
-			Log.Debug("Package created for {HostName}", hostName);
+			Log.Trace("Package created for {HostName}", hostName);
 			return macPackage;
 		}
 
@@ -36,6 +36,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan
 
 		public static async Task UpdateDefinitionAsync(MacPackage package)
 		{
+			Log.Debug("Wake on LAN package updated");
 			await Storage.AddOrUpdateAsync(package);
 		}
 	}

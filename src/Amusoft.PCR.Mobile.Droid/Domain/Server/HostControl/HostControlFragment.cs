@@ -37,6 +37,16 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			return new ButtonListDataSource(CreateButtons);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_agent.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+
 		public override void OnViewCreated(View view, Bundle savedInstanceState)
 		{
 			base.OnViewCreated(view, savedInstanceState);

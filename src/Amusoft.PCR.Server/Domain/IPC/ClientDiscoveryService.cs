@@ -40,7 +40,10 @@ namespace Amusoft.PCR.Server.Domain.IPC
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			_channel = new UdpBroadcastCommunicationChannel(new UdpBroadcastCommunicationChannelSettings(_settings.Value.Port));
+			var channelSettings = new UdpBroadcastCommunicationChannelSettings(_settings.Value.Port);
+			channelSettings.AllowNatTraversal = true;
+
+			_channel = new UdpBroadcastCommunicationChannel(channelSettings);
 			var receiveHandler = _channel.MessageReceived
 				.Subscribe(async (d) => { await HandleReceive(d); });
 			try
@@ -67,15 +70,15 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			var message = Encoding.UTF8.GetString(received.Buffer);
 			if (!string.Equals(message, GrpcHandshakeClientMessage.Message))
 			{
-				_logger.LogDebug("Discarding message - invalid");
+				_logger.LogDebug("Discarding message - invalid (Origin: {Origin})", received.RemoteEndPoint.Address.ToString());
 				return;
 			}
 				
 			_logger.LogInformation("Received handshake from [{Address}]", received.RemoteEndPoint);
 			var ports = _settings.Value.PublicHttpsPorts;
 			var replyText = GrpcHandshakeFormatter.Write(Environment.MachineName, ports);
-			await _channel.SendAsync(Encoding.UTF8.GetBytes(replyText));
-			_logger.LogDebug("Reply \"{Message}\" sent", replyText);
+			await _channel.SendToAsync(Encoding.UTF8.GetBytes(replyText), received.RemoteEndPoint);
+			_logger.LogDebug("Reply \"{Message}\" sent to {Address}", replyText, received.RemoteEndPoint.Address.ToString());
 		}
 	}
 }

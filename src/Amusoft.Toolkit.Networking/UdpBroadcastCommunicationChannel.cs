@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using NLog;
 
 namespace Amusoft.Toolkit.Networking
 {
@@ -23,6 +24,8 @@ namespace Amusoft.Toolkit.Networking
 
 	public class UdpBroadcastCommunicationChannel : IDisposable
 	{
+		private static readonly Logger Log = LogManager.GetLogger(nameof(UdpBroadcastCommunicationChannel));
+
 		private UdpClient _client;
 		private readonly UdpBroadcastCommunicationChannelSettings _settings;
 		private CancellationTokenSource _cts;
@@ -34,13 +37,15 @@ namespace Amusoft.Toolkit.Networking
 		public UdpBroadcastCommunicationChannel(UdpBroadcastCommunicationChannelSettings settings)
 		{
 			_settings = settings;
-			_client = new UdpClient();
+			_client = new UdpClient()
+			{
+				EnableBroadcast = true,
+				ExclusiveAddressUse = false
+			};
 
 			if (_settings.AllowNatTraversal)
 				_client.AllowNatTraversal(true);
-
-			_client.EnableBroadcast = true;
-			_client.ExclusiveAddressUse = false;
+			
 			_client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 			_client.Client.Bind(new IPEndPoint(IPAddress.Any, _settings.Port));
 		}
@@ -66,10 +71,12 @@ namespace Amusoft.Toolkit.Networking
 				}
 				catch (OperationCanceledException)
 				{
+					Log.Debug("Operation canceled");
 					_messageReceived.OnCompleted();
 				}
 				catch (Exception e)
 				{
+					Log.Error(e, "Listening exception");
 					_settings.ReceiveErrorHandler?.Invoke(e);
 					_messageReceived.OnError(e);
 				}
@@ -78,8 +85,13 @@ namespace Amusoft.Toolkit.Networking
 
 		public async Task<bool> SendAsync(byte[] bytes)
 		{
+			return await SendToAsync(bytes, new IPEndPoint(IPAddress.Broadcast, _settings.Port));
+		}
+
+		public async Task<bool> SendToAsync(byte[] bytes, IPEndPoint endPoint)
+		{
 			var byteLength = bytes.Length;
-			return await _client.SendAsync(bytes, byteLength, new IPEndPoint(IPAddress.Broadcast, _settings.Port)) == byteLength;
+			return await _client.SendAsync(bytes, byteLength, endPoint) == byteLength;
 		}
 
 		public void Dispose()

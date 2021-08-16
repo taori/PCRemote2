@@ -18,7 +18,7 @@ namespace Amusoft.PCR.Grpc.Client
 		public GrpcClientHandler(IAuthenticationSurface authenticationSurface)
 		{
 			AuthenticationSurface = authenticationSurface;
-			Log.Debug("Enabling DangerousAcceptAnyServerCertificateValidator");
+			Log.Trace("Enabling DangerousAcceptAnyServerCertificateValidator");
 			ServerCertificateCustomValidationCallback = DangerousAcceptAnyServerCertificateValidator;
 		}
 
@@ -32,19 +32,19 @@ namespace Amusoft.PCR.Grpc.Client
 				var currentAccessToken = await AuthenticationSurface.GetAccessTokenAsync();
 				if (currentAccessToken == null)
 				{
-					Log.Debug("No access token available - sending request as is");
+					Log.Trace("No access token available - sending request as is");
 					return await base.SendAsync(request, cancellationToken);
 				}
 				else
 				{
-					Log.Debug("Using {Token} to authenticate current request", currentAccessToken);
+					Log.Trace("Using {Token} to authenticate current request", currentAccessToken);
 					return await HandleExistingAuthenticationAsync(request, cancellationToken, currentAccessToken);
 				}
 			}
 			catch (Exception e)
 			{
 				Log.Error(e, "Unexpected error occured");
-				throw;
+				return new HttpResponseMessage(HttpStatusCode.BadRequest);
 			}
 		}
 
@@ -53,23 +53,25 @@ namespace Amusoft.PCR.Grpc.Client
 			request.Headers.Add("Authorization", "Bearer " + currentAccessToken);
 			var response = await base.SendAsync(request, cancellationToken);
 
+			var expired = response.Headers.Contains("X-Token-Expired");
+
 			//test for 403 and actual bearer token in initial request
 			if (response.StatusCode == HttpStatusCode.Unauthorized
 			    && request.Headers.Any(d => d.Key == "Authorization" && d.Value.Any(d => d.StartsWith("Bearer"))))
 			{
-				Log.Debug("Found Bearer authentication and current request was unauthorized - Authenticating ...");
+				Log.Trace("Found Bearer authentication and current request was unauthorized - Authenticating ...");
 				try
 				{
 					await Semaphore.WaitAsync(cancellationToken);
 
 					var authRequest = await GetAuthenticationRequestMessage(response);
-					Log.Trace("Requesting authentication response");
+					Log.Debug("Requesting authentication response using {Url}", authRequest.RequestUri);
 					using (var authResponse = await base.SendAsync(authRequest, cancellationToken))
 					{
 						if (!authResponse.IsSuccessStatusCode)
 						{
-							throw new Exception(string.Format("Invalid status code {0}, Reason: {1}",
-								authResponse.StatusCode, authResponse.ReasonPhrase));
+							Log.Error("Invalid status code {StatusCode}, Reason: {Reason}", authResponse.StatusCode, authResponse.ReasonPhrase);
+							throw new Exception(string.Format("Invalid status code {0}, Reason: {1}", authResponse.StatusCode, authResponse.ReasonPhrase));
 						}
 
 						var authResponseString = await authResponse.Content.ReadAsStringAsync();
@@ -81,10 +83,10 @@ namespace Amusoft.PCR.Grpc.Client
 							return await HandleNoAuthenticationAsync(request, cancellationToken, true);
 						}
 
-						Log.Info("Updating token store");
+						Log.Debug("Updating token store");
 						await AuthenticationSurface.UpdateTokenStoreAsync(authResponseResult);
 
-						Log.Debug("Updating accessToken");
+						Log.Trace("Assigning accessToken to request");
 						request.Headers.Remove("Authorization");
 						request.Headers.Add("Authorization", "Bearer " + authResponseResult.AccessToken);
 
@@ -96,7 +98,7 @@ namespace Amusoft.PCR.Grpc.Client
 				}
 				catch (Exception e)
 				{
-					Log.Error(e);
+					Log.Error(e, "Failed to handle original request");
 					throw;
 				}
 				finally
@@ -118,11 +120,12 @@ namespace Amusoft.PCR.Grpc.Client
 				var authRequest = new HttpRequestMessage(HttpMethod.Post, AuthenticationSurface.GetAuthenticationUri())
 					{Content = await AuthenticationSurface.CreateAuthenticationRequestContentAsync()};
 
-				Log.Debug("Requesting authentication response");
+				Log.Trace("Requesting authentication response");
 				using (var authResponse = await base.SendAsync(authRequest, cancellationToken))
 				{
 					if (!authResponse.IsSuccessStatusCode)
 					{
+						Log.Error("Invalid status code {StatusCode}, Reason: {Reason}", authResponse.StatusCode, authResponse.ReasonPhrase);
 						throw new Exception(string.Format("Invalid status code {0}, Reason: {1}",
 							authResponse.StatusCode, authResponse.ReasonPhrase));
 					}
@@ -130,10 +133,10 @@ namespace Amusoft.PCR.Grpc.Client
 					var authResponseString = await authResponse.Content.ReadAsStringAsync();
 					var authResponseResult = JsonConvert.DeserializeObject<JwtAuthenticationResult>(authResponseString);
 
-					Log.Info("Updating token store");
+					Log.Debug("Updating token store");
 					await AuthenticationSurface.UpdateTokenStoreAsync(authResponseResult);
 
-					Log.Debug("Updating accessToken");
+					Log.Trace("Assigning accessToken to request");
 					request.Headers.Remove("Authorization");
 					request.Headers.Add("Authorization", "Bearer " + authResponseResult.AccessToken);
 
@@ -155,7 +158,7 @@ namespace Amusoft.PCR.Grpc.Client
 
 		private async Task<HttpRequestMessage> GetAuthenticationRequestMessage(HttpResponseMessage httpResponseMessage)
 		{
-			if (httpResponseMessage.Headers.Contains("Token-Expired"))
+			if (httpResponseMessage.Headers.Contains("X-Token-Expired"))
 			{
 				return new HttpRequestMessage(HttpMethod.Post, AuthenticationSurface.GetRefreshUri()) { Content = await AuthenticationSurface.CreateRefreshRequestContentAsync() };
 			}

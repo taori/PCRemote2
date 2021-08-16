@@ -13,6 +13,7 @@ $serviceName = "PCR2"
 $programFolder = [System.Environment+SpecialFolder]::ProgramFiles
 $translatedFolder = [System.Environment]::GetFolderPath($programFolder)
 
+Write-Host "Waiting for folder selection" -ForegroundColor Yellow
 $browser = New-Object System.Windows.Forms.FolderBrowserDialog
 $browser.ShowNewFolderButton = $true
 if(Test-Path "$translatedFolder\Amusoft\PCR2"){
@@ -25,7 +26,7 @@ if($browser.ShowDialog() -eq "OK"){
     Write-Host "Copying files to $folder from ..\artifacts\"
     Remove-Item "$folder\*" -Recurse -ErrorAction Stop -Force
     Copy-Item ..\artifacts\* -Recurse -ErrorAction Stop -Destination $folder
-    Write-Host "Copy done."
+    Write-Host "Copy done." -ForegroundColor Green
 
     New-Item -ItemType Directory -Path "$folder\logs" -ErrorAction Stop | Out-Null
     
@@ -44,11 +45,10 @@ if($browser.ShowDialog() -eq "OK"){
         Write-Host "Waiting 10 seconds for service to start ..."
         $service = Get-Service "$serviceName"
         $service.WaitForStatus([System.ServiceProcess.ServiceControllerStatus]::Running, [System.TimeSpan]::FromSeconds(10))
-        Write-Host "Service launched succesfully"
+        Write-Host "Service launched successfully" -ForegroundColor Green
     } catch {
-        Write-Host "Service failed to start"
+        Write-Host "Service failed to start" -ForegroundColor Red
     }
-    Write-Host
 }
 
 Write-Host "Script complete"

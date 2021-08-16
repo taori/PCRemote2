@@ -13,10 +13,11 @@ namespace Amusoft.PCR.Mobile.Droid.Helpers
 		{
 			try
 			{
-				Log.Debug("Verifying connectivity to {Ip}:{Port}", ip, port);
+				Log.Trace("Verifying connectivity to {Ip}:{Port}", ip, port);
 				using var socket = new Socket();
 				await socket.ConnectAsync(new InetSocketAddress(ip, port), (int)timeout.TotalMilliseconds);
 				socket.Close();
+				Log.Debug("Connection to {Address} can be established", $"{ip}:{port}");
 				return true;
 			}
 			catch (ConnectException ce)

@@ -6,16 +6,18 @@ $scriptRoot = $PSScriptRoot
 
 Write-Host $scriptRoot
 Write-Host $msbuildPath
-#Remove-Item $scriptRoot\..\artifacts\android\ -Recurse -Force
+if(Test-Path "$scriptRoot\..\artifacts\android\"){
+    Write-Host "Deleting old artifacts" -ForegroundColor Green
+    Remove-Item $scriptRoot\..\artifacts\android\ -Recurse -Force
+}
 
 #/p:MSBuildExtensionsPath="$extensionRoot"
-#&$msbuildPath "$scriptRoot\..\src\Amusoft.PCR.Mobile.Droid\Amusoft.PCR.Mobile.Droid.csproj" /verbosity:minimal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath="$scriptRoot\..\artifacts\android" 
+&$msbuildPath "$scriptRoot\..\src\Amusoft.PCR.Mobile.Droid\Amusoft.PCR.Mobile.Droid.csproj" /verbosity:minimal /restore /t:"SignAndroidPackage" /bl /p:Configuration=Release /p:OutputPath="$scriptRoot\..\artifacts\android" 
 New-Item -ItemType Directory -Force -Path "$scriptRoot\..\mobile-artifacts\android" | Out-Null
 
-Get-ChildItem "$scriptRoot\..\artifacts\android\" -Filter "*.apk" | Foreach { Move-Item $_.FullName "$scriptRoot\..\mobile-artifacts\android\$($_.Name)" }
-Get-ChildItem "$scriptRoot\..\mobile-artifacts\android" | Foreach { Move-Item $_.FullName $_.FullName.Replace("-Signed","") }
-#Get-ChildItem "$scriptRoot\..\artifacts\android\" -Filter "*.apk" | Foreach { Move-Item -Path $_.FullName -Destination "$scriptRoot\..\mobile-artifacts\android\$($_.Name)" }
-#Get-ChildItem "$scriptRoot\..\artifacts\android\" -Filter "*.apk" | Foreach { Write-Host "$scriptRoot\..\mobile-artifacts\android\$($_.Name)" }
-#Get-ChildItem "$scriptRoot\..\artifacts\android\" -Filter "*.apk" | Foreach { Write-Host  $_.FullName -Destination "$scriptRoot\..\mobile-artifacts\android\" }
-#Move-Item "$scriptRoot\..\artifacts\android\*.apk" -Destination "$scriptRoot\..\mobile-artifacts\android\"
-#Move-Item $scriptRoot\..\mobile-artifacts\android\amusoft.pcr.mobile.droid-Signed.apk  $scriptRoot\..\mobile-artifacts\android\amusoft.pcr.mobile.droid.apk
+Write-Host "APK built" -ForegroundColor Green
+
+Get-ChildItem "$scriptRoot\..\artifacts\android\" -Filter "*.apk" | Foreach { Move-Item $_.FullName "$scriptRoot\..\mobile-artifacts\android\$($_.Name)" -Force }
+Get-ChildItem "$scriptRoot\..\mobile-artifacts\android" | Foreach { Move-Item $_.FullName $_.FullName.Replace("-Signed","") -Force }
+
+Write-Host "APK moved to server copy source" -ForegroundColor Green

@@ -38,28 +38,12 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace Amusoft.PCR.Server
 {
-	// public class BlaInterceptor : Interceptor
-	// {
-	// 	public override async AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context,
-	// 		AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
-	// 	{
-	// 		try
-	// 		{
-	// 			var interceptor = await base.AsyncUnaryCall(request, context, continuation);
-	// 			return interceptor;
-	// 		}
-	// 		catch (Exception e)
-	// 		{
-	// 			return default(TResponse);
-	// 		}
-	// 	}
-	// }
-
 	public class Startup
 	{
 		public Startup(IConfiguration configuration)
@@ -133,7 +117,7 @@ namespace Amusoft.PCR.Server
 				.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 				{				   
 					options.SaveToken = true;
-					options.RefreshInterval = TimeSpan.FromHours(1);
+					options.RefreshInterval = TimeSpan.Parse(Configuration["ApplicationSettings:Jwt:RefreshAccessTokenInterval"]);
 					options.TokenValidationParameters = tokenValidationParameters;
 
 					options.Events = new JwtBearerEvents
@@ -142,7 +126,7 @@ namespace Amusoft.PCR.Server
 						{
 							if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
 							{
-								context.Response.Headers.Add("Token-Expired", "true");
+								context.Response.Headers.Add("X-Token-Expired", "true");
 							}
 
 							return Task.CompletedTask;
@@ -221,8 +205,18 @@ namespace Amusoft.PCR.Server
 				endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 			});
 			
+
 			using (var serviceScope = serviceScopeFactory.CreateScope())
 			{
+				var jwtSettings = serviceScope.ServiceProvider.GetRequiredService<IOptions<JwtSettings>>();
+
+				logger.LogDebug("Authentication settings: SignIn valid: [{AccessTokenValid}] RefreshToken valid: [{RefreshTokenValid}] Refresh every: [{RefreshInterval}]", 
+					jwtSettings.Value.AccessTokenValidDuration,
+					jwtSettings.Value.RefreshTokenValidDuration,
+					jwtSettings.Value.RefreshAccessTokenInterval);
+
+				VerifyAuthenticationSettings(logger, jwtSettings.Value);
+
 				using (var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
 				{
 					var configuration = serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
@@ -263,6 +257,14 @@ namespace Amusoft.PCR.Server
 			applicationStateTransmitter.NotifyConfigurationDone();
 
 			logger.LogInformation("Configuration done");
+		}
+
+		private void VerifyAuthenticationSettings(ILogger<Startup> logger, JwtSettings jwtSettings)
+		{
+			if(jwtSettings.RefreshTokenValidDuration < jwtSettings.AccessTokenValidDuration)
+				logger.LogError("Access tokens have to be valid for a shorter duration than refresh tokens");
+			if(jwtSettings.AccessTokenValidDuration.Add(jwtSettings.RefreshAccessTokenInterval) > jwtSettings.RefreshTokenValidDuration)
+				logger.LogError("AccessTokenValidDuration + RefreshAccessTokenInterval must be smaller than RefreshTokenValidDuration");
 		}
 	}
 }

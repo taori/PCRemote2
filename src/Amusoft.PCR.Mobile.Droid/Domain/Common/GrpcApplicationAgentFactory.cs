@@ -1,6 +1,8 @@
 ﻿using System;
 using Amusoft.PCR.Grpc.Client;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
+using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using NLog;
 
@@ -24,7 +26,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 		public static GrpcApplicationAgent Create(HostEndpointAddress address)
 		{
 			var baseAddress = new Uri(address.FullAddress);
-			Log.Debug("Creating agent with connection {Address}", address.FullAddress);
+			Log.Trace("Creating agent with connection {Address}", address.FullAddress);
 
 			var channelOptions = new GrpcChannelOptions()
 			{
