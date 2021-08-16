@@ -52,7 +52,8 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 			if (!await _userManager.CheckPasswordAsync(user, password))
 			{
 				_logger.LogWarning("Failed login attempt for {User}", userName);
-				return null;
+				await _userManager.AccessFailedAsync(user);
+				return new JwtAuthenticationResult() { InvalidCredentials = true };
 			}
 
 			return await CreateAuthenticationResultFromUserAsync(user);
@@ -73,12 +74,12 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 				_options.Value.Issuer,
 				claims: claims,
 				signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512),
-				expires: DateTime.UtcNow.Add(_options.Value.TokenValidDuration));
+				expires: DateTime.UtcNow.Add(_options.Value.AccessTokenValidDuration));
 
 			var outputToken = handler.WriteToken(securityToken);
 			var refreshToken = GenerateRefreshToken();
-
-			await _refreshTokenManager.AddRefreshTokenAsync(user, refreshToken, DateTime.UtcNow.AddMonths(2));
+			
+			await _refreshTokenManager.AddRefreshTokenAsync(user, refreshToken, DateTime.UtcNow.Add(_options.Value.RefreshTokenValidDuration));
 
 			return new JwtAuthenticationResult()
 			{

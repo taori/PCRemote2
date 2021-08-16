@@ -37,6 +37,16 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			return new ButtonListDataSource(CreateButtons);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_agent.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+
 		public override void OnViewCreated(View view, Bundle savedInstanceState)
 		{
 			base.OnViewCreated(view, savedInstanceState);
@@ -49,13 +59,16 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 				Activity.SetStatusBarTitle($"{machineName}");
 
 			_agent?.Dispose();
-			_agent = GrpcApplicationAgentFactory.Create(ipAddress, ipPort);
+			_agent = GrpcApplicationAgentFactory.Create(new HostEndpointAddress(ipAddress, ipPort));
 
 			UpdateWolClient(_agent);
 		}
 
 		private async void UpdateWolClient(GrpcApplicationAgent agent)
 		{
+			if (!await IsAuthorizedAsync())
+				return;
+
 			var package = await WakeOnLanManager.GetMacPackageAsync(agent);
 			await WakeOnLanManager.UpdateDefinitionAsync(package);
 		}

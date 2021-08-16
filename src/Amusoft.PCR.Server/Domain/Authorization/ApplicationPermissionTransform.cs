@@ -57,7 +57,7 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 				identity.AddClaim(new Claim(PermissionClaimNames.ApplicationPermissionClaim, permission.SubjectId, ((int)permission.PermissionType).ToString()));
 			}
 
-			return principal;
+			return new ClaimsPrincipal(original.Identities);
 		}
 	}
 }

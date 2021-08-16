@@ -298,7 +298,7 @@ jobs:
         id: create_release
         with:
           draft: false
-          prerelease: ${{ startsWith( env.RN, 'CI-') }}
+          prerelease: ${{ startsWith( env.RN, 'beta-') }}
           release_name: "${{ env.RN }}"
           tag_name: "${{ env.RN }}"
         env:

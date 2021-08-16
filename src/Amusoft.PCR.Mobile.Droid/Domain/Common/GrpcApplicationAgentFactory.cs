@@ -1,6 +1,8 @@
 ﻿using System;
 using Amusoft.PCR.Grpc.Client;
 using Amusoft.PCR.Mobile.Droid.Domain.Communication;
+using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using NLog;
 
@@ -18,21 +20,20 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 			if (!int.TryParse(port, out var parsedPort))
 				throw new Exception($"Invalid port {port}");
 
-			return Create(address, parsedPort);
+			return Create(new HostEndpointAddress(address, parsedPort));
 		}
 
-		public static GrpcApplicationAgent Create(string ipAddress, int port)
+		public static GrpcApplicationAgent Create(HostEndpointAddress address)
 		{
-			var uriString = $"https://{ipAddress}:{port}";
-			var baseAddress = new Uri(uriString);
-			Log.Debug("Creating agent with connection {Address}", uriString);
+			var baseAddress = new Uri(address.FullAddress);
+			Log.Trace("Creating agent with connection {Address}", address.FullAddress);
 
 			var channelOptions = new GrpcChannelOptions()
 			{
 				DisposeHttpClient = true,
-				HttpClient = GrpcWebHttpClientFactory.Create(baseAddress, new AuthenticationSurface(uriString))
+				HttpClient = GrpcWebHttpClientFactory.Create(baseAddress, new AuthenticationSurface(address, new AuthenticationStorage(address)))
 			};
-			var channel = GrpcChannel.ForAddress(new Uri(uriString), channelOptions);
+			var channel = GrpcChannel.ForAddress(new Uri(address.FullAddress), channelOptions);
 
 			return new GrpcApplicationAgent(channel);
 		}

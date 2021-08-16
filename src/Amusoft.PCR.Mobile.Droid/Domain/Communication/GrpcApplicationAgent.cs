@@ -31,6 +31,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 			DesktopClient = new SimpleDesktopClient(_desktopIntegrationClient);
 		}
 
+		public DesktopIntegrationService.DesktopIntegrationServiceClient FullDesktopClient => _desktopIntegrationClient;
+
 		public SimpleDesktopClient DesktopClient { get; }
 
 		public string Address => _channel.Target;

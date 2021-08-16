@@ -5,49 +5,83 @@ using System.Text;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Client;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Mobile.Droid.Domain.Common;
 using Newtonsoft.Json;
 using NLog;
 using Xamarin.Essentials;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 {
+	public class AuthenticationStorage
+	{
+		private static readonly Logger Log = LogManager.GetLogger(nameof(AuthenticationStorage));
+
+		public HostEndpointAddress Address { get; }
+
+		public AuthenticationStorage(HostEndpointAddress address)
+		{
+			Address = address;
+		}
+
+		public void Clear()
+		{
+			Log.Debug("Removing {Key} from {Place}", $"{Address}.AccessToken", nameof(SecureStorage));
+			SecureStorage.Remove($"{Address}.AccessToken");
+
+			Log.Debug("Removing {Key} from {Place}", $"{Address}.RefreshToken", nameof(SecureStorage));
+			SecureStorage.Remove($"{Address}.RefreshToken");
+		}
+
+		public async Task UpdateAsync(string accessToken, string refreshToken)
+		{
+			await SecureStorage.SetAsync($"{Address}.AccessToken", accessToken);
+			await SecureStorage.SetAsync($"{Address}.RefreshToken", refreshToken);
+		}
+
+		public async Task<string> GetAccessTokenAsync()
+		{
+			return await SecureStorage.GetAsync($"{Address}.AccessToken");
+		}
+
+		public async Task<string> GetRefreshTokenAsync()
+		{
+			return await SecureStorage.GetAsync($"{Address}.RefreshToken");
+		}
+	}
+
 	public class AuthenticationSurface : IAuthenticationSurface
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(AuthenticationSurface));
 
-		private readonly string _uriString;
+		private readonly AuthenticationStorage _authenticationStorage;
+		private readonly string _address;
 
-		public AuthenticationSurface(string uriString)
+		public AuthenticationSurface(HostEndpointAddress address, AuthenticationStorage authenticationStorage)
 		{
-			_uriString = uriString;
+			_authenticationStorage = authenticationStorage;
+			_address = address.FullAddress;
 		}
 
 		public async Task UpdateTokenStoreAsync(JwtAuthenticationResult authenticationResult)
 		{
 			if (authenticationResult == null || authenticationResult.AuthenticationRequired)
 			{
-				Log.Debug("Removing {Key} from {Place}", $"{_uriString}.AccessToken", nameof(SecureStorage));
-				SecureStorage.Remove($"{_uriString}.AccessToken");
-
-				Log.Debug("Removing {Key} from {Place}", $"{_uriString}.RefreshToken", nameof(SecureStorage));
-				SecureStorage.Remove($"{_uriString}.RefreshToken");
+				_authenticationStorage.Clear();
 			}
 			else
 			{
-				await SecureStorage.SetAsync($"{_uriString}.AccessToken", authenticationResult.AccessToken);
-				await SecureStorage.SetAsync($"{_uriString}.RefreshToken", authenticationResult.RefreshToken);
+				await _authenticationStorage.UpdateAsync(authenticationResult.AccessToken, authenticationResult.RefreshToken);
 			}
 		}
 
 		public async Task<string> GetAccessTokenAsync()
 		{
-			return await SecureStorage.GetAsync($"{_uriString}.AccessToken");
+			return await _authenticationStorage.GetAccessTokenAsync();
 		}
-
 
 		public Uri GetAuthenticationUri()
 		{
-			return new Uri($"{_uriString}/Jwt/Authenticate", UriKind.Absolute);
+			return new Uri($"{_address}/Jwt/Authenticate", UriKind.Absolute);
 		}
 
 		public async Task<HttpContent> CreateAuthenticationRequestContentAsync()
@@ -58,14 +92,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 
 		public Uri GetRefreshUri()
 		{
-			return new Uri($"{_uriString}/Jwt/RefreshToken", UriKind.Absolute);
+			return new Uri($"{_address}/Jwt/RefreshToken", UriKind.Absolute);
 		}
 
 		public async Task<HttpContent> CreateRefreshRequestContentAsync()
 		{
 			var authenticationResult = new JwtAuthenticationResult();
-			authenticationResult.AccessToken = await SecureStorage.GetAsync($"{_uriString}.AccessToken");
-			authenticationResult.RefreshToken = await SecureStorage.GetAsync($"{_uriString}.RefreshToken");
+			authenticationResult.AccessToken = await _authenticationStorage.GetAccessTokenAsync();
+			authenticationResult.RefreshToken = await _authenticationStorage.GetRefreshTokenAsync();
 			return new StringContent(JsonConvert.SerializeObject(authenticationResult), Encoding.UTF8, MediaTypeNames.Application.Json);
 		}
     }

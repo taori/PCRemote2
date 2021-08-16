@@ -32,7 +32,9 @@ namespace Amusoft.PCR.Installer.Custom
 			try
 			{
 				var content = File.ReadAllText(appsettingsPath, Encoding.UTF8);
-				File.WriteAllText(appsettingsPath, content.Replace("https://*:5001", $"https://*:{port}"));
+				var stringBuilder = new StringBuilder(content);
+				stringBuilder.Replace("5001", port);
+				File.WriteAllText(appsettingsPath, stringBuilder.ToString());
 			}
 			catch (Exception e)
 			{

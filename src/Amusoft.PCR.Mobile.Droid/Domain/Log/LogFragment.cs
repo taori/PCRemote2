@@ -25,12 +25,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Log
 		private Button _refreshButton;
 		private TextView _textView;
 		private ProgressBar _progressBar;
-		public override void OnCreate(Bundle savedInstanceState)
-		{
-			base.OnCreate(savedInstanceState);
-
-			// Create your fragment here
-		}
 
 		protected override void Dispose(bool disposing)
 		{
@@ -70,6 +64,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Log
 
 		private async Task LoadLogIntoViewAsync()
 		{
+			
 			var root = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 			var path = Path.Combine(root, "logs", "nlog.csv");
 			if (!File.Exists(path))

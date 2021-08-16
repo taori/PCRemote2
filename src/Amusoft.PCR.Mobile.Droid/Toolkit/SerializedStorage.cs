@@ -24,14 +24,14 @@ namespace Amusoft.PCR.Mobile.Droid.Toolkit
 			if (!File.Exists(loadPath))
 				return Empty;
 
-			Log.Debug("Loading storage file from {Path}", loadPath);
+			Log.Trace("Loading storage file from {Path}", loadPath);
 			return JsonConvert.DeserializeObject<List<TItem>>(await File.ReadAllTextAsync(loadPath));
 		}
 
 		public async Task SaveAsync(List<TItem> items)
 		{
 			var path = GetPath();
-			Log.Debug("Saving {Count} items to storage file {Path}", items.Count, path);
+			Log.Trace("Saving {Count} items to storage file {Path}", items.Count, path);
 			await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(items));
 		}
 
@@ -41,12 +41,12 @@ namespace Amusoft.PCR.Mobile.Droid.Toolkit
 			var index = items.FindIndex(current => ItemEqual(current, item));
 			if (index >= 0)
 			{
-				Log.Debug("Updating item for storage {Name}", GetType().FullName);
+				Log.Trace("Updating item for storage {Name}", GetType().FullName);
 				items[index] = item;
 			}
 			else
 			{
-				Log.Debug("Adding item for storage {Name}", GetType().FullName);
+				Log.Trace("Adding item for storage {Name}", GetType().FullName);
 				items.Add(item);
 			}
 

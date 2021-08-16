@@ -8,9 +8,12 @@ using Amusoft.PCR.Model;
 using Amusoft.PCR.Model.Entities;
 using Amusoft.PCR.Model.Statics;
 using Amusoft.PCR.Server.Dependencies;
+using Amusoft.PCR.Server.Domain.Authorization;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Amusoft.PCR.Server.Domain.IPC
@@ -18,13 +21,19 @@ namespace Amusoft.PCR.Server.Domain.IPC
 	[Authorize(Policy = PolicyNames.ApiPolicy)]
 	public class BackendIntegrationService : DesktopIntegrationService.DesktopIntegrationServiceBase
 	{
+		private readonly IJwtTokenService _jwtTokenService;
 		private readonly ApplicationDbContext _dbContext;
 		private readonly IAuthorizationService _authorizationService;
 		public IUserContextChannel InteropService { get; }
 		public ILogger<BackendIntegrationService> Logger { get; }
 
-		public BackendIntegrationService(IUserContextChannel interopService, ILogger<BackendIntegrationService> logger, ApplicationDbContext dbContext, IAuthorizationService authorizationService)
+		public BackendIntegrationService(IUserContextChannel interopService, 
+			IJwtTokenService jwtTokenService,
+			ILogger<BackendIntegrationService> logger,
+			ApplicationDbContext dbContext, 
+			IAuthorizationService authorizationService)
 		{
+			_jwtTokenService = jwtTokenService;
 			_dbContext = dbContext;
 			_authorizationService = authorizationService;
 			InteropService = interopService;
@@ -49,6 +58,37 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			{
 				Success = result
 			};
+		}
+
+		[AllowAnonymous]
+		public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
+		{
+			var tokenData = await _jwtTokenService.CreateAuthenticationAsync(request.User, request.Password);
+			return new LoginResponse()
+			{
+				AccessToken = tokenData.AccessToken,
+				RefreshToken = tokenData.RefreshToken,
+				InvalidCredentials = tokenData.InvalidCredentials
+			};
+		}
+
+		[Authorize]
+		public override async Task<CheckIsAuthenticatedResponse> CheckIsAuthenticated(CheckIsAuthenticatedRequest request, ServerCallContext context)
+		{
+			var authenticated = await IsContextAuthenticated(context);
+			return new CheckIsAuthenticatedResponse() { Result = authenticated };
+		}
+
+		private static async Task<bool> IsContextAuthenticated(ServerCallContext context)
+		{
+			return context.GetHttpContext()?.User?.Identity?.IsAuthenticated ?? false;
+			// var authstateProvider = context.GetHttpContext().RequestServices.GetService<AuthenticationStateProvider>();
+			// if (authstateProvider == null)
+			// 	throw new Exception($"{nameof(AuthenticationStateProvider)} not available");
+			//
+			// var state = await authstateProvider.GetAuthenticationStateAsync();
+			// var authenticated = state?.User?.Identity?.IsAuthenticated ?? false;
+			// return authenticated;
 		}
 
 		[Authorize]

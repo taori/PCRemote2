@@ -50,6 +50,7 @@
 		<ProjectReference Include="..\Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj" />
 		<ProjectReference Include="..\Amusoft.PCR.Model\Amusoft.PCR.Model.csproj" />
 		<ProjectReference Include="..\Amusoft.Toolkit.Impersonation\Amusoft.Toolkit.Impersonation.csproj" />
+		<ProjectReference Include="..\Amusoft.Toolkit.Networking\Amusoft.Toolkit.Networking.csproj" />
 		<ProjectReference Include="..\Amusoft.Toolkit.UI\Amusoft.Toolkit.UI.csproj" />
 	</ItemGroup>
 

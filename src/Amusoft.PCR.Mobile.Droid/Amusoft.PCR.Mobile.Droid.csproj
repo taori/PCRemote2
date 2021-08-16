@@ -78,6 +78,7 @@
     <Compile Include="Domain\Common\ButtonListFragment.cs" />
     <Compile Include="Domain\Common\GrpcApplicationAgentFactory.cs" />
     <Compile Include="Domain\Common\GrpcRequestObserver.cs" />
+    <Compile Include="Domain\Common\HostEndpointAddress.cs" />
     <Compile Include="Domain\Common\NotificationHelper.cs" />
     <Compile Include="Domain\Common\SmartFragment.cs" />
     <Compile Include="Domain\Common\StaticButtonListFragment.cs" />

@@ -8,6 +8,10 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 
 		public string Key { get; set; }
 
-		public TimeSpan TokenValidDuration { get; set; }
+		public TimeSpan AccessTokenValidDuration { get; set; }
+
+		public TimeSpan RefreshAccessTokenInterval { get; set; }
+
+		public TimeSpan RefreshTokenValidDuration { get; set; }
 	}
 }
