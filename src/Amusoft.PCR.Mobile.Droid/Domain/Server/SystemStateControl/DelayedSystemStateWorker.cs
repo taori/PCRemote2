@@ -108,11 +108,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 					{
 						if (result)
 						{
-							ToastHelper.Display(ApplicationContext, GetSuccessToastMessage(hostName), ToastLength.Long);
+							ToastHelper.Display(GetSuccessToastMessage(hostName), ToastLength.Long);
 						}
 						else
 						{
-							ToastHelper.Display(ApplicationContext, "Error", ToastLength.Short);
+							ToastHelper.Display("Error", ToastLength.Short);
 						}
 					});
 				}

@@ -43,12 +43,12 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 
 			if (await _agent.DesktopClient.SendKeysAsync(message))
 			{
-				ToastHelper.DisplaySuccess(Context, true, ToastLength.Short);
+				ToastHelper.DisplaySuccess(true, ToastLength.Short);
 				return true;
 			}
 			else
 			{
-				ToastHelper.DisplaySuccess(Context, false, ToastLength.Long);
+				ToastHelper.DisplaySuccess(false, ToastLength.Long);
 				return false;
 			}
 		}

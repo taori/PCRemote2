@@ -104,7 +104,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			catch (RpcException exception)
 			{
 				Log.Error(exception);
-				ToastHelper.Display(Context, "Failed to check authentication state", ToastLength.Long);
+				ToastHelper.Display("Failed to check authentication state", ToastLength.Long);
 				authenticated = false;
 			}
 
@@ -113,14 +113,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 				var input = await LoginDialog.GetInputAsync("Authentication required");
 				if (input == null)
 				{
-					ToastHelper.Display(Context, "Authentication required", ToastLength.Long);
+					ToastHelper.Display("Authentication required", ToastLength.Long);
 					return;
 				}
 
 				var loginResponse = await GetLoginResponseAsync(agent, input);
 				if (loginResponse.InvalidCredentials)
 				{
-					ToastHelper.Display(Context, "Invalid credentials", ToastLength.Long);
+					ToastHelper.Display("Invalid credentials", ToastLength.Long);
 					return;
 				}
 

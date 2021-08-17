@@ -204,7 +204,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			{
 				if (holder.AbsoluteAdapterPosition < 0)
 				{
-					ToastHelper.Display(Application.Context, "Error - Restart application", ToastLength.Short);
+					ToastHelper.Display("Error - Restart application", ToastLength.Short);
 					Log.Debug("holder.AbsoluteAdapterPosition < 0");
 					return;
 				}

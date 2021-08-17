@@ -36,7 +36,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 					ButtonAction = async () =>
 					{
 						var result = await _agent.DesktopClient.InvokeHostCommand(TimeSpan.FromSeconds(5), command.CommandId);
-						ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
+						ToastHelper.DisplaySuccess(result, ToastLength.Short);
 					}
 				});
 			}
