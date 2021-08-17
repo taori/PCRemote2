@@ -49,13 +49,13 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl
 			switch (result)
 			{
 				case null:
-					ToastHelper.Display(Context, "Error", ToastLength.Short);
+					ToastHelper.Display("Error", ToastLength.Short);
 					break;
 				case true:
-					ToastHelper.Display(Context, "Muted", ToastLength.Short);
+					ToastHelper.Display("Muted", ToastLength.Short);
 					break;
 				case false:
-					ToastHelper.Display(Context, "Unmuted", ToastLength.Short);
+					ToastHelper.Display("Unmuted", ToastLength.Short);
 					break;
 			}
 		}
@@ -75,7 +75,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl
 				Debouncer.Debounce(nameof(AudioFragment) + nameof(SeekBarOnProgressChanged), async () =>
 				{
 					await _agent.DesktopClient.SetMasterVolumeAsync(TimeSpan.FromSeconds(5), progress);
-					ToastHelper.Display(Context, "Volume updated", ToastLength.Short);
+					ToastHelper.Display("Volume updated", ToastLength.Short);
 				}, TimeSpan.FromSeconds(2));
 			}
 		}

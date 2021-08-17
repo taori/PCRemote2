@@ -35,6 +35,9 @@
     <string name="button_update_from_github">Update from GitHub</string>
     <string name="button_goto_latest_release">Go to latest release</string>
     <string name="button_wake_up_host">Wake up host</string>
+    <string name="button_click_left">LMB</string>
+    <string name="button_click_right">RMB</string>
+    <string name="label_mouse_gesture">Gesture below to control mouse</string>
 	<string name="label_user">User</string>
 	<string name="label_password">Password</string>
 </resources>

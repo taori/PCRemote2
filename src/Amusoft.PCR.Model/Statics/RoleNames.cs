@@ -26,5 +26,6 @@
 		public const string FunctionReadClipboard = "function-readClipboard";
 		public const string FunctionWriteClipboard = "function-writeClipboard";
 		public const string FunctionWakeOnLan = "function-wakeOnLan";
+		public const string FunctionMouseControl = "function-mouseControl";
 	}
 }

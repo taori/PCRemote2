@@ -29,11 +29,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Settings
 				{
 					File.Delete(path);
 				}
-				ToastHelper.Display(Context, "Logs deleted", ToastLength.Short);
+				ToastHelper.Display("Logs deleted", ToastLength.Short);
 			}
 			catch (Exception e)
 			{
-				ToastHelper.Display(Context, "Failed to clear logs", ToastLength.Short);
+				ToastHelper.Display("Failed to clear logs", ToastLength.Short);
 				Log.Error(e);
 			}
 		}
@@ -41,7 +41,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Settings
 		private void ClearStorageClicked()
 		{
 			SecureStorage.RemoveAll();
-			ToastHelper.Display(Context, "Secure storage cleared", ToastLength.Short);
+			ToastHelper.Display("Secure storage cleared", ToastLength.Short);
 		}
 	}
 }

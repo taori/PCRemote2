@@ -32,7 +32,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Features.WakeOnLan
 				await Amusoft.Toolkit.Networking.WakeOnLan.UsingAddressAsync(address);
 			}
 
-			ToastHelper.Display(Context, $"Wake On LAN for {package.HostName} sent", ToastLength.Long);
+			ToastHelper.Display($"Wake On LAN for {package.HostName} sent", ToastLength.Long);
 		}
 	}
 }

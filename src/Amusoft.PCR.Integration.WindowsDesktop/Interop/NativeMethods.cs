@@ -10,6 +10,32 @@ using NLog;
 
 namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 {
+	[Flags]
+	public enum MouseEventFlags
+	{
+		LeftDown = 0x00000002,
+		LeftUp = 0x00000004,
+		MiddleDown = 0x00000020,
+		MiddleUp = 0x00000040,
+		Move = 0x00000001,
+		Absolute = 0x00008000,
+		RightDown = 0x00000008,
+		RightUp = 0x00000010
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct MousePoint
+	{
+		public int X;
+		public int Y;
+
+		public MousePoint(int x, int y)
+		{
+			X = x;
+			Y = y;
+		}
+	}
+
 	internal class NativeMethods
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(NativeMethods));
@@ -68,17 +94,61 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 			keybd_event((byte)code, 0, KEYEVENTF_KEYUP, IntPtr.Zero);
 		}
 
+		public static class Mouse
+		{
+			[DllImport("user32.dll")]
+			static extern void mouse_event(Int32 dwFlags, Int32 dx, Int32 dy, Int32 dwData, UIntPtr dwExtraInfo);
+
+			[DllImport("user32.dll")]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			private static extern bool GetCursorPos(out MousePoint lpMousePoint);
+			public static MousePoint GetCursorPosition()
+			{
+				MousePoint currentMousePoint;
+				var gotPoint = GetCursorPos(out currentMousePoint);
+				if (!gotPoint) { currentMousePoint = new MousePoint(0, 0); }
+				return currentMousePoint;
+			}
+
+			public static void Move(int x, int y)
+			{
+				mouse_event((int)MouseEventFlags.Move, x, y, 0, UIntPtr.Zero);
+			}
+			public static void MouseEvent(MouseEventFlags value)
+			{
+				MousePoint position = GetCursorPosition();
+				mouse_event
+					((int)value,
+						position.X,
+						position.Y,
+						0,
+						UIntPtr.Zero)
+					;
+			}
+
+			public static void ClickLeft()
+			{
+				MouseEvent(MouseEventFlags.LeftDown);
+				Thread.Sleep(20);
+				MouseEvent(MouseEventFlags.LeftUp);
+			}
+
+			public static void ClickRight()
+			{
+				MouseEvent(MouseEventFlags.RightDown);
+				Thread.Sleep(20);
+				MouseEvent(MouseEventFlags.RightUp);
+			}
+		}
+
 		public static class Monitor
 		{
 			[DllImport("user32.dll")]
 			static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-			[DllImport("user32.dll")]
-			static extern void mouse_event(Int32 dwFlags, Int32 dx, Int32 dy, Int32 dwData, UIntPtr dwExtraInfo);
 
 			private const int WmSyscommand = 0x0112;
 			private const int ScMonitorpower = 0xF170;
 			private const int MonitorShutoff = 0x0002;
-			private const int MouseEventfMove = 0x0001;
 			private const int Broadcast = 0xffff;
 
 			public static void Off()
@@ -88,9 +158,9 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 
 			public static void On()
 			{
-				mouse_event(MouseEventfMove, 0, 1, 0, UIntPtr.Zero);
+				Mouse.Move(0, 1);
 				Thread.Sleep(40);
-				mouse_event(MouseEventfMove, 0, -1, 0, UIntPtr.Zero);
+				Mouse.Move(0, -1);
 			}
 		}
 	}

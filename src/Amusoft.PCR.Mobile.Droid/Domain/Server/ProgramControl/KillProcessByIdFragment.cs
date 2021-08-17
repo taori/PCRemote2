@@ -50,11 +50,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 					if (await _agent.DesktopClient.KillProcessByIdAsync(TimeSpan.FromSeconds(5), item.ProcessId))
 					{
 						this.DataSource.RemoveAt(scopedIndex);
-						ToastHelper.DisplaySuccess(Context, true, ToastLength.Short);
+						ToastHelper.DisplaySuccess(true, ToastLength.Short);
 					}
 					else
 					{
-						ToastHelper.DisplaySuccess(Context, false, ToastLength.Short);
+						ToastHelper.DisplaySuccess(false, ToastLength.Short);
 					}
 				};
 

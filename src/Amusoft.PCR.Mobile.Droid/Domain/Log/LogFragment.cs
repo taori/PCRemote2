@@ -25,16 +25,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Log
 		private Button _refreshButton;
 		private TextView _textView;
 		private ProgressBar _progressBar;
-
-		protected override void Dispose(bool disposing)
-		{
-			base.Dispose(disposing);
-			_refreshButton.Click -= RefreshButtonOnClick;
-			_refreshButton.Dispose();
-			_textView.Dispose();
-			_progressBar.Dispose();
-		}
-
+		
 		public override void OnViewCreated(View view, Bundle savedInstanceState)
 		{
 			base.OnViewCreated(view, savedInstanceState);
@@ -81,7 +72,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Log
 				_textView.Text = logContent;
 				_progressBar.Visibility = ViewStates.Gone;
 			}
-
 		}
 	}
 }

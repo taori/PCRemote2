@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Integration.WindowsDesktop.Helpers;
 using Amusoft.PCR.Integration.WindowsDesktop.Interop;
@@ -228,6 +229,46 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 				Log.Warn("Permission denied");
 				throw new RpcException(new Status(StatusCode.PermissionDenied, "Host declined permission"));
 			}
+		}
+
+		public override async Task<SendMouseMoveResponse> SendMouseMove(IAsyncStreamReader<SendMouseMoveRequestItem> requestStream, ServerCallContext context)
+		{
+			Log.Debug("Sending mouse moves");
+			try
+			{
+				while (await requestStream.MoveNext(context.CancellationToken))
+				{
+					var x = requestStream.Current.X;
+					var y = requestStream.Current.Y;
+					NativeMethods.Mouse.Move(x, y);
+
+					Log.Trace("Mouse move: {X} {Y}", x, y);
+				}
+			}
+			catch (OperationCanceledException e)
+			{
+				Log.Trace(e, "Operation cancelled");
+			}
+			catch (Exception e)
+			{
+				Log.Error(e, "An error occured while sending mouse input");
+			}
+
+			Log.Debug("Sending mouse moves done");
+
+			return new SendMouseMoveResponse();
+		}
+
+		public override Task<DefaultResponse> SendLeftMouseButtonClick(DefaultRequest request, ServerCallContext context)
+		{
+			NativeMethods.Mouse.ClickLeft();
+			return Task.FromResult(new DefaultResponse());
+		}
+
+		public override Task<DefaultResponse> SendRightMouseButtonClick(DefaultRequest request, ServerCallContext context)
+		{
+			NativeMethods.Mouse.ClickRight();
+			return Task.FromResult(new DefaultResponse());
 		}
 	}
 }

@@ -65,7 +65,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 			}
 			catch (RpcException e) when (e.StatusCode == StatusCode.PermissionDenied)
 			{
-				ToastHelper.Display(Application.Context, "Permission denied", ToastLength.Long);
+				ToastHelper.Display("Permission denied", ToastLength.Long);
 				return defaultValue;
 			}
 			catch (Exception e)

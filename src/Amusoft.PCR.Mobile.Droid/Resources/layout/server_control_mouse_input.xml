@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	
+	<TextView
+		android:id="@+id/trackViewLabel"
+		android:text="@string/label_mouse_gesture"
+		android:layout_marginTop="12dp"
+		android:layout_marginLeft="10dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+
+    <Amusoft.PCR.Mobile.Droid.CustomControls.TrackingView
+	    android:id="@+id/trackingView1"
+		android:background="@drawable/trackviewborder"
+		android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+	    android:layout_above="@id/sliderBar"
+	    android:layout_below="@id/trackViewLabel"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+	    android:orientation="vertical"
+	    android:id="@+id/sliderBar"
+	    android:layout_above="@id/buttonBar"
+	    android:layout_marginBottom="20dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+	    <TextView
+		    android:id="@+id/seekbar1Label"
+		    android:text="Sensitivity: 55"
+		    android:layout_marginBottom="12dp"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"/>
+	    <SeekBar
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:id="@+id/seekBar1" />
+    </LinearLayout>
+
+    <LinearLayout
+		android:id="@+id/buttonBar"
+		android:layout_alignParentBottom="true"
+		android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+	        android:id="@+id/buttonLMB"
+	        android:layout_weight="1"
+			android:text="@string/button_click_left"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+	        android:id="@+id/buttonRMB"
+	        android:layout_weight="1"
+	        android:text="@string/button_click_right"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</RelativeLayout>

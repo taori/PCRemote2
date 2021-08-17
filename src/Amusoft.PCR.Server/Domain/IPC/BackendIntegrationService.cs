@@ -10,6 +10,7 @@ using Amusoft.PCR.Model.Statics;
 using Amusoft.PCR.Server.Dependencies;
 using Amusoft.PCR.Server.Domain.Authorization;
 using Grpc.Core;
+using Grpc.Core.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,28 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			_authorizationService = authorizationService;
 			InteropService = interopService;
 			Logger = logger;
+		}
+
+
+		[Authorize(Roles = RoleNames.FunctionMouseControl)]
+		public override async Task<SendMouseMoveResponse> SendMouseMove(IAsyncStreamReader<SendMouseMoveRequestItem> requestStream, ServerCallContext context)
+		{
+			await InteropService.SendMouseMoveAsync(requestStream, context.CancellationToken);
+			return new SendMouseMoveResponse();
+		}
+
+		[Authorize(Roles = RoleNames.FunctionMouseControl)]
+		public override async Task<DefaultResponse> SendLeftMouseButtonClick(DefaultRequest request, ServerCallContext context)
+		{
+			var result = await InteropService.SendLeftMouseClickAsync();
+			return new DefaultResponse() { Success = result };
+		}
+
+		[Authorize(Roles = RoleNames.FunctionMouseControl)]
+		public override async Task<DefaultResponse> SendRightMouseButtonClick(DefaultRequest request, ServerCallContext context)
+		{
+			var result = await InteropService.SendRightMouseClickAsync();
+			return new DefaultResponse() { Success = result };
 		}
 
 		[Authorize(Roles = RoleNames.FunctionReadClipboard)]
@@ -79,16 +102,9 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			return new CheckIsAuthenticatedResponse() { Result = authenticated };
 		}
 
-		private static async Task<bool> IsContextAuthenticated(ServerCallContext context)
+		private static Task<bool> IsContextAuthenticated(ServerCallContext context)
 		{
-			return context.GetHttpContext()?.User?.Identity?.IsAuthenticated ?? false;
-			// var authstateProvider = context.GetHttpContext().RequestServices.GetService<AuthenticationStateProvider>();
-			// if (authstateProvider == null)
-			// 	throw new Exception($"{nameof(AuthenticationStateProvider)} not available");
-			//
-			// var state = await authstateProvider.GetAuthenticationStateAsync();
-			// var authenticated = state?.User?.Identity?.IsAuthenticated ?? false;
-			// return authenticated;
+			return Task.FromResult(context.GetHttpContext()?.User?.Identity?.IsAuthenticated ?? false);
 		}
 
 		[Authorize]

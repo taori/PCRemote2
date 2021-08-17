@@ -64,7 +64,8 @@ namespace Amusoft.PCR.Mobile.Droid
 			Analytics.TrackEvent("Application launching");
 
 			base.OnCreate(savedInstanceState);
-			
+
+
 			AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 			Application.RegisterActivityLifecycleCallbacks(ActivityLifecycleCallbacks.Instance);
 			
@@ -198,6 +199,7 @@ namespace Amusoft.PCR.Mobile.Droid
 			{
 				using (var transaction = SupportFragmentManager.BeginTransaction())
 				{
+					transaction.SetStatusBarTitle("Logs");
 					transaction.Replace(Resource.Id.app_bar_main_container, new LogFragment());
 					transaction.AddToBackStack(null);
 					transaction.SetTransition(AndroidX.Fragment.App.FragmentTransaction.TransitFragmentFade);

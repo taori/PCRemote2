@@ -178,7 +178,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			var result = await _agent.DesktopClient.AuthenticateAsync();
 			if (!result)
 			{
-				ToastHelper.Display(Context, "Authentication required.", ToastLength.Long);
+				ToastHelper.Display("Authentication required.", ToastLength.Long);
 			}
 
 			return result;

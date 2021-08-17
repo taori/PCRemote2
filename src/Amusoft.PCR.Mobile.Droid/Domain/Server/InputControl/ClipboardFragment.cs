@@ -44,7 +44,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 		{
 			if (TryGetClipboardContent(out var content))
 			{
-				ToastHelper.Display(Context, content, ToastLength.Long);
+				ToastHelper.Display(content, ToastLength.Long);
 			}
 
 			return Task.CompletedTask;
@@ -54,7 +54,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 		{
 			if (!TryGetClipboardContent(out var content))
 			{
-				ToastHelper.Display(Context, $"Clipboard cannot be sent", ToastLength.Long);
+				ToastHelper.Display($"Clipboard cannot be sent", ToastLength.Long);
 				return;
 			}
 
@@ -62,11 +62,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			{
 				
 				var result = await _agent.DesktopClient.SetClipboardAsync(TimeSpan.FromMinutes(1), GetRemoteName(), content);
-				ToastHelper.Display(Context, result ? "Host clipboard updated" : "error", ToastLength.Short);
+				ToastHelper.Display(result ? "Host clipboard updated" : "error", ToastLength.Short);
 			}
 			catch (RpcException e) when (e.StatusCode == StatusCode.PermissionDenied)
 			{
-				ToastHelper.Display(Context, e.Message, ToastLength.Long);
+				ToastHelper.Display(e.Message, ToastLength.Long);
 			}
 		}
 
@@ -99,11 +99,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			{
 				var content = await _agent.DesktopClient.GetClipboardAsync(TimeSpan.FromMinutes(1), GetRemoteName());
 				cm.PrimaryClip = ClipData.NewPlainText("Host clipboard", content);
-				ToastHelper.Display(Context, "Clipboard updated", ToastLength.Short);
+				ToastHelper.Display("Clipboard updated", ToastLength.Short);
 			}
 			catch (RpcException e) when (e.StatusCode == StatusCode.PermissionDenied)
 			{
-				ToastHelper.Display(Context, e.Message, ToastLength.Long);
+				ToastHelper.Display(e.Message, ToastLength.Long);
 			}
 		}
 

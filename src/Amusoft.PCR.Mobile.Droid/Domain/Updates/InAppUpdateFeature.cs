@@ -39,7 +39,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Updates
 			if (!decision)
 			{
 				if (_featureContext.UserInitiated)
-					ToastHelper.Display(_context, "Update aborted", ToastLength.Long);
+					ToastHelper.Display("Update aborted", ToastLength.Long);
 
 				return;
 			}

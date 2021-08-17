@@ -68,7 +68,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 		private async void LockWorkstationOnClick(object sender, EventArgs e)
 		{
 			var result = await _agent.DesktopClient.LockWorkStationAsync(TimeSpan.FromSeconds(5));
-			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
+			ToastHelper.DisplaySuccess(result, ToastLength.Short);
 		}
 
 		private async void AbortOnClick(object sender, EventArgs e)
@@ -76,7 +76,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 			SystemStateManager.AbortAllTimers(_agent.Address);
 
 			var result = await _agent.DesktopClient.AbortShutDownAsync(TimeSpan.FromSeconds(5));
-			ToastHelper.DisplaySuccess(Context, result, ToastLength.Short);
+			ToastHelper.DisplaySuccess(result, ToastLength.Short);
 		}
 
 		private async void RestartOnClick(object sender, EventArgs e)
