@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomControls\LoaderPanel.cs" />
+    <Compile Include="CustomControls\TrackingView.cs" />
     <Compile Include="Domain\Common\AsyncButtonListFragment.cs" />
     <Compile Include="Domain\Common\BackStackHandler.cs" />
     <Compile Include="Domain\Common\ButtonListFragment.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Domain\Server\InputControl\BrowserVideoPlayerFragment.cs" />
     <Compile Include="Domain\Server\InputControl\ClipboardFragment.cs" />
     <Compile Include="Domain\Server\InputControl\InputFragment.cs" />
+    <Compile Include="Domain\Server\InputControl\MouseInputFragment.cs" />
     <Compile Include="Domain\Server\InputControl\SendInputFragment.cs" />
     <Compile Include="Domain\Server\MonitorControl\MonitorFragment.cs" />
     <Compile Include="Domain\Server\ProgramControl\KillProcessByIdFragment.cs" />
@@ -792,7 +794,16 @@
   <ItemGroup>
     <AndroidResource Include="Resources\xml\file_provider_paths.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\custom_tracking_view.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\server_control_mouse_input.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <PropertyGroup>
     <GitCommitIdFile>$(ProjectDir)Resources\raw\gitcommitid.txt</GitCommitIdFile>

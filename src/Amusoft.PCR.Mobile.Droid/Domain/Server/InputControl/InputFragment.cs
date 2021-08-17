@@ -28,7 +28,18 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			var buttons = new List<ButtonElement>();
 			buttons.Add(new ButtonElement(true, "Send input", InputClicked));
 			buttons.Add(new ButtonElement(true, "Clipboard", ClipboardClicked));
+			buttons.Add(new ButtonElement(true, "Control Mousecursor", CursorControlClicked));
 			return Task.FromResult(buttons);
+		}
+
+		private void CursorControlClicked()
+		{
+			using (var transaction = ParentFragmentManager.BeginTransaction())
+			{
+				transaction.SetStatusBarTitle("Mouse control");
+				transaction.ReplaceContentAnimated(new MouseInputFragment(_agent));
+				transaction.Commit();
+			}
 		}
 
 		private void InputClicked()

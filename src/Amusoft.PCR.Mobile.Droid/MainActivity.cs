@@ -64,7 +64,8 @@ namespace Amusoft.PCR.Mobile.Droid
 			Analytics.TrackEvent("Application launching");
 
 			base.OnCreate(savedInstanceState);
-			
+
+
 			AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 			Application.RegisterActivityLifecycleCallbacks(ActivityLifecycleCallbacks.Instance);
 			
