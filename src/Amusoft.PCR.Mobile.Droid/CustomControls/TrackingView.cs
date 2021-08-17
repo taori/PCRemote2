@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using Amusoft.PCR.Mobile.Droid.Helpers;
 using Android.Content;
 using Android.Runtime;
 using Android.Util;
@@ -47,6 +48,10 @@ namespace Amusoft.PCR.Mobile.Droid.CustomControls
 
 		public event EventHandler<Vector2> VelocityOccured;
 
+		public event EventHandler MultiTouchGesture;
+
+		public event EventHandler SingleTapGesture;
+
 		private void InitializeView(Context context, IAttributeSet attrs)
 		{
 			_rootView = LayoutInflater.FromContext(context).Inflate(Resource.Layout.custom_tracking_view, this);
@@ -57,16 +62,32 @@ namespace Amusoft.PCR.Mobile.Droid.CustomControls
 			var allStyles = context.ObtainStyledAttributes(attrs, Resource.Styleable.LoaderPanel, 0, 0);
 			allStyles.Recycle();
 		}
-		
+
+		private DateTime _downTime;
+
 		public override bool DispatchTouchEvent(MotionEvent e)
 		{
 			var index = e.ActionIndex;
 			var action = e.ActionMasked;
 			var pointerId = e.GetPointerId(index);
 
+			switch (action & MotionEventActions.Mask)
+			{
+				case MotionEventActions.PointerDown:
+					MultiTouchGesture?.Invoke(this, EventArgs.Empty);
+					break;
+				case MotionEventActions.Up:
+					if ((DateTime.Now - _downTime).TotalMilliseconds < 200)
+						SingleTapGesture?.Invoke(this, EventArgs.Empty);
+
+					break;
+			}
+
 			switch (action)
 			{
 				case MotionEventActions.Down:
+					_downTime = DateTime.Now;
+
 					if (_velocityTracker == null)
 					{
 						_velocityTracker = VelocityTracker.Obtain();
@@ -87,16 +108,8 @@ namespace Amusoft.PCR.Mobile.Droid.CustomControls
 						return true;
 
 					_velocityTracker.AddMovement(e);
-					// When you want to determine the velocity, call
-					// computeCurrentVelocity(). Then call getXVelocity()
-					// and getYVelocity() to retrieve the velocity for each pointer ID.
 					_velocityTracker.ComputeCurrentVelocity(Sensitivity);
-					// Log velocity of pixels per second
-					// Best practice to use VelocityTrackerCompat where possible.
-					var xVel = _velocityTracker.GetXVelocity(pointerId);
-					var yVel = _velocityTracker.GetYVelocity(pointerId);
-					if(xVel > 0 && yVel > 0)
-						VelocityOccured?.Invoke(this, new Vector2(xVel, yVel));
+					TryExportVelocity(_velocityTracker.GetXVelocity(pointerId), _velocityTracker.GetYVelocity(pointerId));
 
 					break;
 				case MotionEventActions.Up:
@@ -110,6 +123,14 @@ namespace Amusoft.PCR.Mobile.Droid.CustomControls
 			}
 
 			return true;
+		}
+
+		private void TryExportVelocity(float xVel, float yVel)
+		{
+			if (MathF.Abs(xVel) < 0.1f && MathF.Abs(yVel) < 0.1f)
+				return;
+
+			VelocityOccured?.Invoke(this, new Vector2(xVel, yVel));
 		}
 
 		private bool IfVelocityTrackerIsNull()

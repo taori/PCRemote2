@@ -71,14 +71,21 @@ namespace Amusoft.Toolkit.Networking
 				}
 				catch (OperationCanceledException)
 				{
-					Log.Debug("Operation canceled");
+					Log.Debug("Operation cancelled");
 					_messageReceived.OnCompleted();
 				}
 				catch (Exception e)
 				{
-					Log.Error(e, "Listening exception");
-					_settings.ReceiveErrorHandler?.Invoke(e);
-					_messageReceived.OnError(e);
+					if (_disposed)
+					{
+						Log.Trace(e, "Listening exception");
+					}
+					else
+					{
+						Log.Error(e, "Listening exception");
+						_settings.ReceiveErrorHandler?.Invoke(e);
+						_messageReceived.OnError(e);
+					}
 				}
 			}, _cts.Token);
 		}
@@ -94,10 +101,15 @@ namespace Amusoft.Toolkit.Networking
 			return await _client.SendAsync(bytes, byteLength, endPoint) == byteLength;
 		}
 
+		private bool _disposed;
 		public void Dispose()
 		{
+			if (_disposed)
+				return;
+
 			_cts?.Dispose();
 			_client.Dispose();
+			_disposed = true;
 		}
 	}
 }

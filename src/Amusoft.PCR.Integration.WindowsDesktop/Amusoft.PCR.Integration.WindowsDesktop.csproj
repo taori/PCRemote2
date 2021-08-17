@@ -24,6 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Grpc.Core.Api" Version="2.26.0" />
 		<PackageReference Include="GrpcDotNetNamedPipes" Version="1.1.0" />
 		<PackageReference Include="NLog" Version="4.7.10" />
 		<PackageReference Include="NLog.Schema" Version="4.7.10" />

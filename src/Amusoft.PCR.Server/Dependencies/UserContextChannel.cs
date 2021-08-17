@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Google.Protobuf.Collections;
+using Grpc.Core;
 using GrpcDotNetNamedPipes;
 using Microsoft.Extensions.Logging;
 
@@ -34,6 +36,9 @@ namespace Amusoft.PCR.Server.Dependencies
 		Task<bool> SendMediaKey(SendMediaKeysRequest.Types.MediaKeyCode code);
 		Task<string> GetClipboardAsync(string requestee);
 		Task<bool> SetClipboardAsync(string requestee, string content);
+		Task SendMouseMoveAsync(IAsyncStreamReader<SendMouseMoveRequestItem> streamReader, CancellationToken cancellationToken);
+		Task<bool> SendLeftMouseClickAsync();
+		Task<bool> SendRightMouseClickAsync();
 	}
 
 	public class UserContextChannel : IUserContextChannel
@@ -112,7 +117,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			try
 			{
 				_logger.LogInformation("Calling method {Method}", nameof(SendKeys));
-				await _service.SendKeysAsync(new SendKeysRequest(){Message = keys});
+				await _service.SendKeysAsync(new SendKeysRequest() { Message = keys });
 				return true;
 			}
 			catch (Exception e)
@@ -127,7 +132,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			try
 			{
 				_logger.LogInformation("Calling method {Method}", nameof(SetMasterVolume));
-				var reply = await _service.SetMasterVolumeAsync(new SetMasterVolumeRequest() {Value = value});
+				var reply = await _service.SetMasterVolumeAsync(new SetMasterVolumeRequest() { Value = value });
 				return reply.Value;
 			}
 			catch (Exception e)
@@ -157,7 +162,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			try
 			{
 				_logger.LogInformation("Calling method {Method}", nameof(Shutdown));
-				var reply = await _service.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = (int)delay.TotalSeconds, Force = force});
+				var reply = await _service.ShutDownDelayedAsync(new ShutdownDelayedRequest() { Seconds = (int)delay.TotalSeconds, Force = force });
 				return reply.Success;
 			}
 			catch (Exception e)
@@ -202,7 +207,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			try
 			{
 				_logger.LogInformation("Calling method {Method}", nameof(Restart));
-				var reply = await _service.RestartAsync(new RestartRequest(){ Delay = (int)delay.TotalSeconds, Force = force});
+				var reply = await _service.RestartAsync(new RestartRequest() { Delay = (int)delay.TotalSeconds, Force = force });
 				return reply.Success;
 			}
 			catch (Exception e)
@@ -234,7 +239,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			try
 			{
 				_logger.LogInformation("Calling method {Method}", nameof(KillProcessById));
-				var reply = await _service.KillProcessByIdAsync(new KillProcessRequest(){ProcessId = processId});
+				var reply = await _service.KillProcessByIdAsync(new KillProcessRequest() { ProcessId = processId });
 				return reply.Success;
 			}
 			catch (Exception e)
@@ -249,7 +254,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			try
 			{
 				_logger.LogInformation("Calling method {Method}", nameof(FocusProcessWindow));
-				var reply = await _service.FocusWindowAsync(new FocusWindowRequest(){ ProcessId = processId });
+				var reply = await _service.FocusWindowAsync(new FocusWindowRequest() { ProcessId = processId });
 				return reply.Success;
 			}
 			catch (Exception e)
@@ -301,7 +306,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			try
 			{
 				_logger.LogInformation("Calling method {Method}", nameof(GetClipboardAsync));
-				var content = await _service.GetClipboardAsync(new GetClipboardRequest(){ Requestee = requestee});
+				var content = await _service.GetClipboardAsync(new GetClipboardRequest() { Requestee = requestee });
 				return content.Content;
 			}
 			catch (Exception e)
@@ -316,12 +321,71 @@ namespace Amusoft.PCR.Server.Dependencies
 			try
 			{
 				_logger.LogInformation("Calling method {Method}", nameof(SetClipboardAsync));
-				var result = await _service.SetClipboardAsync(new SetClipboardRequest() {Content = content, Requestee = requestee});
+				var result = await _service.SetClipboardAsync(new SetClipboardRequest() { Content = content, Requestee = requestee });
 				return result.Success;
 			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(SetClipboardAsync));
+				return default;
+			}
+		}
+
+		public async Task SendMouseMoveAsync(IAsyncStreamReader<SendMouseMoveRequestItem> streamReader, CancellationToken cancellationToken)
+		{
+			var mouseStream = _service.SendMouseMove();
+			try
+			{
+				_logger.LogInformation("Calling method {Method}", nameof(SendMouseMoveAsync));
+
+				while (await streamReader.MoveNext(cancellationToken))
+				{
+					await mouseStream.RequestStream.WriteAsync(streamReader.Current);
+				}
+
+				_logger.LogInformation("{Method} terminated", nameof(SendMouseMoveAsync));
+			}
+			catch (OperationCanceledException e)
+			{
+				_logger.LogTrace(e, "Operation cancelled");
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(SendMouseMoveAsync));
+			}
+			finally
+			{
+				await mouseStream.RequestStream.CompleteAsync();
+				mouseStream.Dispose();
+			}
+		}
+
+		public async Task<bool> SendLeftMouseClickAsync()
+		{
+			try
+			{
+				_logger.LogInformation("Calling method {Method}", nameof(SendLeftMouseClickAsync));
+				var result = await _service.SendLeftMouseButtonClickAsync(new DefaultRequest());
+				return result.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(SendLeftMouseClickAsync));
+				return default;
+			}
+		}
+
+		public async Task<bool> SendRightMouseClickAsync()
+		{
+			try
+			{
+				_logger.LogInformation("Calling method {Method}", nameof(SendRightMouseClickAsync));
+				var result = await _service.SendRightMouseButtonClickAsync(new DefaultRequest());
+				return result.Success;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(SendRightMouseClickAsync));
 				return default;
 			}
 		}

@@ -34,6 +34,10 @@ Remote controller for your own PC
 - Copy clipboard to phone
 - Copy phone clipboard to host
 
+#### Cursor control
+- Use your phone to control the cursor on your desktop
+- Send Left/Right mouse button clicks
+
 ### Process control
 Define commands you want to make launchable through a client
 
