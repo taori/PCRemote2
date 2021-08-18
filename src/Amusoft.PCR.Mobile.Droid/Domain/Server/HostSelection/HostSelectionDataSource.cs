@@ -146,7 +146,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 				Log.Debug("Discarding Endpoint because hostname is empty.");
 				return;
 			}
-
+			
 			var index = _dataItems.FindIndex(d => CompareEndpoints(d.EndPoint, obj.RemoteEndPoint));
 			if (index >= 0)
 			{
