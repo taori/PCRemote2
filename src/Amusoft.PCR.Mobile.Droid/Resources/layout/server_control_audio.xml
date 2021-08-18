@@ -5,35 +5,48 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <Button
-        android:id="@+id/button1"
-        android:text="@string/button_toggle_mute"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/textView1"
-        android:text="Master volume: 55"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/seekBar1" />
+
     
-    <TextView
-	    android:text="Applications"
-	    android:layout_marginLeft="10dp"
-	    android:layout_marginTop="12dp"
-	    android:layout_marginBottom="12dp"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"/>
+	<TextView
+		android:id="@+id/textView1"
+		android:text="Master volume"
+		android:textSize="24dp"
+		android:layout_marginLeft="14dp"
+		android:layout_marginTop="7dp"
+		android:layout_marginBottom="2dp"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+
+	<LinearLayout
+		android:layout_below="@id/textView1"
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		
+		<SeekBar
+			android:layout_weight="1"
+			android:layout_width="0dp"
+			android:layout_marginTop="3dp"
+			android:progress="100"
+			android:layout_height="wrap_content"
+			android:id="@+id/seekBar1" />
+
+		<ImageView
+			android:id="@+id/button1"
+			android:src="@drawable/outline_volume_up_24"
+			android:layout_marginLeft="12dp"
+			android:layout_marginRight="12dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
     
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 	    android:id="@+id/swipeRefreshLayout1"
 	    android:layout_weight="1"
+	    android:layout_marginTop="10dp"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent">
         

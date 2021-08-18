@@ -158,6 +158,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Managers
 			try
 			{
 				sessionManager.RefreshSessions();
+				Log.Trace("Found {Count} running audio sessions", sessionManager.Sessions.Count);
 				for (int sessionIndex = 0; sessionIndex < sessionManager.Sessions.Count; sessionIndex++)
 				{
 					var session = sessionManager.Sessions[sessionIndex];
@@ -166,10 +167,14 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Managers
 
 					if (session.GetSessionIdentifier.Equals(requestItem.Id))
 					{
+						Log.Trace("Found session which matches requested session - Updating");
+
 						var fixedValue = requestItem.Volume <= 0f ? 0f : requestItem.Volume / 100;
 						session.SimpleAudioVolume.Mute = requestItem.Muted;
 						session.SimpleAudioVolume.Volume = fixedValue;
 						foundSession = true;
+
+						Log.Debug("SimpleAudioVolume for {Name} updated", requestItem.Name);
 						break;
 					}
 				}
