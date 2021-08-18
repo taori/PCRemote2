@@ -5,8 +5,10 @@ Remote controller for your own PC
   - Wake on LAN
 
 ### Volume Control 
-  - Mute Toggle
-  - Raise/Lower volume
+  - Toggle mute on master volume
+  - Toggle mute on application sound sources
+  - Raise/Lower volume on master volume
+  - Raise/Lower volume on application sound sources
 
 ### Monitor Control
   - Turn on
