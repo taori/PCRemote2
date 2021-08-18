@@ -810,6 +810,170 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\trackViewBorder.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\server_control_audio_item.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Toolkit\UI\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\outline_volume_off_24.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\outline_volume_up_24.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_off_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_off_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_off_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_off_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_off_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_up_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_up_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_up_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_up_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_volume_up_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_off_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_off_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_off_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_off_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_off_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_up_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_up_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_up_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_up_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_volume_up_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_off_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_off_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_off_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_off_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_off_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_up_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_up_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_up_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_up_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_volume_up_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_off_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_off_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_off_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_off_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_off_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_up_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_up_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_up_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_up_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_volume_up_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_off_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_off_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_off_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_off_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_off_black_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_up_black_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_up_black_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_up_black_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_up_black_36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_volume_up_black_48.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <PropertyGroup>
     <GitCommitIdFile>$(ProjectDir)Resources\raw\gitcommitid.txt</GitCommitIdFile>

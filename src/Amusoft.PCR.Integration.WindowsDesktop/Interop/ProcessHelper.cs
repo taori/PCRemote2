@@ -83,7 +83,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 			{
 				var processDescription = process.MainModule?.FileVersionInfo.FileDescription;
 				if (string.IsNullOrEmpty(processDescription))
-					return null;
+					return Path.GetFileName(process.MainModule?.FileVersionInfo.FileName);
 
 				return processDescription;
 			}
