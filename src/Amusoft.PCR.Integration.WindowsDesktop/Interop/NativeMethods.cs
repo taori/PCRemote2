@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -161,6 +162,41 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 				Mouse.Move(0, 1);
 				Thread.Sleep(40);
 				Mouse.Move(0, -1);
+			}
+		}
+		
+		public static class Processes
+		{
+			[Flags]
+			private enum ProcessAccessFlags : uint
+			{
+				QueryLimitedInformation = 0x00001000
+			}
+
+			[DllImport("kernel32.dll", SetLastError = true)]
+			private static extern bool QueryFullProcessImageName(
+				[In] IntPtr hProcess,
+				[In] int dwFlags,
+				[Out] StringBuilder lpExeName,
+				ref int lpdwSize);
+
+			[DllImport("kernel32.dll", SetLastError = true)]
+			private static extern IntPtr OpenProcess(
+				ProcessAccessFlags processAccess,
+				bool bInheritHandle,
+				int processId);
+
+			public static string GetProcessFileName(Process process)
+			{
+				int capacity = 2000;
+				var builder = new StringBuilder(capacity);
+				var ptr = OpenProcess(ProcessAccessFlags.QueryLimitedInformation, false, process.Id);
+				if (!QueryFullProcessImageName(ptr, 0, builder, ref capacity))
+				{
+					return string.Empty;
+				}
+
+				return builder.ToString();
 			}
 		}
 	}

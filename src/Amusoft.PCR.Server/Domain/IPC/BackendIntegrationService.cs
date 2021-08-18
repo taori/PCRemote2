@@ -203,6 +203,19 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			};
 		}
 
+		[Authorize(Roles = RoleNames.FunctionMasterVolumeControl)]
+		public override async Task<AudioFeedResponse> GetAudioFeeds(AudioFeedRequest request, ServerCallContext context)
+		{
+			var value = await InteropService.GetAudioFeedsResponse();
+			return value;
+		}
+
+		public override async Task<DefaultResponse> UpdateAudioFeed(UpdateAudioFeedRequest request, ServerCallContext context)
+		{
+			var value = await InteropService.UpdateAudioFeed(request);
+			return value;
+		}
+
 		[Authorize(Roles = RoleNames.FunctionSendInput)]
 		public override async Task<SendKeysReply> SendKeys(SendKeysRequest request, ServerCallContext context)
 		{

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Amusoft.PCR.Grpc.Common;
 using NLog;
@@ -73,6 +74,26 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Interop
 			{
 				Log.Error(e, "Exception occured while calling [{Name}] [{Program}] with arguments [{Arguments}]", nameof(TryLaunchProgram), program, arguments);
 				return false;
+			}
+		}
+
+		public static string GetProcessName(Process process)
+		{
+			try
+			{
+				var processDescription = process.MainModule?.FileVersionInfo.FileDescription;
+				if (string.IsNullOrEmpty(processDescription))
+					return null;
+
+				return processDescription;
+			}
+			catch (Exception)
+			{
+				var fileName = NativeMethods.Processes.GetProcessFileName(process);
+				if (string.IsNullOrEmpty(fileName))
+					return null;
+
+				return Path.GetFileName(fileName);
 			}
 		}
 	}

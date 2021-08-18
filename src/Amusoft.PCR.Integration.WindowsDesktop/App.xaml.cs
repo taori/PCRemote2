@@ -41,11 +41,49 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 			}
 #endif
 
+			VerifySimpleAudioManager();
 			if (!TryLaunchInteropChannel())
 			{
 				Log.Fatal("Failed to launch named pipe for IPC with web application");
 				_namedPipeServer?.Dispose();
 			}
+		}
+
+		private void VerifySimpleAudioManager()
+		{
+			return;
+			Task.Run(() =>
+			{
+				if (!SimpleAudioManager.TryGetAudioFeeds(out var feeds))
+				{
+					Log.Error("Failed to get audio feeds");
+					return;
+				}
+				else
+				{
+					foreach (var feed in feeds)
+					{
+						Log.Debug($"Feed: {feed.Id} {feed.Volume}% name: {feed.Name}");
+					}
+				}
+
+				Log.Debug("Muted: {Muted}", SimpleAudioManager.GetMasterVolumeMute());
+				Thread.Sleep(1000);
+				Log.Debug("Inverting Mute: {Muted}", SimpleAudioManager.SetMasterVolumeMute(!SimpleAudioManager.GetMasterVolumeMute()));
+				Thread.Sleep(1000);
+				Log.Debug("Reverting Mute: {Muted}", SimpleAudioManager.SetMasterVolumeMute(!SimpleAudioManager.GetMasterVolumeMute()));
+				Thread.Sleep(1000);
+
+
+				var startVolume = SimpleAudioManager.GetMasterVolume();
+				Log.Debug("Current volume {Volume}", startVolume);
+				Thread.Sleep(1000);
+				SimpleAudioManager.SetMasterVolume(60);
+				Thread.Sleep(1000);
+				Log.Debug("Current volume {Volume}", SimpleAudioManager.GetMasterVolume());
+				Thread.Sleep(1000);
+				SimpleAudioManager.SetMasterVolume(startVolume);
+			});
 		}
 
 		private void ProcessExitListenerManagerOnProcessExited(object sender, int e)

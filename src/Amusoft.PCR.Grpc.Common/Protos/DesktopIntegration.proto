@@ -33,7 +33,25 @@ service DesktopIntegrationService {
 	rpc SendMouseMove (stream .Amusoft.PCR.Grpc.Common.SendMouseMoveRequestItem) returns (.Amusoft.PCR.Grpc.Common.SendMouseMoveResponse) {}
 	rpc SendLeftMouseButtonClick (.Amusoft.PCR.Grpc.Common.DefaultRequest) returns (.Amusoft.PCR.Grpc.Common.DefaultResponse) {}
 	rpc SendRightMouseButtonClick (.Amusoft.PCR.Grpc.Common.DefaultRequest) returns (.Amusoft.PCR.Grpc.Common.DefaultResponse) {}
+	rpc GetAudioFeeds (.Amusoft.PCR.Grpc.Common.AudioFeedRequest) returns (.Amusoft.PCR.Grpc.Common.AudioFeedResponse) {}
+	rpc UpdateAudioFeed (.Amusoft.PCR.Grpc.Common.UpdateAudioFeedRequest) returns (.Amusoft.PCR.Grpc.Common.DefaultResponse) {}
 }
+
+message UpdateAudioFeedRequest {
+	.Amusoft.PCR.Grpc.Common.AudioFeedResponseItem item = 1;
+}
+
+message AudioFeedResponseItem {
+	string id = 1;
+	string name = 2;
+	float volume = 3;
+	bool muted = 4;
+}
+message AudioFeedResponse {
+	repeated AudioFeedResponseItem items = 1;
+	bool success = 2;
+}
+message AudioFeedRequest {}
 
 message DefaultRequest {}
 message DefaultResponse {

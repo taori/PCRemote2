@@ -59,16 +59,16 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 		public override Task<ToggleMuteReply> ToggleMute(ToggleMuteRequest request, ServerCallContext context)
 		{
 			Log.Info("Executing [{Name}]", nameof(ToggleMute));
-			var muteState = AudioManager.GetMasterVolumeMute();
+			var muteState = SimpleAudioManager.GetMasterVolumeMute();
 			try
 			{
-				AudioManager.SetMasterVolumeMute(!muteState);
+				SimpleAudioManager.SetMasterVolumeMute(!muteState);
 				return Task.FromResult(new ToggleMuteReply() { Muted = !muteState });
 			}
 			catch (Exception e)
 			{
 				Log.Error(e, "ToggleMute failed.");
-				AudioManager.SetMasterVolumeMute(!muteState);
+				SimpleAudioManager.SetMasterVolumeMute(!muteState);
 				return Task.FromResult(new ToggleMuteReply() { Muted = muteState });
 			}
 		}
@@ -76,7 +76,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 		public override Task<SetMasterVolumeReply> SetMasterVolume(SetMasterVolumeRequest request, ServerCallContext context)
 		{
 			Log.Info("Executing [{Name}] [{NewValue}]", nameof(SetMasterVolume), request.Value);
-			var previousVolume = AudioManager.GetMasterVolume();
+			var previousVolume = SimpleAudioManager.GetMasterVolume();
 			var newVolume = Math.Max(Math.Min(100, request.Value), 0);
 			if (MathHelper.IsEqual(newVolume, previousVolume, 1.01f))
 			{
@@ -85,8 +85,8 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 			else
 			{
 				Log.Debug("Changing volume from [{From}] to [{To}]", previousVolume, newVolume);
-				AudioManager.SetMasterVolume(newVolume);
-				var masterVolume = AudioManager.GetMasterVolume();
+				SimpleAudioManager.SetMasterVolume(newVolume);
+				var masterVolume = SimpleAudioManager.GetMasterVolume();
 				return Task.FromResult(new SetMasterVolumeReply() { Value = (int)masterVolume });
 			}
 		}
@@ -94,7 +94,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 		public override Task<GetMasterVolumeReply> GetMasterVolume(GetMasterVolumeRequest request, ServerCallContext context)
 		{
 			Log.Info("Executing [{Name}]", nameof(GetMasterVolume));
-			return Task.FromResult(new GetMasterVolumeReply() { Value = (int)AudioManager.GetMasterVolume() });
+			return Task.FromResult(new GetMasterVolumeReply() { Value = (int)SimpleAudioManager.GetMasterVolume() });
 		}
 
 		public override Task<SendKeysReply> SendKeys(SendKeysRequest request, ServerCallContext context)
@@ -269,6 +269,25 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 		{
 			NativeMethods.Mouse.ClickRight();
 			return Task.FromResult(new DefaultResponse());
+		}
+
+		public override Task<AudioFeedResponse> GetAudioFeeds(AudioFeedRequest request, ServerCallContext context)
+		{
+			var response = new AudioFeedResponse();
+			var audioFeedQuery = SimpleAudioManager.TryGetAudioFeeds(out var feeds);
+			if (audioFeedQuery)
+				response.Items.AddRange(feeds);
+
+			response.Success = audioFeedQuery;
+
+			return Task.FromResult(response);
+		}
+
+		public override Task<DefaultResponse> UpdateAudioFeed(UpdateAudioFeedRequest request, ServerCallContext context)
+		{
+			var result = SimpleAudioManager.TryUpdateFeed(request.Item);
+
+			return Task.FromResult(new DefaultResponse() {Success = result});
 		}
 	}
 }
