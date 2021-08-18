@@ -26,6 +26,8 @@
 	<ItemGroup>
 		<PackageReference Include="Grpc.Core.Api" Version="2.26.0" />
 		<PackageReference Include="GrpcDotNetNamedPipes" Version="1.1.0" />
+		<PackageReference Include="NAudio.Core" Version="2.0.0" />
+		<PackageReference Include="NAudio.Wasapi" Version="2.0.0" />
 		<PackageReference Include="NLog" Version="4.7.10" />
 		<PackageReference Include="NLog.Schema" Version="4.7.10" />
 		<ProjectReference Include="..\Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj" />

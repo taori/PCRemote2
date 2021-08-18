@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+	android:paddingBottom="10dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    
 	<TextView
 		android:id="@+id/textView1"
-		android:text="Master volume"
+		android:text="Firefox: 55"
 		android:textSize="24dp"
 		android:layout_marginLeft="14dp"
 		android:layout_marginTop="7dp"
@@ -22,8 +20,8 @@
 	<LinearLayout
 		android:layout_below="@id/textView1"
 		android:orientation="horizontal"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 		
 		<SeekBar
 			android:layout_weight="1"
@@ -42,20 +40,4 @@
 			android:layout_height="wrap_content"/>
 
 	</LinearLayout>
-    
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-	    android:id="@+id/swipeRefreshLayout1"
-	    android:layout_weight="1"
-	    android:layout_marginTop="10dp"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent">
-        
-	    <androidx.recyclerview.widget.RecyclerView
-		    android:id="@+id/recyclerView1"
-		    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-		    android:orientation="vertical"
-		    android:layout_width="match_parent"
-		    android:layout_height="0dp"/>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-</LinearLayout>
+</RelativeLayout>

@@ -39,6 +39,8 @@ namespace Amusoft.PCR.Server.Dependencies
 		Task SendMouseMoveAsync(IAsyncStreamReader<SendMouseMoveRequestItem> streamReader, CancellationToken cancellationToken);
 		Task<bool> SendLeftMouseClickAsync();
 		Task<bool> SendRightMouseClickAsync();
+		Task<AudioFeedResponse> GetAudioFeedsResponse();
+		Task<DefaultResponse> UpdateAudioFeed(UpdateAudioFeedRequest request);
 	}
 
 	public class UserContextChannel : IUserContextChannel
@@ -386,6 +388,36 @@ namespace Amusoft.PCR.Server.Dependencies
 			catch (Exception e)
 			{
 				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(SendRightMouseClickAsync));
+				return default;
+			}
+		}
+
+		public async Task<AudioFeedResponse> GetAudioFeedsResponse()
+		{
+			try
+			{
+				_logger.LogInformation("Calling method {Method}", nameof(GetAudioFeedsResponse));
+				var result = await _service.GetAudioFeedsAsync(new AudioFeedRequest());
+				return result;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(GetAudioFeedsResponse));
+				return default;
+			}
+		}
+
+		public async Task<DefaultResponse> UpdateAudioFeed(UpdateAudioFeedRequest request)
+		{
+			try
+			{
+				_logger.LogInformation("Calling method {Method}", nameof(UpdateAudioFeed));
+				var result = await _service.UpdateAudioFeedAsync(request);
+				return result;
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Exception occured while calling [{Name}]", nameof(UpdateAudioFeed));
 				return default;
 			}
 		}
