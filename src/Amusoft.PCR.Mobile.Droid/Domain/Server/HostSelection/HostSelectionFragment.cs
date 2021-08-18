@@ -90,7 +90,61 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		private async void InstanceOnItemClicked(object sender, HostSelectionDataSource.ServerDataItem e)
 		{
 			var endpointAddress = new HostEndpointAddress(e.EndPoint.Address.ToString(), e.HttpsPorts[0]);
-			var agent = GrpcApplicationAgentFactory.Create(endpointAddress);
+			using (var agent = GrpcApplicationAgentFactory.Create(endpointAddress))
+			{
+				var authenticated = await CheckIsAuthenticatedAsync(agent);
+				if (!authenticated)
+				{
+					if (!await TryUpdateAuthenticationAsync(agent, endpointAddress))
+						return;
+				}
+
+				NavigateToHost(e);
+			}
+		}
+
+		private void NavigateToHost(HostSelectionDataSource.ServerDataItem e)
+		{
+			var fragment = new HostControlFragment();
+			fragment.DisplayListHeader = true;
+			var bundle = new Bundle();
+			bundle.PutInt(HostControlFragment.ArgumentTargetPort, e.HttpsPorts[0]);
+			bundle.PutString(HostControlFragment.ArgumentTargetAddress, e.EndPoint.Address.ToString());
+			bundle.PutString(HostControlFragment.ArgumentTargetMachineName, e.MachineName);
+			fragment.Arguments = bundle;
+
+			using (var transaction = Activity.SupportFragmentManager.BeginTransaction())
+			{
+				transaction.SetStatusBarTitle(e.MachineName);
+				transaction.ReplaceContentAnimated(fragment);
+				transaction.Commit();
+			}
+		}
+
+		private async Task<bool> TryUpdateAuthenticationAsync(GrpcApplicationAgent agent, HostEndpointAddress endpointAddress)
+		{
+			var input = await LoginDialog.GetInputAsync("Authentication required");
+			if (input == null)
+			{
+				ToastHelper.Display("Authentication required", ToastLength.Long);
+				return false;
+			}
+
+			var loginResponse = await GetLoginResponseAsync(agent, input);
+			if (loginResponse.InvalidCredentials)
+			{
+				ToastHelper.Display("Invalid credentials", ToastLength.Long);
+				return false;
+			}
+
+			var authenticationStorage = new AuthenticationStorage(endpointAddress);
+			await authenticationStorage.UpdateAsync(loginResponse.AccessToken, loginResponse.RefreshToken);
+
+			return true;
+		}
+
+		private static async Task<bool> CheckIsAuthenticatedAsync(GrpcApplicationAgent agent)
+		{
 			var authenticated = true;
 			CheckIsAuthenticatedResponse response = null;
 			try
@@ -108,42 +162,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 				authenticated = false;
 			}
 
-			if (!authenticated || !response.Result)
-			{
-				var input = await LoginDialog.GetInputAsync("Authentication required");
-				if (input == null)
-				{
-					ToastHelper.Display("Authentication required", ToastLength.Long);
-					return;
-				}
-
-				var loginResponse = await GetLoginResponseAsync(agent, input);
-				if (loginResponse.InvalidCredentials)
-				{
-					ToastHelper.Display("Invalid credentials", ToastLength.Long);
-					return;
-				}
-
-				var authenticationStorage = new AuthenticationStorage(endpointAddress);
-				await authenticationStorage.UpdateAsync(loginResponse.AccessToken, loginResponse.RefreshToken);
-			}
-
-			var fragment = new HostControlFragment();
-			fragment.DisplayListHeader = true;
-			var bundle = new Bundle();
-			bundle.PutInt(HostControlFragment.ArgumentTargetPort, e.HttpsPorts[0]);
-			bundle.PutString(HostControlFragment.ArgumentTargetAddress, e.EndPoint.Address.ToString());
-			bundle.PutString(HostControlFragment.ArgumentTargetMachineName, e.MachineName);
-			fragment.Arguments = bundle;
-
-			using (var transaction = Activity.SupportFragmentManager.BeginTransaction())
-			{
-				transaction.AddToBackStack(null);
-				transaction.SetCustomAnimations(Resource.Animation.enter_from_right, Resource.Animation.exit_to_left, Resource.Animation.enter_from_left, Resource.Animation.exit_to_right);
-				transaction.Replace(Resource.Id.content_display_frame, fragment);
-
-				transaction.Commit();
-			}
+			return authenticated && response.Result;
 		}
 	}
 }
