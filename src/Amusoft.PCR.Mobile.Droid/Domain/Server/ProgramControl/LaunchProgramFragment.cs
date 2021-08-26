@@ -9,15 +9,8 @@ using Android.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 {
-	public class LaunchProgramFragment : ButtonListFragment
+	public class LaunchProgramFragment : ButtonListAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
-
-		public LaunchProgramFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
-
 		protected override ButtonListDataSource CreateDataSource()
 		{
 			return new ButtonListDataSource(GenerateData);
@@ -25,7 +18,8 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 
 		private async Task<List<ButtonElement>> GenerateData()
 		{
-			var hostCommands = await _agent.DesktopClient.GetHostCommandsAsync(TimeSpan.FromSeconds(5));
+			using var agent = this.GetAgent();
+			var hostCommands = await agent.DesktopClient.GetHostCommandsAsync(TimeSpan.FromSeconds(5));
 			var results = new List<ButtonElement>();
 			foreach (var command in hostCommands)
 			{
@@ -35,7 +29,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 					ButtonText = command.Title,
 					ButtonAction = async () =>
 					{
-						var result = await _agent.DesktopClient.InvokeHostCommand(TimeSpan.FromSeconds(5), command.CommandId);
+						var result = await agent.DesktopClient.InvokeHostCommand(TimeSpan.FromSeconds(5), command.CommandId);
 						ToastHelper.DisplaySuccess(result, ToastLength.Short);
 					}
 				});

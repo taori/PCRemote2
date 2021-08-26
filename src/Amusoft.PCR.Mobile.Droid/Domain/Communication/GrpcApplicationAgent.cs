@@ -41,7 +41,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Communication
 
 		public void Dispose()
 		{
-			_channel?.Dispose();
 		}
 	}
 

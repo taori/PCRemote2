@@ -16,9 +16,8 @@ using Xamarin.Essentials;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 {
-	public class MouseInputFragment : SmartFragment
+	public class MouseInputFragment : SmartAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
 		private static readonly Logger Log = LogManager.GetLogger(nameof(MouseInputFragment));
 		private AsyncClientStreamingCall<SendMouseMoveRequestItem, SendMouseMoveResponse> _mouseMoveStream;
 		private SeekBar _seekbar;
@@ -26,13 +25,6 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 		private Button _buttonRMB;
 		private Button _buttonLMB;
 		private TrackingView _trackView;
-		private CancellationTokenSource _cts;
-
-
-		public MouseInputFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
@@ -77,7 +69,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 		{
 			Log.Info("Starting mouse move stream");
 			_mouseMoveStream?.Dispose();
-			_mouseMoveStream = _agent.FullDesktopClient.SendMouseMove();
+			_mouseMoveStream = this.GetAgent().FullDesktopClient.SendMouseMove();
 			base.OnResume();
 		}
 
@@ -90,12 +82,12 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 
 		private async void ButtonLMBOnClick(object sender, EventArgs e)
 		{
-			await _agent.FullDesktopClient.SendLeftMouseButtonClickAsync(new DefaultRequest());
+			await this.GetAgent().FullDesktopClient.SendLeftMouseButtonClickAsync(new DefaultRequest());
 		}
 
 		private async void ButtonRMBOnClick(object sender, EventArgs e)
 		{
-			await _agent.FullDesktopClient.SendRightMouseButtonClickAsync(new DefaultRequest());
+			await this.GetAgent().FullDesktopClient.SendRightMouseButtonClickAsync(new DefaultRequest());
 		}
 
 		private void SeekbarOnProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
@@ -108,7 +100,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 
 		private string GetSensitivityStorageKey()
 		{
-			return $"{_agent.Address}:MouseMoveSensitivity";
+			return $"{this.GetAgent().Address}:MouseMoveSensitivity";
 		}
 
 		private async void SetDefaultSensitivityAsync()

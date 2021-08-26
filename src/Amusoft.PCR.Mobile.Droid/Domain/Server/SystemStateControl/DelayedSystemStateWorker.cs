@@ -64,7 +64,13 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 				var progressDataBuilder = new Data.Builder();
 
 				UpdateProgress(progressDataBuilder, 0, false);
-				using (var agent = GrpcApplicationAgentFactory.Create(_agentAddress))
+				if (!HostEndpointAddress.TryParse(_agentAddress, out var address))
+				{
+					Log.Warn("Address {Address} could not be parsed - aborting process", _agentAddress);
+					return Data.Empty;
+				}
+
+				using (var agent = GrpcApplicationAgentFactory.Create(GrpcChannelHub.GetChannelFor(address)))
 				{
 					var hostName = await agent.DesktopClient.GetHostNameAsync(TimeSpan.FromSeconds(5));
 					var notification = NotificationHelper.DisplayNotification(notificationId, builder =>

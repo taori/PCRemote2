@@ -8,16 +8,10 @@ using Android.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 {
-	public class ProgramFragment : SmartFragment
+	public class ProgramFragment : SmartAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
 		private Button _startProgram;
 		private Button _killProcess;
-
-		public ProgramFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
@@ -39,7 +33,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 		{
 			using (var fragmentTransaction = ParentFragmentManager.BeginTransaction())
 			{
-				fragmentTransaction.ReplaceContentAnimated(new LaunchProgramFragment(_agent));
+				fragmentTransaction.ReplaceContentAnimated(new LaunchProgramFragment().WithAgent(this));
 				fragmentTransaction.SetStatusBarTitle("Launch program");
 				fragmentTransaction.Commit();
 			}
@@ -49,7 +43,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 		{
 			using (var fragmentTransaction = ParentFragmentManager.BeginTransaction())
 			{
-				fragmentTransaction.ReplaceContentAnimated(new KillProcessFragment(_agent));
+				fragmentTransaction.ReplaceContentAnimated(new KillProcessFragment().WithAgent(this));
 				fragmentTransaction.SetStatusBarTitle("Processes");
 				fragmentTransaction.Commit();
 			}

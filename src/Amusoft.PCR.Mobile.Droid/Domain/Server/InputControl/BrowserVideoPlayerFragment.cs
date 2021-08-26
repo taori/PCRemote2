@@ -7,15 +7,8 @@ using Android.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 {
-	public class BrowserVideoPlayerFragment : ButtonListFragment
+	public class BrowserVideoPlayerFragment : ButtonListAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
-
-		public BrowserVideoPlayerFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
-
 		protected override ButtonListDataSource CreateDataSource()
 		{
 			return new ButtonListDataSource(Generate);
@@ -41,7 +34,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			await Task.Delay(3000);
 #endif
 
-			if (await _agent.DesktopClient.SendKeysAsync(message))
+			if (await this.GetAgent().DesktopClient.SendKeysAsync(message))
 			{
 				ToastHelper.DisplaySuccess(true, ToastLength.Short);
 				return true;

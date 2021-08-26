@@ -64,9 +64,9 @@ namespace Amusoft.PCR.Mobile.Droid
 			Analytics.TrackEvent("Application launching");
 
 			base.OnCreate(savedInstanceState);
-
-
+			
 			AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+			Application.UnregisterActivityLifecycleCallbacks(ActivityLifecycleCallbacks.Instance);
 			Application.RegisterActivityLifecycleCallbacks(ActivityLifecycleCallbacks.Instance);
 			
 			ApplicationContext.RegisterReceiver(AbortBroadcastReceiver.Instance, new IntentFilter(AbortBroadcastReceiver.ActionKindHibernate));
@@ -99,11 +99,18 @@ namespace Amusoft.PCR.Mobile.Droid
 			var navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
 			navigationView.SetNavigationItemSelectedListener(this);
 
-			using (var transaction = SupportFragmentManager.BeginTransaction())
+			if (savedInstanceState == null)
 			{
-				transaction.Replace(Resource.Id.content_display_frame, new HostSelectionFragment());
-				transaction.DisallowAddToBackStack();
-				transaction.Commit();
+				using (var transaction = SupportFragmentManager.BeginTransaction())
+				{
+					transaction.Replace(Resource.Id.content_display_frame, new HostSelectionFragment());
+					transaction.DisallowAddToBackStack();
+					transaction.Commit();
+				}
+			}
+			else
+			{
+				Log.Debug("Activity restarting - skipping replacing content fragment");
 			}
 
 			Analytics.TrackEvent("Application started");
@@ -197,31 +204,43 @@ namespace Amusoft.PCR.Mobile.Droid
 			}
 			else if (id == Resource.Id.nav_logs)
 			{
-				using (var transaction = SupportFragmentManager.BeginTransaction())
+				using var transaction = SupportFragmentManager.BeginTransaction();
+				var fragment = SupportFragmentManager.FindFragmentByTag(nameof(LogFragment));
+				if (fragment == null)
 				{
 					transaction.SetStatusBarTitle("Logs");
-					transaction.Replace(Resource.Id.app_bar_main_container, new LogFragment());
-					transaction.AddToBackStack(null);
 					transaction.SetTransition(AndroidX.Fragment.App.FragmentTransaction.TransitFragmentFade);
+					transaction.AddToBackStack(null);
+					transaction.Replace(Resource.Id.app_bar_main_container, new LogFragment(), nameof(LogFragment));
+					transaction.Commit();
+				}
+				else
+				{
+					transaction.SetTransition(AndroidX.Fragment.App.FragmentTransaction.TransitFragmentFade);
+					transaction.Replace(Resource.Id.app_bar_main_container, fragment, nameof(LogFragment));
 					transaction.Commit();
 				}
 			}
 			else if (id == Resource.Id.nav_settings)
 			{
-				using (var transaction = SupportFragmentManager.BeginTransaction())
+				var fragmentExists = SupportFragmentManager.FindFragmentByTag(nameof(SettingsFragment)) != null;
+				if (!fragmentExists)
 				{
+					using var transaction = SupportFragmentManager.BeginTransaction();
 					transaction.SetStatusBarTitle("Settings");
-					transaction.ReplaceContentAnimated(new SettingsFragment());
+					transaction.ReplaceContentAnimated(new SettingsFragment(), nameof(SettingsFragment));
 					transaction.Commit();
 				}
 
 			}
 			else if (id == Resource.Id.nav_update)
 			{
-				using (var transaction = SupportFragmentManager.BeginTransaction())
+				var fragmentExists = SupportFragmentManager.FindFragmentByTag(nameof(UpdateFragment)) != null;
+				if (!fragmentExists)
 				{
+					using var transaction = SupportFragmentManager.BeginTransaction();
 					transaction.SetStatusBarTitle("Update");
-					transaction.ReplaceContentAnimated(new UpdateFragment());
+					transaction.ReplaceContentAnimated(new UpdateFragment(), nameof(UpdateFragment));
 					transaction.Commit();
 				}
 			}

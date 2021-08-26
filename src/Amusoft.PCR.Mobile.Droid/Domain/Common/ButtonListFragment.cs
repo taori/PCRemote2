@@ -13,7 +13,7 @@ using Xamarin.Essentials;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 {
-    public abstract class ButtonListFragment : SmartFragment, SwipeRefreshLayout.IOnRefreshListener
+	public abstract class ButtonListFragment : SmartFragment, SwipeRefreshLayout.IOnRefreshListener
     {
 	    private ButtonListDataSource _dataSource;
 	    private SwipeRefreshLayout _swipeRefreshLayout;
@@ -115,12 +115,22 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Common
 
 	    public void RemoveAt(int index)
 	    {
+		    if (index < 0 || index > _elements.Count - 1)
+			    return;
+
 			_elements.RemoveAt(index);
 			NotifyItemRemoved(index);
 	    }
 
 	    public async Task ReloadAsync()
 	    {
+		    if (_generate == null)
+			{
+				_elements.Clear();
+				NotifyDataSetChanged();
+				return;
+			}
+
 			_elements = await _generate?.Invoke();
 	    }
     }

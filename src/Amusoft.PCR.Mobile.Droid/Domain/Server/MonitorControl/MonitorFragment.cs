@@ -8,16 +8,10 @@ using Android.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.MonitorControl
 {
-	public class MonitorFragment : SmartFragment
+	public class MonitorFragment : SmartAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
 		private Button _monitorOn;
 		private Button _monitorOff;
-
-		public MonitorFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
@@ -36,13 +30,13 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.MonitorControl
 
 		private async void MonitorOnOnClick(object sender, EventArgs e)
 		{
-			var result = await _agent.DesktopClient.MonitorOnAsync(TimeSpan.FromSeconds(5));
+			var result = await this.GetAgent().DesktopClient.MonitorOnAsync(TimeSpan.FromSeconds(5));
 			ToastHelper.DisplaySuccess(result, ToastLength.Short);
 		}
 
 		private async void MonitorOffOnClick(object sender, EventArgs e)
 		{
-			var result = await _agent.DesktopClient.MonitorOffAsync(TimeSpan.FromSeconds(10));
+			var result = await this.GetAgent().DesktopClient.MonitorOffAsync(TimeSpan.FromSeconds(10));
 			ToastHelper.DisplaySuccess(result, ToastLength.Short);
 		}
 	}

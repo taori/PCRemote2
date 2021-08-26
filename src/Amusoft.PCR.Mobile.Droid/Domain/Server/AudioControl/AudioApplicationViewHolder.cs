@@ -54,7 +54,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl
 			if (!e.FromUser)
 				return;
 
-			Debouncer.Debounce(nameof(AudioApplicationViewHolder) + nameof(SeekBarOnProgressChanged) + _id, async () =>
+			Debouncer.Debounce(nameof(AudioApplicationViewHolder) + nameof(SeekBarOnProgressChanged) + _id, () =>
 			{
 				_progress = e.Progress;
 				RaiseDataUpdateRequired(AbsoluteAdapterPosition);
