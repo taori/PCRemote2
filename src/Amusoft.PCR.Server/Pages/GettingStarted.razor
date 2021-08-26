@@ -1,0 +1,54 @@
+﻿@page "/GettingStarted"
+@using System.Net.NetworkInformation
+@using System.Net.Sockets
+<Title WindowTitle="Getting started" Headline="Getting started"></Title>
+
+<p>There are two main ways you can use to control your computer using PC Remote 2:</p>
+<p>
+	<ul>
+		<li>A native app for your phone/tablet available <a href="/Downloads">here</a></li>
+		<li>Any device with a browser if you are aware of the hosts IP address</li>
+	</ul>
+</p>
+<p>
+	When using a browser you need to accept the self signed certificate. You can replace the certificate with your own certificate of your choice, but a free self signed certificate was added through the installer of this application.
+</p>
+<p>
+	When running PC Remote 2 for the first time you should register a user which can use made up email addresses, which will not be checked and confirm the account straight away.
+</p>
+<p>
+	If you want to know the IP address of the machine you can start a commandline and execute "ipconfig" to check for addresses. With a default installation the address in your browser should be similar to: https://192.168.0.x:8080.
+</p>
+<p>
+	Your current network addresses are:
+	
+	<ul>
+		@foreach (var item in GetEndpoints())
+		{
+			<li>@item</li>
+		}
+	</ul>
+</p>
+@code {
+
+	private IEnumerable<string> GetEndpoints()
+	{
+		foreach (var networkInterface in GetOperationalInterfaces())
+		{
+			foreach (var address in networkInterface.GetIPProperties().UnicastAddresses)
+			{
+				if(address.Address.AddressFamily != AddressFamily.InterNetwork)
+					continue;
+
+				yield return address.Address.ToString();
+			}
+		}
+	}
+
+	private static IEnumerable<NetworkInterface> GetOperationalInterfaces()
+	{
+		return NetworkInterface.GetAllNetworkInterfaces().Where((n) =>
+			n.NetworkInterfaceType != NetworkInterfaceType.Loopback && n.OperationalStatus == OperationalStatus.Up);
+	}
+
+}
