@@ -17,22 +17,17 @@ using NLog;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl
 {
-	public class AudioFragment : SmartFragment
+	public class AudioFragment : SmartAgentFragment
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(AudioFragment));
 
-		private readonly GrpcApplicationAgent _agent;
+		private GrpcApplicationAgent _agent;
 		private SeekBar _seekBar;
 		private TextView _textView;
 		private ImageView _imageViewMasterToggle;
 		private RecyclerView _recyclerView;
 		private SwipeRefreshLayout _swipeRefreshLayout;
-
-		public AudioFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
-
+		
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
 			return inflater.Inflate(Resource.Layout.server_control_audio, container, false);
@@ -46,6 +41,9 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.AudioControl
 			_imageViewMasterToggle = view.FindViewById<ImageView>(Resource.Id.button1);
 			_recyclerView = view.FindViewById<RecyclerView>(Resource.Id.recyclerView1);
 			_swipeRefreshLayout = view.FindViewById<SwipeRefreshLayout>(Resource.Id.swipeRefreshLayout1);
+
+			_agent?.Dispose();
+			_agent = this.GetAgent();
 
 			_imageViewMasterToggle.Clickable = true;
 

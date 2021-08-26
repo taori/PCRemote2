@@ -22,7 +22,7 @@ using NLog;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 {
-	public class HostSelectionFragment : Fragment, SwipeRefreshLayout.IOnRefreshListener
+	public class HostSelectionFragment : SmartFragment, SwipeRefreshLayout.IOnRefreshListener
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(HostSelectionFragment));
 		
@@ -49,8 +49,12 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 			HostSelectionDataSource.Instance.ItemClicked -= InstanceOnItemClicked;
 			HostSelectionDataSource.Instance.ItemClicked += InstanceOnItemClicked;
+		}
 
+		public override void OnResume()
+		{
 			OnRefresh();
+			base.OnResume();
 		}
 
 		private void WakeUpButtonOnClick(object sender, EventArgs e)
@@ -65,6 +69,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 
 		public void OnRefresh()
 		{
+			_swipeRefreshLayout.Refreshing = true;
 			var taskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			HostSelectionDataSource.Instance.RequestHostRepliesAsync()
 				.ContinueWith(prev =>
@@ -90,22 +95,38 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 		private async void InstanceOnItemClicked(object sender, HostSelectionDataSource.ServerDataItem e)
 		{
 			var endpointAddress = new HostEndpointAddress(e.EndPoint.Address.ToString(), e.HttpsPorts[0]);
-			using (var agent = GrpcApplicationAgentFactory.Create(endpointAddress))
+			try
 			{
-				var authenticated = await CheckIsAuthenticatedAsync(agent);
-				if (!authenticated)
+				var portOpen = await SocketHelper.IsPortOpenAsync(endpointAddress.IpAddress, endpointAddress.Port, TimeSpan.FromSeconds(1));
+				if (!portOpen)
 				{
-					if (!await TryUpdateAuthenticationAsync(agent, endpointAddress))
-						return;
+					ToastHelper.Display($"Failed to connect to {endpointAddress.FullAddress}", ToastLength.Long);
+					return;
 				}
+				
+				using (var agent = GrpcApplicationAgentFactory.Create(GrpcChannelHub.GetChannelFor(endpointAddress)))
+				{
+					var authenticated = await CheckIsAuthenticatedAsync(agent);
+					if (!authenticated)
+					{
+						if (!await TryUpdateAuthenticationAsync(agent, endpointAddress))
+							return;
+					}
 
-				NavigateToHost(e);
+					NavigateToHost(e);
+				}
+			}
+			catch (Exception exception)
+			{
+				ToastHelper.Display($"Failed to connect to {endpointAddress.FullAddress}", ToastLength.Long);
+				Log.Error(exception);
 			}
 		}
 
 		private void NavigateToHost(HostSelectionDataSource.ServerDataItem e)
 		{
 			var fragment = new HostControlFragment();
+			fragment.WithAgent(e.EndPoint.Address.ToString(), e.MachineName, e.HttpsPorts[0]);
 			fragment.DisplayListHeader = true;
 			var bundle = new Bundle();
 			bundle.PutInt(HostControlFragment.ArgumentTargetPort, e.HttpsPorts[0]);
@@ -113,6 +134,10 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			bundle.PutString(HostControlFragment.ArgumentTargetMachineName, e.MachineName);
 			fragment.Arguments = bundle;
 
+			if (Activity?.SupportFragmentManager == null)
+			{
+				Log.Error("-------------------------------- ERROR HAPPENED");
+			}
 			using (var transaction = Activity.SupportFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle(e.MachineName);
@@ -138,7 +163,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			}
 
 			var authenticationStorage = new AuthenticationStorage(endpointAddress);
-			await authenticationStorage.UpdateAsync(loginResponse.AccessToken, loginResponse.RefreshToken);
+			await authenticationStorage.UpdateAsync(loginResponse.AccessToken, loginResponse.RefreshToken).ConfigureAwait(false);
 
 			return true;
 		}
@@ -149,7 +174,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostSelection
 			CheckIsAuthenticatedResponse response = null;
 			try
 			{
-				response = await agent.FullDesktopClient.CheckIsAuthenticatedAsync(new CheckIsAuthenticatedRequest());
+				response = await agent.FullDesktopClient.CheckIsAuthenticatedAsync(new CheckIsAuthenticatedRequest()).ResponseAsync;
 			}
 			catch (RpcException exception) when (exception.Status.StatusCode == StatusCode.Unauthenticated)
 			{

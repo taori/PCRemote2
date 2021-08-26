@@ -24,22 +24,16 @@ using Object = Java.Lang.Object;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 {
-	public class SystemStateFragment : SmartFragment, IObserver
+	public class SystemStateFragment : SmartAgentFragment, IObserver
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(SystemStateFragment));
-
-		private readonly GrpcApplicationAgent _agent;
+		
 		private Button _lockWorkstation;
 		private Button _restart;
 		private ProgressBar _progressBar;
 		private Button _abort;
 		private Button _shutdown;
 		private Button _hibernate;
-
-		public SystemStateFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
@@ -67,15 +61,16 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 
 		private async void LockWorkstationOnClick(object sender, EventArgs e)
 		{
-			var result = await _agent.DesktopClient.LockWorkStationAsync(TimeSpan.FromSeconds(5));
+			var result = await this.GetAgent().DesktopClient.LockWorkStationAsync(TimeSpan.FromSeconds(5));
 			ToastHelper.DisplaySuccess(result, ToastLength.Short);
 		}
 
 		private async void AbortOnClick(object sender, EventArgs e)
 		{
-			SystemStateManager.AbortAllTimers(_agent.Address);
+			var agent = this.GetAgent();
+			SystemStateManager.AbortAllTimers(agent.Address);
 
-			var result = await _agent.DesktopClient.AbortShutDownAsync(TimeSpan.FromSeconds(5));
+			var result = await agent.DesktopClient.AbortShutDownAsync(TimeSpan.FromSeconds(5));
 			ToastHelper.DisplaySuccess(result, ToastLength.Short);
 		}
 
@@ -88,7 +83,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 				return;
 			}
 
-			var workName = await SystemStateWorkRequestFactory.EnqueueAsync<RestartWorker>(Context, _agent.Address, SystemStateKind.Restart, DateTime.Now.Add(executionDelay.Value));
+			var workName = await SystemStateWorkRequestFactory.EnqueueAsync<RestartWorker>(Context, this.GetAgent().Address, SystemStateKind.Restart, DateTime.Now.Add(executionDelay.Value));
 			var liveData = WorkManager.GetInstance(Context).GetWorkInfosForUniqueWorkLiveData(workName);
 			liveData.RemoveObserver(this);
 			liveData.Observe(ViewLifecycleOwner, this);
@@ -104,7 +99,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 			}
 
 			
-			var workName = await SystemStateWorkRequestFactory.EnqueueAsync<HibernateWorker>(Context, _agent.Address, SystemStateKind.Hibernate, DateTime.Now.Add(executionDelay.Value));
+			var workName = await SystemStateWorkRequestFactory.EnqueueAsync<HibernateWorker>(Context, this.GetAgent().Address, SystemStateKind.Hibernate, DateTime.Now.Add(executionDelay.Value));
 			var liveData = WorkManager.GetInstance(Context).GetWorkInfosForUniqueWorkLiveData(workName);
 			liveData.RemoveObserver(this);
 			liveData.Observe(ViewLifecycleOwner, this);
@@ -119,7 +114,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 				return;
 			}
 
-			var workName = await SystemStateWorkRequestFactory.EnqueueAsync<ShutdownWorker>(Context, _agent.Address, SystemStateKind.Shutdown, DateTime.Now.Add(executionDelay.Value));
+			var workName = await SystemStateWorkRequestFactory.EnqueueAsync<ShutdownWorker>(Context, this.GetAgent().Address, SystemStateKind.Shutdown, DateTime.Now.Add(executionDelay.Value));
 			var liveData = WorkManager.GetInstance(Context).GetWorkInfosForUniqueWorkLiveData(workName);
 			liveData.RemoveObserver(this);
 			liveData.Observe(ViewLifecycleOwner, this);

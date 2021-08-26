@@ -11,14 +11,16 @@ using Android.Widget;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 {
-	public class KillProcessByIdFragment : ButtonListFragment
+	public class KillProcessByIdFragment : ButtonListAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
 		private readonly string _itemProcessName;
 
-		public KillProcessByIdFragment(GrpcApplicationAgent agent, string itemProcessName)
+		public KillProcessByIdFragment()
 		{
-			_agent = agent;
+		}
+
+		public KillProcessByIdFragment(string itemProcessName)
+		{
 			_itemProcessName = itemProcessName;
 		}
 
@@ -30,7 +32,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 		private async Task<List<ButtonElement>> GenerateElements()
 		{
 			var list = new List<ButtonElement>();
-			var processes = await _agent.DesktopClient.GetProcessListAsync(TimeSpan.FromSeconds(5));
+			var processes = await this.GetAgent().DesktopClient.GetProcessListAsync(TimeSpan.FromSeconds(5));
 			var filtered = processes.GroupBy(d => d.ProcessName).Select(d => d.First());
 			AddElements(list, filtered);
 			return list;
@@ -47,7 +49,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 				var scopedIndex = index;
 				buttonElement.ButtonAction = async () =>
 				{
-					if (await _agent.DesktopClient.KillProcessByIdAsync(TimeSpan.FromSeconds(5), item.ProcessId))
+					if (await this.GetAgent().DesktopClient.KillProcessByIdAsync(TimeSpan.FromSeconds(5), item.ProcessId))
 					{
 						this.DataSource.RemoveAt(scopedIndex);
 						ToastHelper.DisplaySuccess(true, ToastLength.Short);

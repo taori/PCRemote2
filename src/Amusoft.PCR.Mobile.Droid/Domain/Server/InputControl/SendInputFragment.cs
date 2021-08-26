@@ -6,15 +6,8 @@ using Amusoft.PCR.Mobile.Droid.Extensions;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 {
-	public class SendInputFragment : ButtonListFragment
+	public class SendInputFragment : ButtonListAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
-
-		public SendInputFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
-
 		protected override ButtonListDataSource CreateDataSource()
 		{
 			return new ButtonListDataSource(Generate);
@@ -32,7 +25,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Video player");
-				transaction.ReplaceContentAnimated(new BrowserVideoPlayerFragment(_agent));
+				transaction.ReplaceContentAnimated(new BrowserVideoPlayerFragment().WithAgent(this));
 				transaction.Commit();
 			}
 		}

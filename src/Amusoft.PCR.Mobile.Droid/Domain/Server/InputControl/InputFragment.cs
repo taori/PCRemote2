@@ -9,15 +9,8 @@ using Android.Views;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 {
-	public class InputFragment : ButtonListFragment
+	public class InputFragment : ButtonListAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
-
-		public InputFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
-
 		protected override ButtonListDataSource CreateDataSource()
 		{
 			return new ButtonListDataSource(Generate);
@@ -37,7 +30,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Mouse control");
-				transaction.ReplaceContentAnimated(new MouseInputFragment(_agent));
+				transaction.ReplaceContentAnimated(new MouseInputFragment().WithAgent(this));
 				transaction.Commit();
 			}
 		}
@@ -47,7 +40,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Send input");
-				transaction.ReplaceContentAnimated(new SendInputFragment(_agent));
+				transaction.ReplaceContentAnimated(new SendInputFragment().WithAgent(this));
 				transaction.Commit();
 			}
 		}
@@ -57,7 +50,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Clipboard");
-				transaction.ReplaceContentAnimated(new ClipboardFragment(_agent));
+				transaction.ReplaceContentAnimated(new ClipboardFragment().WithAgent(this));
 				transaction.Commit();
 			}
 		}

@@ -74,13 +74,25 @@
   <ItemGroup>
     <Compile Include="CustomControls\LoaderPanel.cs" />
     <Compile Include="CustomControls\TrackingView.cs" />
+    <Compile Include="Domain\Common\AgentFragmentExtensions.cs" />
+    <Compile Include="Domain\Common\AgentPersistanceComponent.cs" />
     <Compile Include="Domain\Common\AsyncButtonListFragment.cs" />
     <Compile Include="Domain\Common\BackStackHandler.cs" />
+    <Compile Include="Domain\Common\ButtonListAgentFragment.cs" />
     <Compile Include="Domain\Common\ButtonListFragment.cs" />
+    <Compile Include="Domain\Common\ComponentRunner.cs" />
     <Compile Include="Domain\Common\GrpcApplicationAgentFactory.cs" />
+    <Compile Include="Domain\Common\GrpcChannelFactory.cs" />
+    <Compile Include="Domain\Common\GrpcChannelHub.cs" />
     <Compile Include="Domain\Common\GrpcRequestObserver.cs" />
     <Compile Include="Domain\Common\HostEndpointAddress.cs" />
+    <Compile Include="Domain\Common\IAgentFragment.cs" />
+    <Compile Include="Domain\Common\IComponent.cs" />
+    <Compile Include="Domain\Common\IComponentContainer.cs" />
+    <Compile Include="Domain\Common\IFragmentCreationComponent.cs" />
+    <Compile Include="Domain\Common\IFragmentPersistanceComponent.cs" />
     <Compile Include="Domain\Common\NotificationHelper.cs" />
+    <Compile Include="Domain\Common\SmartAgentFragment.cs" />
     <Compile Include="Domain\Common\SmartFragment.cs" />
     <Compile Include="Domain\Common\StaticButtonListFragment.cs" />
     <Compile Include="Domain\Common\WorkerRequestFactory.cs" />
@@ -121,6 +133,7 @@
     <Compile Include="Domain\Updates\InAppUpdateFeature.cs" />
     <Compile Include="Domain\Updates\UpdateFragment.cs" />
     <Compile Include="Domain\Updates\UpdateHelper.cs" />
+    <Compile Include="Extensions\ActivityExtensions.cs" />
     <Compile Include="Extensions\FragmentTransactionExtensions.cs" />
     <Compile Include="Helpers\DialogHelper.cs" />
     <Compile Include="Helpers\SocketHelper.cs" />

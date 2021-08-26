@@ -22,29 +22,19 @@ using NLog;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 {
-	public class HostControlFragment : ButtonListFragment
+	public class HostControlFragment : ButtonListAgentFragment
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(HostControlFragment));
-
-		private GrpcApplicationAgent _agent;
-
+		
 		public const string ArgumentTargetMachineName = "MachineName";
 		public const string ArgumentTargetAddress = "Address";
 		public const string ArgumentTargetPort = "Port";
 
+		private GrpcApplicationAgent _agent;
+
 		protected override ButtonListDataSource CreateDataSource()
 		{
 			return new ButtonListDataSource(CreateButtons);
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				_agent.Dispose();
-			}
-
-			base.Dispose(disposing);
 		}
 
 		public override void OnViewCreated(View view, Bundle savedInstanceState)
@@ -59,7 +49,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			// 	Activity.SetStatusBarTitle($"{machineName}");
 
 			_agent?.Dispose();
-			_agent = GrpcApplicationAgentFactory.Create(new HostEndpointAddress(ipAddress, ipPort));
+			_agent = this.GetAgent();
 
 			UpdateWolClient(_agent);
 		}
@@ -81,6 +71,11 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 		private string GetConnectionAddress()
 		{
 			return Arguments.GetString(ArgumentTargetAddress);
+		}
+
+		private string GetMachineName()
+		{
+			return Arguments.GetString(ArgumentTargetMachineName);
 		}
 
 		private async Task<List<ButtonElement>> CreateButtons()
@@ -116,7 +111,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Programs");
-				transaction.ReplaceContentAnimated(new ProgramFragment(_agent));
+				transaction.ReplaceContentAnimated(new ProgramFragment().WithAgent(this));
 				transaction.Commit();
 			}
 		}
@@ -129,7 +124,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Send input");
-				transaction.ReplaceContentAnimated(new InputFragment(_agent));
+				transaction.ReplaceContentAnimated(new InputFragment().WithAgent(this));
 				transaction.Commit();
 			}
 		}
@@ -142,7 +137,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("System state");
-				transaction.ReplaceContentAnimated(new SystemStateFragment(_agent));
+				transaction.ReplaceContentAnimated(new SystemStateFragment().WithAgent(this));
 				transaction.Commit();
 			}
 		}
@@ -155,7 +150,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Monitors");
-				transaction.ReplaceContentAnimated(new MonitorFragment(_agent));
+				transaction.ReplaceContentAnimated(new MonitorFragment().WithAgent(this));
 				transaction.Commit();
 			}
 		}
@@ -168,7 +163,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.HostControl
 			using (var transaction = ParentFragmentManager.BeginTransaction())
 			{
 				transaction.SetStatusBarTitle("Audio");
-				transaction.ReplaceContentAnimated(new AudioFragment(_agent));
+				transaction.ReplaceContentAnimated(new AudioFragment().WithAgent(this));
 				transaction.Commit();
 			}
 		}

@@ -12,17 +12,8 @@ using NLog;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 {
-	public class ClipboardFragment : ButtonListFragment
+	public class ClipboardFragment : ButtonListAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
-
-		private static readonly Logger Log = LogManager.GetLogger(nameof(ClipboardFragment));
-
-		public ClipboardFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
-
 		protected override ButtonListDataSource CreateDataSource()
 		{
 			return new ButtonListDataSource(Generate);
@@ -61,7 +52,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 			try
 			{
 				
-				var result = await _agent.DesktopClient.SetClipboardAsync(TimeSpan.FromMinutes(1), GetRemoteName(), content);
+				var result = await this.GetAgent().DesktopClient.SetClipboardAsync(TimeSpan.FromMinutes(1), GetRemoteName(), content);
 				ToastHelper.Display(result ? "Host clipboard updated" : "error", ToastLength.Short);
 			}
 			catch (RpcException e) when (e.StatusCode == StatusCode.PermissionDenied)
@@ -97,7 +88,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.InputControl
 
 			try
 			{
-				var content = await _agent.DesktopClient.GetClipboardAsync(TimeSpan.FromMinutes(1), GetRemoteName());
+				var content = await this.GetAgent().DesktopClient.GetClipboardAsync(TimeSpan.FromMinutes(1), GetRemoteName());
 				cm.PrimaryClip = ClipData.NewPlainText("Host clipboard", content);
 				ToastHelper.Display("Clipboard updated", ToastLength.Short);
 			}

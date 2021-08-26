@@ -9,15 +9,8 @@ using Amusoft.PCR.Mobile.Droid.Extensions;
 
 namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 {
-	public class KillProcessFragment : ButtonListFragment
+	public class KillProcessFragment : ButtonListAgentFragment
 	{
-		private readonly GrpcApplicationAgent _agent;
-
-		public KillProcessFragment(GrpcApplicationAgent agent)
-		{
-			_agent = agent;
-		}
-
 		protected override ButtonListDataSource CreateDataSource()
 		{
 			return new ButtonListDataSource(GenerateElements);
@@ -26,7 +19,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 		private async Task<List<ButtonElement>> GenerateElements()
 		{
 			var list = new List<ButtonElement>();
-			var processes = await _agent.DesktopClient.GetProcessListAsync(TimeSpan.FromSeconds(5));
+			var processes = await this.GetAgent().DesktopClient.GetProcessListAsync(TimeSpan.FromSeconds(5));
 			var filtered = processes.GroupBy(d => d.ProcessName).Select(d => d.First());
 			AddElements(list, filtered);
 			return list;
@@ -43,7 +36,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.ProgramControl
 				{
 					using (var transaction = ParentFragmentManager.BeginTransaction())
 					{
-						transaction.ReplaceContentAnimated(new KillProcessByIdFragment(_agent, item.ProcessName));
+						transaction.ReplaceContentAnimated(new KillProcessByIdFragment(item.ProcessName).WithAgent(this));
 						transaction.SetStatusBarTitle($"Process: {item.ProcessName}");
 						transaction.Commit();
 					}
