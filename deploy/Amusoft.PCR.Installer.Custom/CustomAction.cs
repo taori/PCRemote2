@@ -33,7 +33,7 @@ namespace Amusoft.PCR.Installer.Custom
 			{
 				var content = File.ReadAllText(appsettingsPath, Encoding.UTF8);
 				var stringBuilder = new StringBuilder(content);
-				stringBuilder.Replace("5001", port);
+				stringBuilder.Replace("5001", parsedPort.ToString());
 				File.WriteAllText(appsettingsPath, stringBuilder.ToString());
 			}
 			catch (Exception e)
@@ -60,6 +60,41 @@ namespace Amusoft.PCR.Installer.Custom
 				controller.Stop();
 				controller.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30));
 
+				return ActionResult.Success;
+			}
+			catch (Exception e)
+			{
+				session.Log($"Service failed to start: {e.ToString()}");
+				return ActionResult.Failure;
+			}
+		}
+
+		private static bool TryGetPropertyValue(Session session, string key, out string value)
+		{
+			if (session.CustomActionData.TryGetValue(key, out value))
+				return true;
+
+			value = session[key];
+			return value != null;
+		}
+
+		[CustomAction]
+		public static ActionResult VerifyConfiguration(Session session)
+		{
+			SetBreakpoint(nameof(VerifyConfiguration));
+
+			session.Log("Trying to read port");
+
+			if (!TryGetPropertyValue(session, "CUSTOM_PORT", out var portValue))
+			{
+				session.Log($"Not available in {nameof(session.CustomActionData)}");
+				return ActionResult.Failure;
+			}
+
+			try
+			{
+				session.Log($"Trying to trim CUSTOM_PORT");
+				session["CUSTOM_PORT"] = portValue.Trim();
 				return ActionResult.Success;
 			}
 			catch (Exception e)

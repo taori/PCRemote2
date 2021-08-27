@@ -6,7 +6,7 @@
 		<Property Id="WIXUI_INSTALLDIR" Value="PRODUCTNAMEFOLDER" />
 		<Property Id="ConfigurationIsValid" Value="1" />
 
-		<UI Id="Amusoft_InstallDir">
+		<UI Id="InstallDir_Custom">
 			<TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
 			<TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
 			<TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
@@ -37,9 +37,12 @@
 			<Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
 
 			<Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
-			<Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="ConfigurationDlg">LicenseAccepted = "1"</Publish>
+			<Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PostInstallSettingsDlg">LicenseAccepted = "1"</Publish>
+			
+			<Publish Dialog="PostInstallSettingsDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+			<Publish Dialog="PostInstallSettingsDlg" Control="Next" Event="NewDialog" Value="ConfigurationDlg">1</Publish>
 
-			<Publish Dialog="ConfigurationDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+			<Publish Dialog="ConfigurationDlg" Control="Back" Event="NewDialog" Value="PostInstallSettingsDlg">1</Publish>
 			<Publish Dialog="ConfigurationDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">ConfigurationIsValid = "1"</Publish>
 
 			<Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="ConfigurationDlg">1</Publish>

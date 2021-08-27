@@ -1,0 +1,107 @@
+﻿@page "/GettingStarted"
+@using System.Net.NetworkInformation
+@using System.Net.Sockets
+@using System.Threading
+@using Amusoft.PCR.Server.Domain.Common
+@using Amusoft.PCR.Server.Domain.IPC
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Options
+<Title WindowTitle="Getting started" Headline="Getting started"></Title>
+
+<p>There are two main ways you can use to control your computer using PC Remote 2:</p>
+<p>
+	<ul>
+		<li>A native app for your phone/tablet available <a href="/Downloads">here</a></li>
+		<li>Any device with a browser if you are aware of the hosts IP address</li>
+	</ul>
+</p>
+<p>
+	When using a browser you need to accept the self signed certificate. You can replace the certificate with a certificate of your choice, but a free self signed certificate was added through the installer of this application.
+</p>
+<p>
+	When running PC Remote 2 for the first time you should register a user which can use a made up email address, which will not be checked and then you should confirm the account straight away by clicking the link for it.
+</p>
+<p>
+	If you want to know the IP address of the machine you can start a commandline and execute "ipconfig" to check for addresses. With a default installation the address in your browser should be similar to: https://192.168.0.x:8080.
+</p>
+<p>
+	Your current potential host addresses are:
+	
+	<ul>
+		@foreach (var item in _endpoints)
+		{
+			var color = item.Running ? "#0a0" : "#f00";
+			<li><a href="@item.Endpoint">@item.Endpoint</a>, Can be reached: <span style="color: @color">@(item.Running? "Yes" : "No")</span></li>
+		}
+	</ul>
+</p>
+@code {
+	
+	[Inject]
+	private IOptions<ClientDiscoverySettings> DiscoverySettings { get; set; }
+
+	[Inject]
+	private IHttpClientFactory HttpClientFactory { get; set; }
+
+	private record StatusModel(string Endpoint, bool Running);
+
+	private List<StatusModel> _endpoints;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_endpoints = new List<StatusModel>();
+		await foreach (var model in GetStatusModelsAsync())
+		{
+			_endpoints.Add(model);
+			StateHasChanged();
+		}
+	}
+
+	private async IAsyncEnumerable<StatusModel> GetStatusModelsAsync()
+	{
+		foreach (var endpoint in GetEndpoints())
+		{
+			yield return new StatusModel(endpoint, await GetStatusAsync(endpoint));
+		}
+	}
+
+	private IEnumerable<string> GetEndpoints()
+	{
+		foreach (var networkInterface in GetOperationalInterfaces())
+		{
+			foreach (var address in networkInterface.GetIPProperties().UnicastAddresses)
+			{
+				if(address.Address.AddressFamily != AddressFamily.InterNetwork)
+					continue;
+				yield return FormatAddress(address.Address.ToString());
+			}
+		}
+	}
+
+	private string FormatAddress(string address)
+	{
+		return $"https://{address}:{DiscoverySettings.Value.PublicHttpsPorts[0]}";
+	}
+
+	private static IEnumerable<NetworkInterface> GetOperationalInterfaces()
+	{
+		return NetworkInterface.GetAllNetworkInterfaces().Where((n) =>
+			n.NetworkInterfaceType != NetworkInterfaceType.Loopback && n.OperationalStatus == OperationalStatus.Up);
+	}
+
+	private async Task<bool> GetStatusAsync(string address)
+	{
+		try
+		{
+			using var cts = new CancellationTokenSource(1000);
+			var client = HttpClientFactory.CreateClient(Constants.UnsafeHttpClientName);
+			var result = await client.GetAsync($"{address}/health",HttpCompletionOption.ResponseHeadersRead, cts.Token);
+			return result.IsSuccessStatusCode;
+		}
+		catch (Exception)
+		{
+			return false;
+		}
+	}
+
+}

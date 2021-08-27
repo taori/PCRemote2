@@ -44,6 +44,12 @@
             <Component Id="cmp056EDBA8DFF1021B44264F60560CA51E" Guid="*">
                 <File Id="filB1717C0F890C4656BDD3E719163CB311" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.Toolkit.Impersonation.pdb" />
             </Component>
+            <Component Id="cmp7757970FB49149DFAA0BAABAEBFF881D" Guid="*">
+                <File Id="fil060D6077861FF92D76DC5E94D8CDD44A" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.Toolkit.Networking.dll" />
+            </Component>
+            <Component Id="cmp505C416511A13D91AA7ADFE47D058A2A" Guid="*">
+                <File Id="fil5F0A9630885281431C736879543E2636" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.Toolkit.Networking.pdb" />
+            </Component>
             <Component Id="cmp0A26E3BB068A1A0D282F39E762299A92" Guid="*">
                 <File Id="fil8487571A434A7B6E5D4928CC09CA4492" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.Toolkit.UI.dll" />
             </Component>
@@ -256,6 +262,9 @@
             </Component>
             <Component Id="cmpAE782068842FC402849855F2EA6E5A76" Guid="*">
                 <File Id="fil03F30775CF1636086CB3C66339235935" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.IdentityModel.Tokens.Jwt.dll" />
+            </Component>
+            <Component Id="cmp02EC4702DCCC19017EB431C9CBE4E7D5" Guid="*">
+                <File Id="fil26A515FE2F48A543CF0F1AE642463325" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.Reactive.dll" />
             </Component>
             <Component Id="cmp1D6AEDD77481D34C6DE71F44FE69C556" Guid="*">
                 <File Id="fil2330369E4BEC4AE8879382F7CE6C0C77" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.Runtime.Caching.dll" />
@@ -689,6 +698,8 @@
             <ComponentRef Id="cmpDD3AFB63160C437E091848006525480F" />
             <ComponentRef Id="cmp47AB8B737EC499CF79E4F13D518D7B4A" />
             <ComponentRef Id="cmp056EDBA8DFF1021B44264F60560CA51E" />
+            <ComponentRef Id="cmp7757970FB49149DFAA0BAABAEBFF881D" />
+            <ComponentRef Id="cmp505C416511A13D91AA7ADFE47D058A2A" />
             <ComponentRef Id="cmp0A26E3BB068A1A0D282F39E762299A92" />
             <ComponentRef Id="cmpDD057185F28E1F4E1F4E6295D035E436" />
             <ComponentRef Id="cmpA09B6A0B75DEF8A6D64CB3425D91F1DE" />
@@ -760,6 +771,7 @@
             <ComponentRef Id="cmp41B559AE4DAEC84BB1789E704E0A904A" />
             <ComponentRef Id="cmpDEC7F3DBA30CFFBBE55DD9950CFA2FA4" />
             <ComponentRef Id="cmpAE782068842FC402849855F2EA6E5A76" />
+            <ComponentRef Id="cmp02EC4702DCCC19017EB431C9CBE4E7D5" />
             <ComponentRef Id="cmp1D6AEDD77481D34C6DE71F44FE69C556" />
             <ComponentRef Id="cmpC53121E57D02A091E388B1FE2BAE7E94" />
             <ComponentRef Id="cmp367D8F5193B50F0847584F7072A0D231" />
