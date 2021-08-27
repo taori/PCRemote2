@@ -4,9 +4,10 @@
 		<UI>
 			<Property Id="CUSTOM_PORT" Value="8080"/>
 
-			<Dialog Id="ConfigurationDlg" Width="370" Height="270">
+			<Dialog Id="ConfigurationDlg" Width="370" Height="270" Title="!(loc.BrowseDlg_Title)">
 
 				<Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" >
+					<Publish Event="DoAction" Value="VerifyConfigurationAction">1</Publish>
 					<!-- <Condition Action="disable"><![CDATA[ConfigurationIsValid <> "1"]]></Condition> -->
 					<!-- <Condition Action="enable">ConfigurationIsValid = "1"</Condition> -->
 				</Control>
@@ -23,7 +24,6 @@
 
 				<Control Id="Hint" Type="Text" X="26" Y="60" Width="250" Height="16" Transparent="yes" Text="Application Port"/>
 				<Control Id="ConfigurationPort" Type="MaskedEdit" X="26" Y="76" Width="40" Height="16" Property="CUSTOM_PORT" Text="#####" Sunken="yes">
-					<Publish Event="DoAction" Value="VerifyConfigurationAction">1</Publish>
 				</Control>
 
 			</Dialog>
