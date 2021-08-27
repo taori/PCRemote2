@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ using Microsoft.Extensions.Hosting;
 using Amusoft.PCR.Server.Areas.Identity;
 using Amusoft.PCR.Server.Dependencies;
 using Amusoft.PCR.Server.Domain.Authorization;
+using Amusoft.PCR.Server.Domain.Common;
 using Amusoft.PCR.Server.Domain.IPC;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
@@ -71,6 +73,12 @@ namespace Amusoft.PCR.Server
 			{
 				options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 			});
+			services.AddHttpClient(Constants.UnsafeHttpClientName).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
+			{
+				ServerCertificateCustomValidationCallback =
+					HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+			});
+			services.AddHealthChecks();
 			services.AddGrpc();
 			services.AddDatabaseDeveloperPageExceptionFilter();
 			services.AddOptions();
@@ -198,6 +206,7 @@ namespace Amusoft.PCR.Server
 
 			app.UseEndpoints(endpoints =>
 			{
+				endpoints.MapHealthChecks("/health");
 				endpoints.MapGrpcService<BackendIntegrationService>().EnableGrpcWeb();
 				endpoints.MapControllers();
 				endpoints.MapBlazorHub();
