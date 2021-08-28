@@ -1,17 +1,61 @@
-﻿.main .top-row.auth {
-	background-color: rgb(4,23,61);
+﻿$primary-bg-dark : #222;
+$primary-bg-light: #444;
+
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
-.main > .content > .container {
-	margin-left: 0;
-	margin-right: 0;
-	max-width: 100%;
+body {
+	app {
+		height: 100%;
+		background-color: $primary-bg-dark;
+	}
 }
 
-form > .container {
-	margin : 0;
+h1, h2, h3, h4, h5, h6, div, p {
+	color: #ddd;
 }
 
 .main {
-	background-color: #222 !important;
+	background-color: $primary-bg-dark;
+
+	.top-row {
+		background-color: $primary-bg-light;
+		border-bottom: 1px solid orange;
+	}
+
+	a span.oi {
+		width: 20px;
+	}
+
+	a span.oi-badge {
+		width: auto;
+		margin: 0 6px;
+	}
+
+	> .content {
+
+		> .container {
+			margin-left: 0;
+			margin-right: 0;
+			max-width: 100%;
+		}
+	}
+}
+
+.sidebar {
+	background-image: none;
+	background-color: $primary-bg-light;
+
+	.top-row {
+		background-color: $primary-bg-light;
+	}
+}
+
+
+form > .container {
+	margin : 0;
 }

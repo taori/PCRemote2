@@ -30,7 +30,7 @@
 			"commandName": "Executable",
 			"executablePath": "dotnet.exe",
 			"commandLineArgs": "watch --project ..\\..\\..\\..\\Amusoft.PCR.Server.csproj run --contentroot=..\\..\\..\\..",
-			"launchBrowser": true,
+			"launchBrowser": false,
 			"launchUrl": "https://localhost:5001",
 			"externalUrlConfiguration": true,
 			"environmentVariables": {
