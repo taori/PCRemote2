@@ -20,6 +20,13 @@
 	  <None Include="compilerconfig.json" />
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
+		<Watch Include="..\**\*.razor" />
+		<Watch Include="..\**\*.scss" />
+		<Watch Include="..\**\*.cs" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Grpc.AspNetCore" Version="2.38.0" />
 		<PackageReference Include="Grpc.AspNetCore.Web" Version="2.38.0" />
