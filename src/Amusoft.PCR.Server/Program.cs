@@ -34,9 +34,7 @@ namespace Amusoft.PCR.Server
 
 				if (isService)
 				{
-					var pathToExe = Assembly.GetExecutingAssembly().Location;
-					_logger.Debug("Retrieved {Path} as execution file path", pathToExe);
-					var pathToContentRoot = Path.GetDirectoryName(pathToExe);
+					var pathToContentRoot = GetContentRoot();
 					Directory.SetCurrentDirectory(pathToContentRoot);
 				}
 
@@ -62,6 +60,14 @@ namespace Amusoft.PCR.Server
 				LogManager.Flush();
 				LogManager.Shutdown();
 			}
+		}
+
+		private static string GetContentRoot()
+		{
+			var pathToExe = Assembly.GetExecutingAssembly().Location;
+			_logger.Debug("Retrieved {Path} as execution file path", pathToExe);
+			var pathToContentRoot = Path.GetDirectoryName(pathToExe);
+			return pathToContentRoot;
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>

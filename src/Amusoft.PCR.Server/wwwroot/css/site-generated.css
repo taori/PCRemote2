@@ -8,3 +8,6 @@
 
 form > .container {
   margin: 0; }
+
+.main {
+  background-color: #222 !important; }
