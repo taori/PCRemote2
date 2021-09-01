@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+
+import "Protos/CommonMessages.proto";
+option csharp_namespace = "Amusoft.PCR.Grpc.Common";
+package Amusoft.PCR.Grpc.Common;
+
+service VoiceCommandService {
+	rpc UpdateVoiceRecognition(UpdateVoiceRecognitionRequest) returns (DefaultResponse);
+}
+
+message UpdateVoiceRecognitionRequest {
+	repeated UpdateVoiceRecognitionRequestItem items = 1;
+	string triggerPhrase = 2;
+	string audioPhrase = 3;
+	repeated string onAliases = 4;
+	repeated string offAliases = 5;
+	string synthesizerConfirmMessage = 6;
+	string synthesizerErrorMessage = 7;
+}
+message UpdateVoiceRecognitionRequestItem {
+	string feedName = 1;
+	string alias = 2;
+}

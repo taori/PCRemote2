@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Amusoft.PCR.Grpc.Common";
+package Amusoft.PCR.Grpc.Common;
+
+
+message DefaultRequest {}
+message DefaultResponse {
+	bool success = 1;
+}
+
+message GetAllRequest {}

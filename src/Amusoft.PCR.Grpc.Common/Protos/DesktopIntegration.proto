@@ -1,5 +1,6 @@
 ﻿syntax = "proto3";
 
+import "Protos/CommonMessages.proto";
 option csharp_namespace = "Amusoft.PCR.Grpc.Common";
 package Amusoft.PCR.Grpc.Common;
 
@@ -52,11 +53,6 @@ message AudioFeedResponse {
 	bool success = 2;
 }
 message AudioFeedRequest {}
-
-message DefaultRequest {}
-message DefaultResponse {
-	bool success = 1;
-}
 
 message SendMouseMoveRequestItem {
 	int32 x = 1;
