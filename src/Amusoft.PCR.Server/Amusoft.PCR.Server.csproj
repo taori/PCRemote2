@@ -28,6 +28,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Watch Remove="Domain\IPC\VoiceRecognitionUpdateService.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Grpc.AspNetCore" Version="2.38.0" />
 		<PackageReference Include="Grpc.AspNetCore.Web" Version="2.38.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.7" />

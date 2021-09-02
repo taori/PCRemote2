@@ -27,5 +27,11 @@ namespace Amusoft.PCR.Model
 		public DbSet<Permission> Permissions { get; set; }
 
 		public DbSet<HostCommand> HostCommands { get; set; }
+
+		public DbSet<AudioFeed> AudioFeeds { get; set; }
+
+		public DbSet<AudioFeedAlias> AudioFeedAliases { get; set; }
+
+		public DbSet<KeyValueSetting> KeyValueSettings { get; set; }
 	}
 }

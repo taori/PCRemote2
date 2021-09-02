@@ -17,9 +17,9 @@ using TextDataFormat = System.Windows.TextDataFormat;
 
 namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 {
-	public class WindowsDesktopIntegrationService : DesktopIntegrationService.DesktopIntegrationServiceBase
+	public class DesktopIntegrationServiceImplementation : DesktopIntegrationService.DesktopIntegrationServiceBase
 	{
-		private static readonly Logger Log = LogManager.GetLogger(nameof(WindowsDesktopIntegrationService));
+		private static readonly Logger Log = LogManager.GetLogger(nameof(DesktopIntegrationServiceImplementation));
 		
 		public override Task<SuicideOnProcessExitResponse> SuicideOnProcessExit(SuicideOnProcessExitRequest request, ServerCallContext context)
 		{
