@@ -28,7 +28,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Watch Remove="Domain\Common\KeyValueSettingsManager.cs" />
 	  <Watch Remove="Domain\IPC\VoiceRecognitionUpdateService.cs" />
+	  <Watch Remove="Pages\Settings\ApplicationSettings.razor" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -63,10 +65,6 @@
 		<ProjectReference Include="..\Amusoft.Toolkit.Impersonation\Amusoft.Toolkit.Impersonation.csproj" />
 		<ProjectReference Include="..\Amusoft.Toolkit.Networking\Amusoft.Toolkit.Networking.csproj" />
 		<ProjectReference Include="..\Amusoft.Toolkit.UI\Amusoft.Toolkit.UI.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Domain\Common\" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">

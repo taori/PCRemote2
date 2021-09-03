@@ -5,6 +5,7 @@ using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model.Entities;
 using Amusoft.PCR.Server.Areas.Identity;
 using Amusoft.PCR.Server.Domain.Authorization;
+using Amusoft.PCR.Server.Domain.Common;
 using Amusoft.PCR.Server.Domain.IPC;
 using Grpc.Net.Client;
 using GrpcDotNetNamedPipes;
@@ -39,6 +40,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			collection.AddScoped<IDialogService, DialogService>();
 			collection.AddScoped<BackendIntegrationService>();
 			collection.AddScoped<IClaimsTransformation, ApplicationPermissionTransform>();
+			collection.AddScoped<KeyValueSettingsManager>();
 		}
 
 		private static Func<IServiceProvider, NamedPipeChannel> CreateConfiguredNamedPipeChannel()

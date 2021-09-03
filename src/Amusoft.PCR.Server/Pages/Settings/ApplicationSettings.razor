@@ -1,0 +1,237 @@
+﻿@page "/applicationsettings"
+@using Amusoft.PCR.Model.Statics
+@using Amusoft.PCR.Blazor
+@using Amusoft.PCR.Server.Domain.Common
+@using System.Threading
+@using Amusoft.PCR.Blazor.Extensions
+@using Amusoft.PCR.Model
+@using Amusoft.PCR.Model.Entities
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.DependencyInjection
+@using System.Collections.ObjectModel
+@attribute [Authorize(Roles = RoleNames.Permissions)]
+
+<Title Headline="Application settings" WindowTitle="Application settings"></Title>
+
+<EditForm Model="_model" OnValidSubmit="OnSave">
+
+	<LabeledCheckbox @bind-Checked="@_model.VoiceRecognitionEnabled">Voice recognition commands</LabeledCheckbox>
+
+	<TextBox Placeholder="Trigger word" @bind-Value="@_model.VoiceRecognitionTriggerWord" WrapperClasses="mt-2"></TextBox>
+
+	<TextBox Placeholder="Audio trigger word" @bind-Value="@_model.AudioTriggerWord" WrapperClasses="mt-2"></TextBox>
+
+	<TextBox Placeholder="Confirm message" @bind-Value="@_model.ConfirmMessage" WrapperClasses="mt-2"></TextBox>
+
+	<TextBox Placeholder="Error message" @bind-Value="@_model.ErrorMessage"></TextBox>
+
+	<div class="mt-2 container p-0">
+		<label class="d-block">Alias names for "Off"</label>
+		@if (_model.OffAliases != null)
+		{
+			foreach (var item in _model.OffAliases)
+			{
+				<div class="row mb-2">
+					<TextBox WrapperClasses="col m-0" @bind-Value="item.Name"></TextBox>
+					<Button ButtonTheme="ButtonThemeKind.Danger" CssClass="col-auto" OnClick="args => _model.OffAliases.Remove(item)">Remove</Button>
+				</div>
+			}
+		}
+
+		<Button ButtonTheme="ButtonThemeKind.Secondary" OnClick="OnAddOffAliasClick">Add alias</Button>
+	</div>
+
+	<div class="mt-2 container p-0">
+		<label class="d-block">Alias names for "On"</label>
+		@if (_model.OnAliases != null)
+		{
+			foreach (var item in _model.OnAliases)
+			{
+				<div class="row mb-2">
+					<TextBox WrapperClasses="col m-0" @bind-Value="item.Name"></TextBox>
+					<Button ButtonTheme="ButtonThemeKind.Danger" CssClass="col-auto" OnClick="args => _model.OnAliases.Remove(item)">Remove</Button>
+				</div>
+			}
+		}
+
+		<Button ButtonTheme="ButtonThemeKind.Secondary" OnClick="OnAddOnAliasClick">Add alias</Button>
+	</div>
+
+	@foreach (var feed in _model.FeedAliases)
+	{
+		<div class="mt-2 container p-0">
+			<label class="d-block">Alias names for "@feed.FeedName"</label>
+			@if (feed.Aliases != null)
+			{
+				foreach (var item in feed.Aliases)
+				{
+					<div class="row mb-2">
+						<TextBox WrapperClasses="col m-0" @bind-Value="item.Name"></TextBox>
+						<Button ButtonTheme="ButtonThemeKind.Danger" CssClass="col-auto" OnClick="args => feed.Aliases.Remove(item)">Remove</Button>
+					</div>
+				}
+			}
+
+			<Button ButtonTheme="ButtonThemeKind.Secondary" OnClick="args => feed.Aliases.Add(new AliasValue())">Add alias</Button>
+		</div>
+	}
+
+	<Button CssClass="mt-2" ButtonForm="ButtonFormKind.Submit" ButtonTheme="ButtonThemeKind.Primary">Save</Button>
+</EditForm>
+
+@code {
+
+	private LocalEditModel _model = new LocalEditModel();
+
+	[Inject]
+	public KeyValueSettingsManager KeyValueSettingsManager { get; set; }
+
+	[Inject]
+	public IServiceScopeFactory ServiceScopeFactory { get; set; }
+
+	[Inject]
+	public IJSRuntime JsRuntime { get; set; }
+
+	private class AliasValue
+	{
+		public string Name { get; set; }
+	}
+
+	private class LocalFeedAlias
+	{
+		public string FeedName { get; set; }
+
+		public List<AliasValue> Aliases = new();
+	}
+
+	private class LocalEditModel
+	{
+		public string VoiceRecognitionTriggerWord { get; set; }
+
+		public string AudioTriggerWord { get; set; }
+
+		public string ConfirmMessage { get; set; }
+
+		public string ErrorMessage { get; set; }
+
+		public bool VoiceRecognitionEnabled { get; set; }
+
+		public List<AliasValue> OnAliases { get; set; } = new();
+
+		public List<AliasValue> OffAliases { get; set; } = new();
+
+		public List<LocalFeedAlias> FeedAliases { get; set; } = new();
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		_model.VoiceRecognitionEnabled = await KeyValueSettingsManager.GetByKindAsBoolAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionEnabled, false);
+		_model.ConfirmMessage = await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionConfirmMessage, "OK");
+		_model.ErrorMessage = await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionErrorMessage, "Error");
+		_model.OnAliases = AliasListFromString(await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordOnAliases, "On"));
+		_model.OffAliases = AliasListFromString(await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordOffAliases, "Off"));
+		_model.AudioTriggerWord = await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordAudio, "Audio");
+		_model.VoiceRecognitionTriggerWord = await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWord, "Computer");
+
+		using var serviceScope = ServiceScopeFactory.CreateScope();
+		using var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+		_model.FeedAliases = await CreateFeedsFromDatabaseAsync(dbContext);
+
+		await base.OnInitializedAsync();
+	}
+
+	private async Task<List<LocalFeedAlias>> CreateFeedsFromDatabaseAsync(ApplicationDbContext dbContext)
+	{
+		var result = new List<LocalFeedAlias>();
+		var feeds = await dbContext.AudioFeeds
+			.Include(d => d.Aliases)
+			.ToListAsync();
+
+		foreach (var audioFeed in feeds)
+		{
+			var localFeedAlias = new LocalFeedAlias();
+			localFeedAlias.FeedName = audioFeed.Name;
+
+			foreach (var feedAlias in audioFeed.Aliases)
+			{
+				localFeedAlias.Aliases.Add(new AliasValue(){Name = feedAlias.Alias });
+			}
+
+			result.Add(localFeedAlias);
+		}
+
+		return result;
+	}
+
+	private async Task<bool> UpdateAudioProcessAliasListAsync()
+	{
+		using var scope = ServiceScopeFactory.CreateScope();
+		using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+		var currentFeeds = await dbContext.AudioFeeds.ToListAsync();
+
+		foreach (var localFeedAlias in _model.FeedAliases)
+		{
+			var audioFeed = currentFeeds.Find(d => d.Name == localFeedAlias.FeedName);
+			if (audioFeed == null)
+			{
+				dbContext.AudioFeeds.Add(new AudioFeed() {Name = localFeedAlias.FeedName, Aliases = BuildAudioFeedAliasList(localFeedAlias, null)});
+			}
+			else
+			{
+				dbContext.RemoveRange(await dbContext.AudioFeedAliases.Where(d => d.FeedId == audioFeed.Id).ToListAsync());
+				dbContext.AudioFeedAliases.AddRange(BuildAudioFeedAliasList(localFeedAlias, audioFeed.Id));
+			}
+		}
+
+		return await dbContext.SaveChangesAsync() > 0;
+	}
+
+	private ICollection<AudioFeedAlias> BuildAudioFeedAliasList(LocalFeedAlias localFeedAlias, string audioFeedId)
+	{
+		var result = new Collection<AudioFeedAlias>();
+		foreach (var aliasValue in localFeedAlias.Aliases)
+		{
+			result.Add(new AudioFeedAlias() {Alias = aliasValue.Name, FeedId = audioFeedId });
+		}
+
+		return result;
+	}
+
+	private List<AliasValue> AliasListFromString(string values)
+	{
+		return values.Split('|').Select(d => new AliasValue() {Name = d}).ToList();
+	}
+
+	private async Task OnSave()
+	{
+		var results = new List<bool>();
+		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionEnabled, _model.VoiceRecognitionEnabled ? bool.TrueString : bool.FalseString));
+		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionConfirmMessage, _model.ConfirmMessage));
+		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionErrorMessage, _model.ErrorMessage));
+		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordOnAliases, CreateAliasList(_model.OnAliases)));
+		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordOffAliases, CreateAliasList(_model.OffAliases)));
+		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWord, _model.VoiceRecognitionTriggerWord));
+		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordAudio, _model.AudioTriggerWord));
+
+		results.Add(await UpdateAudioProcessAliasListAsync());
+
+		if (results.Any(d => !d))
+			await JsRuntime.UI().Alert("One or more errors occured while saving your changes.");
+	}
+
+	private string CreateAliasList(List<AliasValue> aliases)
+	{
+		return string.Join('|', aliases.Select(d => d.Name));
+	}
+
+	private void OnAddOnAliasClick()
+	{
+		_model.OnAliases.Add(new AliasValue());
+	}
+
+	private void OnAddOffAliasClick()
+	{
+		_model.OffAliases.Add(new AliasValue());
+	}
+}

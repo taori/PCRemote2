@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model;
 using Amusoft.PCR.Model.Entities;
+using Amusoft.PCR.Server.Dependencies;
+using Amusoft.PCR.Server.Domain.Common;
 using GrpcDotNetNamedPipes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,14 +19,19 @@ namespace Amusoft.PCR.Server.Domain.IPC
 	public class VoiceRecognitionUpdateService : BackgroundService
 	{
 		private readonly ILogger<VoiceRecognitionUpdateService> _log;
-		private readonly IServiceProvider _serviceProvider;
+		private readonly IServiceScopeFactory _serviceScopeFactory;
 		private readonly NamedPipeChannel _namedPipeChannel;
+		private readonly ApplicationStateTransmitter _applicationStateTransmitter;
 
-		public VoiceRecognitionUpdateService(ILogger<VoiceRecognitionUpdateService> log, IServiceProvider serviceProvider, NamedPipeChannel namedPipeChannel)
+		public VoiceRecognitionUpdateService(ILogger<VoiceRecognitionUpdateService> log, 
+			IServiceScopeFactory serviceScopeFactory, 
+			NamedPipeChannel namedPipeChannel, 
+			ApplicationStateTransmitter applicationStateTransmitter)
 		{
 			_log = log;
-			_serviceProvider = serviceProvider;
+			_serviceScopeFactory = serviceScopeFactory;
 			_namedPipeChannel = namedPipeChannel;
+			_applicationStateTransmitter = applicationStateTransmitter;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -32,16 +39,29 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			var voiceCommandServiceClient = new VoiceCommandService.VoiceCommandServiceClient(_namedPipeChannel);
 			var desktopIntegrationServiceClient = new DesktopIntegrationService.DesktopIntegrationServiceClient(_namedPipeChannel);
 
+			await _applicationStateTransmitter.ConfigurationDone;
+
 			while (!stoppingToken.IsCancellationRequested)
 			{
 				try
 				{
 					_log.LogTrace("Attempting to update voice recognition");
-					using var scope = _serviceProvider.CreateScope();
+					using var scope = _serviceScopeFactory.CreateScope();
 					using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-					await voiceCommandServiceClient.UpdateVoiceRecognitionAsync(await BuildUpdateRequest(stoppingToken, dbContext, desktopIntegrationServiceClient));
+					var keyValueSettingsManager = scope.ServiceProvider.GetRequiredService<KeyValueSettingsManager>();
 
-					await Task.Delay(10000, stoppingToken);
+					var feeds = await desktopIntegrationServiceClient.GetAudioFeedsAsync(new AudioFeedRequest());
+
+					await UpdateAudioFeedTableAsync(dbContext, feeds);
+
+					var recognitionEnabled = await keyValueSettingsManager.GetByKindAsBoolAsync(stoppingToken, KeyValueKind.VoiceRecognitionEnabled, false);
+					if (recognitionEnabled)
+						await voiceCommandServiceClient.UpdateVoiceRecognitionAsync(await BuildUpdateRequest(stoppingToken, dbContext, feeds));
+
+					if(!recognitionEnabled)
+						_log.LogTrace("Recognition is disabled");
+
+					await Task.Delay(TimeSpan.FromSeconds(60), stoppingToken);
 				}
 				catch (Exception e)
 				{
@@ -50,11 +70,32 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			}
 		}
 
+		private async Task<bool> UpdateAudioFeedTableAsync(ApplicationDbContext dbContext, AudioFeedResponse feeds)
+		{
+			if (!feeds.Success)
+				return false;
+
+			var feedNames = feeds.Items.Select(d => d.Name?.Trim()).Where(d => !string.IsNullOrEmpty(d));
+			var dbFeeds = await dbContext.AudioFeeds.ToListAsync();
+			var existingNames = new HashSet<string>(dbFeeds.Select(d => d.Name));
+			bool anyChange = false;
+			foreach (var feedName in feedNames)
+			{
+				if (!existingNames.Contains(feedName))
+				{
+					anyChange = true;
+					_log.LogDebug("Adding {Name} to provide alias functionality", feedName);
+					dbContext.AudioFeeds.Add(new AudioFeed() { Name = feedName });
+				}
+			}
+
+			return !anyChange || await dbContext.SaveChangesAsync() > 0;
+		}
+
 		private async Task<UpdateVoiceRecognitionRequest> BuildUpdateRequest(CancellationToken cancellationToken,
-			ApplicationDbContext dbContext, DesktopIntegrationService.DesktopIntegrationServiceClient desktopClient)
+			ApplicationDbContext dbContext, AudioFeedResponse audioFeedResponse)
 		{
 			var request = new UpdateVoiceRecognitionRequest();
-			var feeds = await desktopClient.GetAudioFeedsAsync(new AudioFeedRequest());
 			var settings = (await dbContext.KeyValueSettings.ToListAsync(cancellationToken)).ToDictionary(d => d.Key, d => d.Value);
 
 			request.AudioPhrase =
@@ -96,7 +137,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			request.SynthesizerErrorMessage = errorMessageText;
 			request.OffAliases.AddRange(offAliasList.Split('|'));
 			request.OnAliases.AddRange(onAliasList.Split('|'));
-			request.Items.AddRange(BuildPhraseList(feeds, feedAliasDictionary));
+			request.Items.AddRange(BuildPhraseList(audioFeedResponse, feedAliasDictionary));
 
 			return request;
 		}
