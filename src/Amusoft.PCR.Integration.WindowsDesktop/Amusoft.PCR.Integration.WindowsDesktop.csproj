@@ -31,6 +31,7 @@
 		<PackageReference Include="NLog" Version="4.7.10" />
 		<PackageReference Include="NLog.Schema" Version="4.7.10" />
 		<PackageReference Include="System.Speech" Version="5.0.0" />
+		<ProjectReference Include="..\Amusoft.PCR.Domain\Amusoft.PCR.Domain.csproj" />
 		<ProjectReference Include="..\Amusoft.PCR.Grpc.Common\Amusoft.PCR.Grpc.Common.csproj" />
 		<ProjectReference Include="..\Amusoft.Toolkit.Impersonation\Amusoft.Toolkit.Impersonation.csproj" />
 	</ItemGroup>

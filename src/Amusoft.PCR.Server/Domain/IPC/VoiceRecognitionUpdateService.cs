@@ -52,7 +52,10 @@ namespace Amusoft.PCR.Server.Domain.IPC
 
 					var feeds = await desktopIntegrationServiceClient.GetAudioFeedsAsync(new AudioFeedRequest());
 
-					await UpdateAudioFeedTableAsync(dbContext, feeds);
+					if (await UpdateAudioFeedTableAsync(dbContext, feeds))
+					{
+						_log.LogDebug("Feeds have been added to alias management");
+					}
 
 					var recognitionEnabled = await keyValueSettingsManager.GetByKindAsBoolAsync(stoppingToken, KeyValueKind.VoiceRecognitionEnabled, false);
 					if (recognitionEnabled)

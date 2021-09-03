@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
+namespace Amusoft.PCR.Domain.VoiceRecognition
 {
 	[DebuggerDisplay("{ToString()}")]
-	internal class PhraseCommand : IEquatable<PhraseCommand>
+	public class PhraseCommand : IEquatable<PhraseCommand>
 	{
 		public bool Equals(PhraseCommand other)
 		{

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Amusoft.PCR.Grpc.Common;
 
-namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
+namespace Amusoft.PCR.Domain.VoiceRecognition
 {
-	internal class VoiceCommandTable : IEquatable<VoiceCommandTable>
+	public class VoiceCommandTable : IEquatable<VoiceCommandTable>
 	{
 		public bool Equals(VoiceCommandTable other)
 		{

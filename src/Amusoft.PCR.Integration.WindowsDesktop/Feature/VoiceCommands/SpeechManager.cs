@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
+using Amusoft.PCR.Domain.VoiceRecognition;
 using Amusoft.PCR.Grpc.Common;
 using NLog;
 
