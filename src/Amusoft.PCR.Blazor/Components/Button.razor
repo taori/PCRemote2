@@ -30,6 +30,9 @@
 	}
 
 	[Parameter]
+	public ButtonSize ButtonSize { get; set; } = ButtonSize.Normal;
+
+	[Parameter]
 	public ButtonThemeKind ButtonTheme { get; set; } = ButtonThemeKind.Dark;
 
 	[Parameter]
@@ -64,8 +67,19 @@
 		base.OnParametersSet();
 		var classThemeClass = TranslateButtonThemeKind(ButtonTheme);
 		var classEnabled = Enabled ? string.Empty : "disabled";
+		var classButtonSize = TranslateButtonSize(ButtonSize);
 
-		ButtonClass = $"btn {classEnabled} {classThemeClass}";
+		ButtonClass = $"btn {classEnabled} {classThemeClass} {classButtonSize}";
+	}
+
+	private string TranslateButtonSize(ButtonSize buttonSize)
+	{
+		return buttonSize switch
+		{
+			ButtonSize.Normal => string.Empty,
+			ButtonSize.Small => "btn-sm",
+			ButtonSize.Large => "btn-lg",
+			_ => throw new ArgumentOutOfRangeException(nameof(buttonSize), buttonSize, null)};
 	}
 
 	private string GetRenderedButtonForm(ButtonFormKind kind)

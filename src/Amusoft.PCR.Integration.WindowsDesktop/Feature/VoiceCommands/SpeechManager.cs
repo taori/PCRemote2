@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
+using System.Threading.Tasks;
 using Amusoft.PCR.Domain.VoiceRecognition;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Integration.WindowsDesktop.Managers;
 using NLog;
 
 namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 {
-	internal class SpeechManager
+	internal class SpeechManager : IVoiceCommandBinder
 	{
 		private static readonly Logger Log = LogManager.GetLogger(nameof(SpeechManager));
 
@@ -17,9 +20,15 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 
 		private readonly SpeechRecognitionEngine _speechRecognition;
 		private readonly SpeechSynthesizer _synthesizer;
-		private VoiceCommandTable _commandTable;
 		private string _synthesizerErrorMessage;
 		private string _synthesizerConfirmMessage;
+
+		private readonly VoiceCommandRunner _voiceCommandRunner;
+		private readonly VoiceCommandRegister _voiceCommandRegister;
+		private readonly CompositeKeyValueSource _expanderAliasSource;
+
+		private readonly List<(string key, string value)> _phraseValues = new();
+		private Dictionary<string, string> _aliasToOriginalLookup;
 
 		private SpeechManager()
 		{
@@ -33,11 +42,57 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 			_synthesizer = new SpeechSynthesizer();
 			_synthesizer.Volume = 40;
 			_synthesizer.SetOutputToDefaultAudioDevice();
+
+			_expanderAliasSource = new CompositeKeyValueSource();
+
+			_voiceCommandRunner = new VoiceCommandRunner();
+			_voiceCommandRunner.UseCommandBinders(this);
+
+			_voiceCommandRegister = new VoiceCommandRegister();
+			_voiceCommandRegister.UseCommandProviders(new AudioCommandProvider());
+		}
+
+		private IEnumerable<(string key, string value)> GetPhraseValues(UpdateVoiceRecognitionRequest request)
+		{
+			yield return ("{Master}", "master");
+
+			foreach (var offAlias in request.OffAliases)
+			{
+				yield return ("{Off}", offAlias);
+			}
+
+			foreach (var onAlias in request.OnAliases)
+			{
+				yield return ("{On}", onAlias);
+			}
+
+			yield return ("{Trigger}", request.TriggerPhrase);
+			yield return ("{AudioTrigger}", request.AudioPhrase);
+
+			foreach (var item in request.AudioRecognitionItems)
+			{
+				yield return ("{Application}", item.Alias);
+			}
+		}
+
+		public void SetupRegister(IEnumerable<(string key, string value)> values)
+		{
+			_expanderAliasSource.Clear();
+			_expanderAliasSource.AddRange(values);
+
+			var lookup = _expanderAliasSource.Compose();
+
+			_voiceCommandRegister.ClearExpanders();
+			_voiceCommandRegister.UseCommandExpanders(
+				new AudioApplicationOffExpander(lookup), 
+				new AudioApplicationOnExpander(lookup), 
+				new AudioMasterOffExpander(lookup), 
+				new AudioMasterOnExpander(lookup));
 		}
 
 		private void SpeechRecognitionOnSpeechRecognitionRejected(object sender, SpeechRecognitionRejectedEventArgs e)
 		{
-			Log.Debug("Speech rejected: {Text}", e.Result.Text);
+			Log.Debug("Speech rejected: {Text} - confidence: {Value}", e.Result.Text, e.Result.Confidence);
 		}
 
 		private void SpeechRecognitionOnSpeechHypothesized(object sender, SpeechHypothesizedEventArgs e)
@@ -47,7 +102,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 
 		private void SpeechRecognitionOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
 		{
-			if (VoiceCommandRunner.TryExecute(e.Result.Text, _commandTable))
+			if (_voiceCommandRunner.TryExecute(e.Result.Text, _voiceCommandRegister))
 			{
 				_synthesizer.SpeakAsync(_synthesizerConfirmMessage);
 			}
@@ -59,67 +114,169 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 
 		public void UpdateGrammar(UpdateVoiceRecognitionRequest voiceRecognitionRequest)
 		{
-			var commandTable = RequestToCommandTable(voiceRecognitionRequest);
-			if (EqualityComparer<VoiceCommandTable>.Default.Equals(commandTable, _commandTable))
+			var phraseValues = GetPhraseValues(voiceRecognitionRequest).ToArray();
+			if (phraseValues.SequenceEqual(_phraseValues))
 			{
-				Log.Debug("Request generated same commandTable - Grammar update skipped");
+				Log.Debug("Same phrases as last update - skipping update");
 				return;
 			}
+
+			_aliasToOriginalLookup = GetApplicationOriginalNames(voiceRecognitionRequest);
+
+			_phraseValues.Clear();
+			_phraseValues.AddRange(phraseValues);
 
 			Log.Debug("Stopping current recognition");
 			_speechRecognition.RecognizeAsyncStop();
 
 			_synthesizerErrorMessage = voiceRecognitionRequest.SynthesizerErrorMessage ?? "Error";
 			_synthesizerConfirmMessage = voiceRecognitionRequest.SynthesizerConfirmMessage ?? "OK";
-
-			_commandTable = commandTable;
-
+			
 			Log.Debug("Unloading current grammar");
 			_speechRecognition.UnloadAllGrammars();
 			Log.Debug("Loading grammar from command table");
-			_speechRecognition.LoadGrammar(BuildGrammar(commandTable));
+			_speechRecognition.LoadGrammar(BuildGrammar(_phraseValues));
 			Log.Debug("Starting recognition");
+
+			StartVoiceRecognition();
+		}
+
+		private Dictionary<string, string> GetApplicationOriginalNames(UpdateVoiceRecognitionRequest request)
+		{
+			var all = request.AudioRecognitionItems.Select(d => (d.FeedName.ToLowerInvariant(), d.Alias.ToLowerInvariant()));
+			var unique = new HashSet<(string feedName, string alias)>(all);
+			return unique.ToDictionary(d => d.alias, d => d.feedName);
+		}
+
+		private Grammar BuildGrammar(List<(string key, string value)> phraseValues)
+		{
+			return PhrasesPairsToGrammar(phraseValues);
+		}
+
+		private Grammar PhrasesPairsToGrammar(List<(string key, string value)> phraseValues)
+		{
+			SetupRegister(phraseValues);
+			var commands = _voiceCommandRegister.ReadAll();
+
+			var commandTexts = commands.Select(d => d.Resolve());
+			var commandSplits = commandTexts.Select(d => d.Split(' ')).ToArray();
+			var splitLengths = commandSplits.Select(d => d.Length).ToArray();
+
+			var rootBuilder = new GrammarBuilder();
+			AppendChoices(rootBuilder, commandSplits, splitLengths, 0);
+
+			return new Grammar(rootBuilder);
+		}
+
+		private void AppendChoices(GrammarBuilder rootBuilder, string[][] commandSplits, int[] splitLengths, int index)
+		{
+			var choices = new Choices();
+			var options = GetSplitOptions(commandSplits, splitLengths, index);
+			var uniqueOptions = new HashSet<string>(options);
+			if (uniqueOptions.Count > 0)
+			{
+				choices.Add(uniqueOptions.ToArray());
+				rootBuilder.Append(choices);
+			}
+
+			if(splitLengths.Any(d => index < d))
+				AppendChoices(rootBuilder, commandSplits, splitLengths, ++index);
+		}
+
+		private IEnumerable<string> GetSplitOptions(string[][] commandSplits, int[] splitLengths, int index)
+		{
+			for (int i = 0; i < splitLengths.Length; i++)
+			{
+				if (index < splitLengths[i])
+					yield return commandSplits[i][index];
+			}
+		}
+
+		public bool CanHandle(ExpandedVoiceCommand command)
+		{
+			if (command.CommandType == typeof(AudioApplicationOnCommand) || command.CommandType == typeof(AudioMasterOnCommand))
+			{
+				return true;
+			}
+			if (command.CommandType == typeof(AudioApplicationOffCommand) || command.CommandType == typeof(AudioMasterOffCommand))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public Task ExecuteAsync(ExpandedVoiceCommand command)
+		{
+			HandleApplicationAudio(command);
+			HandleMasterAudio(command);
+
+			return Task.CompletedTask;
+		}
+
+		private void HandleMasterAudio(ExpandedVoiceCommand command)
+		{
+			var onCommand = command.CommandType == typeof(AudioMasterOnCommand);
+			var offCommand = command.CommandType == typeof(AudioMasterOffCommand);
+
+			if ((onCommand || offCommand))
+			{
+				var toValue = offCommand ? "muted" : "unmuted";
+				Log.Info("Setting master to {Value}", toValue);
+				SimpleAudioManager.SetMasterVolumeMute(onCommand);
+			}
+			else
+			{
+				Log.Debug("Unable to process command");
+			}
+		}
+
+		private void HandleApplicationAudio(ExpandedVoiceCommand command)
+		{
+			var onCommand = command.CommandType == typeof(AudioApplicationOnCommand);
+			var offCommand = command.CommandType == typeof(AudioApplicationOffCommand);
+
+			if ((onCommand || offCommand) && command.TryGetParameterValue("{Application}", out var application))
+			{
+				if (SimpleAudioManager.TryGetAudioFeeds(out var feeds))
+				{
+					var feedsWithNames = feeds.Where(d => !string.IsNullOrEmpty(d.Name.Trim())).ToArray();
+					Log.Debug("Found the following processes: {@List}", feedsWithNames.Select(d => d.Name));
+
+					if (_aliasToOriginalLookup.TryGetValue(application.ToLowerInvariant(), out var originalName))
+					{
+						var matchingFeed =
+							feedsWithNames.FirstOrDefault(d => d.Name.Equals(originalName, StringComparison.OrdinalIgnoreCase));
+						if (matchingFeed != null)
+						{
+							matchingFeed.Muted = offCommand;
+							Log.Debug("Found matching feed, updating state.");
+							var success = SimpleAudioManager.TryUpdateFeed(matchingFeed);
+							Log.Info("Feed update result: {Result} for application {Name}", success, originalName);
+						}
+					}
+					else
+					{
+						Log.Debug("Failed to find {Name} in alias lookup", application.ToLowerInvariant());
+					}
+				}
+			}
+			else
+			{
+				Log.Debug("Unable to process command");
+			}
+		}
+
+		public void StartVoiceRecognition()
+		{
+			Log.Info("Enabling voice recognition");
 			_speechRecognition.RecognizeAsync(RecognizeMode.Multiple);
 		}
 
-		private static VoiceCommandTable RequestToCommandTable(UpdateVoiceRecognitionRequest voiceRecognitionRequest)
+		public void StopVoiceRecognition()
 		{
-			var commandTable = new VoiceCommandTable();
-			commandTable.Populate(voiceRecognitionRequest);
-			return commandTable;
-		}
-
-		private Grammar BuildGrammar(VoiceCommandTable commandTable)
-		{
-			_commandTable = commandTable;
-			return CommandTableToGrammar(commandTable);
-		}
-
-		private static Grammar CommandTableToGrammar(VoiceCommandTable commandTable)
-		{
-			var rootBuilder = new GrammarBuilder(commandTable.TriggerPhrase);
-
-			var audioBuilder = new GrammarBuilder(commandTable.AudioPhrase);
-			var choices = new Choices();
-			foreach (var command in commandTable.PhraseCommands)
-			{
-				var phraseJoin = string.Join(" ", command.Phrases);
-				Log.Debug("Adding command {PhraseJoin}", phraseJoin);
-				choices.Add(new GrammarBuilder(phraseJoin));
-			}
-
-			audioBuilder.Append(choices);
-			rootBuilder.Append(audioBuilder);
-
-			// var onOffChoices = new Choices();
-			// onOffChoices.Add(new SemanticResultValue("an", 1));
-			// onOffChoices.Add(new SemanticResultValue("on", 1));
-			// onOffChoices.Add(new SemanticResultValue("aus", 0));
-			// onOffChoices.Add(new SemanticResultValue("off", 0));
-			// grammar.Append(onOffChoices);
-			// grammar.Append(new Choices("Mozilla Firefox", "Explorer", "steam"));
-
-			return new Grammar(rootBuilder);
+			Log.Info("Disabling voice recognition");
+			_speechRecognition.RecognizeAsyncStop();
 		}
 	}
 }

@@ -140,12 +140,12 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			request.SynthesizerErrorMessage = errorMessageText;
 			request.OffAliases.AddRange(offAliasList.Split('|'));
 			request.OnAliases.AddRange(onAliasList.Split('|'));
-			request.Items.AddRange(BuildPhraseList(audioFeedResponse, feedAliasDictionary));
+			request.AudioRecognitionItems.AddRange(BuildPhraseList(audioFeedResponse, feedAliasDictionary));
 
 			return request;
 		}
 
-		private IEnumerable<UpdateVoiceRecognitionRequestItem> BuildPhraseList(AudioFeedResponse feeds, ILookup<string, string> feedAliasLookup)
+		private IEnumerable<AudioRecognitionItem> BuildPhraseList(AudioFeedResponse feeds, ILookup<string, string> feedAliasLookup)
 		{
 			foreach (var item in feeds.Items)
 			{
@@ -155,7 +155,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 				_log.LogDebug("Adding phrases for {Feed}", item.Name);
 				_log.LogTrace("Adding {Feed} -> {Alias}", item.Name, item.Name);
 
-				yield return new UpdateVoiceRecognitionRequestItem() {FeedName = item.Name, Alias = item.Name};
+				yield return new AudioRecognitionItem() {FeedName = item.Name, Alias = item.Name};
 
 				if (feedAliasLookup.Contains(item.Name))
 				{
@@ -164,7 +164,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 					foreach (var alias in feedAliasLookup[item.Name])
 					{
 						_log.LogTrace("Adding {Feed} -> {Alias}", item.Name, alias);
-						yield return new UpdateVoiceRecognitionRequestItem() {FeedName = item.Name, Alias = alias};
+						yield return new AudioRecognitionItem() {FeedName = item.Name, Alias = alias};
 					}
 				}
 			}

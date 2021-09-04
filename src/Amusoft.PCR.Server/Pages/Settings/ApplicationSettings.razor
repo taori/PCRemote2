@@ -9,6 +9,8 @@
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.DependencyInjection
 @using System.Collections.ObjectModel
+@using Amusoft.PCR.Grpc.Common
+@using GrpcDotNetNamedPipes
 @attribute [Authorize(Roles = RoleNames.Permissions)]
 
 <Title Headline="Application settings" WindowTitle="Application settings"></Title>
@@ -215,6 +217,18 @@
 		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordAudio, _model.AudioTriggerWord));
 
 		results.Add(await UpdateAudioProcessAliasListAsync());
+
+		using var scope = ServiceScopeFactory.CreateScope();
+		var channel = scope.ServiceProvider.GetRequiredService<NamedPipeChannel>();
+		var client = new VoiceCommandService.VoiceCommandServiceClient(channel);
+		if (_model.VoiceRecognitionEnabled)
+		{
+			await client.StartVoiceRecognitionAsync(new DefaultRequest());
+		}
+		else
+		{
+			await client.StopVoiceRecognitionAsync(new DefaultRequest());
+		}
 
 		if (results.Any(d => !d))
 			await JsRuntime.UI().Alert("One or more errors occured while saving your changes.");

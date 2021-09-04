@@ -6,10 +6,12 @@ package Amusoft.PCR.Grpc.Common;
 
 service VoiceCommandService {
 	rpc UpdateVoiceRecognition(UpdateVoiceRecognitionRequest) returns (DefaultResponse);
+	rpc StopVoiceRecognition(DefaultRequest) returns (DefaultResponse);
+	rpc StartVoiceRecognition(DefaultRequest) returns (DefaultResponse);
 }
 
 message UpdateVoiceRecognitionRequest {
-	repeated UpdateVoiceRecognitionRequestItem items = 1;
+	repeated AudioRecognitionItem audioRecognitionItems = 1;
 	string triggerPhrase = 2;
 	string audioPhrase = 3;
 	repeated string onAliases = 4;
@@ -17,7 +19,8 @@ message UpdateVoiceRecognitionRequest {
 	string synthesizerConfirmMessage = 6;
 	string synthesizerErrorMessage = 7;
 }
-message UpdateVoiceRecognitionRequestItem {
+
+message AudioRecognitionItem {
 	string feedName = 1;
 	string alias = 2;
 }

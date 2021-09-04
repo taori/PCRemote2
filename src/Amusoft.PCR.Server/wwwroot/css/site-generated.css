@@ -10,6 +10,10 @@ body app {
 h1, h2, h3, h4, h5, h6, div, p {
   color: #ddd; }
 
+.content {
+  height: calc(100% - 3.5rem);
+  overflow: auto; }
+
 .main {
   background-color: #222; }
   .main .top-row {
