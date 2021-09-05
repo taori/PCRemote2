@@ -72,7 +72,7 @@
 
 		<CustomAction Id='UpdateAppSettingsAction_SetProperties' 
 		              Property='UpdateAppSettingsAction'
-		              Value='Port=[CUSTOM_PORT];AppSettingsPath=[#SERVER_APPSETTINGS]'/>
+		              Value='Port=[CUSTOM_PORT];AppSettingsPath=[#SERVER_APPSETTINGS];InstallActionUpgrade=[_UPGRADE]'/>
 		<CustomAction Id='UpdateAppSettingsAction' DllEntry='UpdateAppSettings' Execute='deferred' Impersonate='no' Return='check'
 		              BinaryKey='CustomBinary' />
 
@@ -110,8 +110,8 @@
 		<InstallExecuteSequence>
 			<Custom Action="RunCertGeneratorScript" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
 
-			<Custom Action='UpdateAppSettingsAction_SetProperties' Before='UpdateAppSettingsAction'><![CDATA[NOT Installed]]></Custom>
-			<Custom Action='UpdateAppSettingsAction' Before='RunCertGeneratorScript'><![CDATA[NOT Installed]]></Custom>
+			<Custom Action='UpdateAppSettingsAction_SetProperties' Before='UpdateAppSettingsAction'><![CDATA[_INSTALL="1"]]></Custom>
+			<Custom Action='UpdateAppSettingsAction' Before='RunCertGeneratorScript'><![CDATA[_INSTALL="1"]]></Custom>
 
 			<Custom Action="LaunchBrowserInstall" After="InstallFinalize"><![CDATA[(_INSTALL OR _UPGRADE) AND SHOW_GETTING_STARTED="1"]]></Custom>
 

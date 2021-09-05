@@ -18,6 +18,16 @@ namespace Amusoft.PCR.Installer.Custom
 
 			session.Log("UpdateAppSettings Enter");
 
+			session.Log("Checking if upgrade");
+			if (
+				session.CustomActionData.TryGetValue("InstallActionUpgrade", out var isUpgrade)
+				&& int.TryParse(isUpgrade, out var isUpgradeParsed)
+				&& isUpgradeParsed == 1)
+			{
+				session.Log("Upgrade cases do not need to alter the appsettings, but this message should never be visible because the workflow disallows this case");
+				return ActionResult.Success;
+			}
+
 			session.Log("Accessing Port");
 			if (!session.CustomActionData.TryGetValue("Port", out var port))
 				return ActionResult.Failure;
