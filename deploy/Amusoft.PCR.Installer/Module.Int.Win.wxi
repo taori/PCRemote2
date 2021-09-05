@@ -5,8 +5,8 @@
 
 	<Fragment>
 		<ComponentGroup Id="WinIntegrationComponents" Directory="WININTEGRATIONFOLDER" >
-			<Component Win64="yes" NeverOverwrite="yes">
-				<File Source="$(var.SolutionDir)Amusoft.PCR.Integration.WindowsDesktop\/nlog.config" Name="nlog.config" Id="INT_WIN_NLOG"></File>
+			<Component Id="INT_WIN_NLOG_COMPONENT" Win64="yes" NeverOverwrite="yes" Permanent="yes" Guid="*">
+				<File Source="$(var.SolutionDir)Amusoft.PCR.Integration.WindowsDesktop\nlog.config" Name="nlog.config" Id="INT_WIN_NLOG"></File>
 			</Component>
 		</ComponentGroup>
 	</Fragment>
