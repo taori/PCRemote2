@@ -61,7 +61,7 @@
 		<SetProperty Id="_UNINSTALL" After="FindRelatedProducts" Value="1"><![CDATA[UPGRADINGPRODUCTCODE="" AND REMOVE="ALL"]]></SetProperty>
 		<SetProperty Id="_CHANGE"    After="FindRelatedProducts" Value="1"><![CDATA[Installed<>"" AND REINSTALL="" AND UPGRADINGPRODUCTCODE<>"" AND REMOVE=""]]></SetProperty>
 		<SetProperty Id="_REPAIR"    After="FindRelatedProducts" Value="1"><![CDATA[REINSTALL<>""]]></SetProperty>
-		<SetProperty Id="_UPGRADE"   After="FindRelatedProducts" Value="1"><![CDATA[UPGRADINGPRODUCTCODE<>"" ]]></SetProperty>
+		<SetProperty Id="_UPGRADE"   After="FindRelatedProducts" Value="1"><![CDATA[WIX_UPGRADE_DETECTED<>"" OR UPGRADINGPRODUCTCODE<>""]]></SetProperty>
 
 		<SetProperty Id="RunCertGeneratorScript"
 		             Before="RunCertGeneratorScript"
@@ -110,8 +110,8 @@
 		<InstallExecuteSequence>
 			<Custom Action="RunCertGeneratorScript" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
 
-			<Custom Action='UpdateAppSettingsAction_SetProperties' Before='UpdateAppSettingsAction'><![CDATA[_INSTALL="1"]]></Custom>
-			<Custom Action='UpdateAppSettingsAction' Before='RunCertGeneratorScript'><![CDATA[_INSTALL="1"]]></Custom>
+			<Custom Action='UpdateAppSettingsAction_SetProperties' Before='UpdateAppSettingsAction'><![CDATA[_INSTALL="1" AND NOT _UPGRADE]]></Custom>
+			<Custom Action='UpdateAppSettingsAction' Before='RunCertGeneratorScript'><![CDATA[_INSTALL="1" AND NOT _UPGRADE]]></Custom>
 
 			<Custom Action="LaunchBrowserInstall" After="InstallFinalize"><![CDATA[(_INSTALL OR _UPGRADE) AND SHOW_GETTING_STARTED="1"]]></Custom>
 
