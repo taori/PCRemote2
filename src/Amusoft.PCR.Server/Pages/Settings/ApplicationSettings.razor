@@ -17,68 +17,91 @@
 
 <EditForm Model="_model" OnValidSubmit="OnSave">
 
-	<LabeledCheckbox @bind-Checked="@_model.VoiceRecognitionEnabled">Voice recognition commands</LabeledCheckbox>
+	<h1 class="mb-2 text-primary">Voice recognition commands</h1>
+	<div class="p-2">
+		<LabeledCheckbox @bind-Checked="@_model.VoiceRecognitionEnabled">enabled</LabeledCheckbox>
 
-	<TextBox Placeholder="Trigger word" @bind-Value="@_model.VoiceRecognitionTriggerWord" WrapperClasses="mt-2"></TextBox>
+		<label class="mb-2 mt-4 text-primary">Trigger phrases</label>
+		<TextBox Placeholder="Voice recognition trigger word" @bind-Value="@_model.VoiceRecognitionTriggerWord"></TextBox>
 
-	<TextBox Placeholder="Audio trigger word" @bind-Value="@_model.AudioTriggerWord" WrapperClasses="mt-2"></TextBox>
+		<TextBox Placeholder="Audio trigger word" @bind-Value="@_model.AudioTriggerWord" WrapperClasses="mt-2"></TextBox>
 
-	<TextBox Placeholder="Confirm message" @bind-Value="@_model.ConfirmMessage" WrapperClasses="mt-2"></TextBox>
+		<label class="mb-2 mt-4 text-primary">Voice messages</label>
+		<TextBox Placeholder="Confirm message" @bind-Value="@_model.ConfirmMessage"></TextBox>
 
-	<TextBox Placeholder="Error message" @bind-Value="@_model.ErrorMessage"></TextBox>
+		<TextBox Placeholder="Error message" @bind-Value="@_model.ErrorMessage" WrapperClasses="mt-2"></TextBox>
 
-	<div class="mt-2 container p-0">
-		<label class="d-block">Alias names for "Off"</label>
-		@if (_model.OffAliases != null)
-		{
-			foreach (var item in _model.OffAliases)
+		<label class="mb-2 mt-4 text-primary">Alias configuration</label>
+		<Accordion AccordionId="alias-configuration">
+			<AccordionElement>
+				<HeaderContent>
+					Off
+				</HeaderContent>
+				<ChildContent>
+					@if (_model.OffAliases != null)
+					{
+						foreach (var item in _model.OffAliases)
+						{
+							<div class="row mb-2">
+								<TextBox WrapperClasses="col m-0" @bind-Value="item.Name"></TextBox>
+								<Button ButtonTheme="ButtonThemeKind.Danger" CssClass="col-auto" OnClick="args => _model.OffAliases.Remove(item)">Remove</Button>
+							</div>
+						}
+					}
+
+					<Button ButtonTheme="ButtonThemeKind.Secondary" OnClick="OnAddOffAliasClick">Add alias</Button>
+				</ChildContent>
+			</AccordionElement>
+
+			<AccordionElement>
+				<HeaderContent>
+					On
+				</HeaderContent>
+				<ChildContent>
+					@if (_model.OnAliases != null)
+					{
+						foreach (var item in _model.OnAliases)
+						{
+							<div class="row mb-2">
+								<TextBox WrapperClasses="col m-0" @bind-Value="item.Name"></TextBox>
+								<Button ButtonTheme="ButtonThemeKind.Danger" CssClass="col-auto" OnClick="args => _model.OnAliases.Remove(item)">Remove</Button>
+							</div>
+						}
+					}
+
+					<Button ButtonTheme="ButtonThemeKind.Secondary" OnClick="OnAddOnAliasClick">Add alias</Button>
+				</ChildContent>
+			</AccordionElement>
+
+
+			@foreach (var feed in _model.FeedAliases)
 			{
-				<div class="row mb-2">
-					<TextBox WrapperClasses="col m-0" @bind-Value="item.Name"></TextBox>
-					<Button ButtonTheme="ButtonThemeKind.Danger" CssClass="col-auto" OnClick="args => _model.OffAliases.Remove(item)">Remove</Button>
-				</div>
-			}
-		}
+				<AccordionElement>
+					<HeaderContent>
+						@feed.FeedName
+					</HeaderContent>
+					<ChildContent>
 
-		<Button ButtonTheme="ButtonThemeKind.Secondary" OnClick="OnAddOffAliasClick">Add alias</Button>
+						@if (feed.Aliases != null)
+						{
+							foreach (var item in feed.Aliases)
+							{
+								<div class="row mb-2">
+									<TextBox WrapperClasses="col m-0" @bind-Value="item.Name"></TextBox>
+									<Button ButtonTheme="ButtonThemeKind.Danger" CssClass="col-auto" OnClick="args => feed.Aliases.Remove(item)">Remove</Button>
+								</div>
+							}
+						}
+
+						<Button ButtonTheme="ButtonThemeKind.Secondary" OnClick="args => feed.Aliases.Add(new AliasValue())">Add alias</Button>
+					</ChildContent>
+				</AccordionElement>
+			}
+
+		</Accordion>
+
+		<Button CssClass="mt-2" ButtonForm="ButtonFormKind.Submit" ButtonTheme="ButtonThemeKind.Primary">Save</Button>
 	</div>
-
-	<div class="mt-2 container p-0">
-		<label class="d-block">Alias names for "On"</label>
-		@if (_model.OnAliases != null)
-		{
-			foreach (var item in _model.OnAliases)
-			{
-				<div class="row mb-2">
-					<TextBox WrapperClasses="col m-0" @bind-Value="item.Name"></TextBox>
-					<Button ButtonTheme="ButtonThemeKind.Danger" CssClass="col-auto" OnClick="args => _model.OnAliases.Remove(item)">Remove</Button>
-				</div>
-			}
-		}
-
-		<Button ButtonTheme="ButtonThemeKind.Secondary" OnClick="OnAddOnAliasClick">Add alias</Button>
-	</div>
-
-	@foreach (var feed in _model.FeedAliases)
-	{
-		<div class="mt-2 container p-0">
-			<label class="d-block">Alias names for "@feed.FeedName"</label>
-			@if (feed.Aliases != null)
-			{
-				foreach (var item in feed.Aliases)
-				{
-					<div class="row mb-2">
-						<TextBox WrapperClasses="col m-0" @bind-Value="item.Name"></TextBox>
-						<Button ButtonTheme="ButtonThemeKind.Danger" CssClass="col-auto" OnClick="args => feed.Aliases.Remove(item)">Remove</Button>
-					</div>
-				}
-			}
-
-			<Button ButtonTheme="ButtonThemeKind.Secondary" OnClick="args => feed.Aliases.Add(new AliasValue())">Add alias</Button>
-		</div>
-	}
-
-	<Button CssClass="mt-2" ButtonForm="ButtonFormKind.Submit" ButtonTheme="ButtonThemeKind.Primary">Save</Button>
 </EditForm>
 
 @code {

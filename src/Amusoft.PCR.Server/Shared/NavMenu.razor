@@ -1,8 +1,10 @@
 ﻿@using Microsoft.Extensions.Hosting
+@using Microsoft.Extensions.Configuration
 @inject IHostEnvironment HostEnvironment
+@inject IConfiguration Configuration
 
-<div class="top-row pl-4 navbar navbar-dark">
-	<a class="navbar-brand" href="">PC Remote 2</a>
+<div class="top-row ps-4 navbar navbar-dark">
+	<a class="navbar-brand" href=""><img src="favicon.ico" />@(Configuration.GetValue<string>("ApplicationSettings:ApplicationTitle"))</a>
 	<button class="navbar-toggler" @onclick="ToggleNavMenu">
 		<span class="navbar-toggler-icon"></span>
 	</button>

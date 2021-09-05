@@ -14,10 +14,16 @@
 
 	<ItemGroup>
 	  <Content Remove="compilerconfig.json" />
+	  <Content Remove="wwwroot\css\custom-colors.scss" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="wwwroot\css\custom-bootstrap.min.css" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <None Include="compilerconfig.json" />
+	  <None Include="wwwroot\css\custom-colors.scss" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
@@ -28,9 +34,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Watch Remove="Domain\Common\KeyValueSettingsManager.cs" />
-	  <Watch Remove="Domain\IPC\VoiceRecognitionUpdateService.cs" />
-	  <Watch Remove="Pages\Settings\ApplicationSettings.razor" />
+	  <Watch Remove="wwwroot\css\custom-colors.scss" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -66,6 +70,11 @@
 		<ProjectReference Include="..\Amusoft.Toolkit.Impersonation\Amusoft.Toolkit.Impersonation.csproj" />
 		<ProjectReference Include="..\Amusoft.Toolkit.Networking\Amusoft.Toolkit.Networking.csproj" />
 		<ProjectReference Include="..\Amusoft.Toolkit.UI\Amusoft.Toolkit.UI.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\js\" />
+	  <Folder Include="wwwroot\bootstrap\" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">

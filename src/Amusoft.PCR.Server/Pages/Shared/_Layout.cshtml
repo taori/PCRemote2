@@ -10,14 +10,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - @(Configuration.GetValue<string>("ApplicationSettings:ApplicationTitle"))</title>
-    <link rel="stylesheet" href="~/Identity/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/custom-bootstrap.min.css" />
     <link rel="stylesheet" href="~/Identity/css/site.css" />
+    <link href="css/site-generated.css" rel="stylesheet" />
+    <link href="_content/Amusoft.PCR.Blazor/styles.css" rel="stylesheet" />
+    <link href="_content/Amusoft.PCR.Blazor/generated.css" rel="stylesheet" />
+    <script type="text/javascript" src="js/bootstrap.min.js" async="async"></script>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-light navbar-toggleable-sm bg-white border-bottom box-shadow mb-3">
             <div class="container">
-				<a class="navbar-brand" href="~/">@(Configuration.GetValue<string>("ApplicationSettings:ApplicationTitle"))</a>
+				<a class="navbar-brand" href="~/"><img src="favicon.ico"/> @(Configuration.GetValue<string>("ApplicationSettings:ApplicationTitle"))</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>

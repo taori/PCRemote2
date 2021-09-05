@@ -1,6 +1,10 @@
 ﻿[
-  {
-    "outputFile": "wwwroot/css/site-generated.css",
-    "inputFile": "wwwroot/css/site-generated.scss"
-  }
+	{
+		"outputFile": "wwwroot/css/site-generated.css",
+		"inputFile": "wwwroot/css/site-generated.scss"
+	},
+	{
+		"outputFile": "wwwroot/css/custom-bootstrap.css",
+		"inputFile": "wwwroot/css/custom-bootstrap.scss"
+	}
 ]

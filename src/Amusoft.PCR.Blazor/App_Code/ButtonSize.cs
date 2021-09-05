@@ -4,6 +4,7 @@
 	{
 		Normal,
 		Small,
-		Large
+		Large,
+		ExtraSmall
 	}
 }

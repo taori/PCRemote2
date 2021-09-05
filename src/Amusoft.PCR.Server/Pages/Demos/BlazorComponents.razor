@@ -26,6 +26,28 @@
 			<LabeledCheckbox @bind-Checked="ModalWithoutOpenFlag">Modal open</LabeledCheckbox>
 		</ModalDialog>
 	</div>
+	
+	<div>
+		<label>accordion</label>
+		<Accordion AccordionId="asdf" MultipleOpen="true" FlushLayout="true">
+			<AccordionElement>
+				<HeaderContent>
+					just a test
+				</HeaderContent>
+				<ChildContent>
+					content for the element 1
+				</ChildContent>
+			</AccordionElement>
+			<AccordionElement>
+				<HeaderContent>
+					just a test
+				</HeaderContent>
+				<ChildContent>
+					content for the element 2
+				</ChildContent>
+			</AccordionElement>
+		</Accordion>
+	</div>
 </EditForm>
 
 @code
