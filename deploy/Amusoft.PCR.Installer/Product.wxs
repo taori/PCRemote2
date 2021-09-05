@@ -57,11 +57,11 @@
 			<![CDATA[Installed OR POWERSHELLEXE]]>
 		</Condition>
 
-		<SetProperty Id="_INSTALL"   After="FindRelatedProducts" Value="1"><![CDATA[Installed="" AND PREVIOUSVERSIONSINSTALLED=""]]></SetProperty>
-		<SetProperty Id="_UNINSTALL" After="FindRelatedProducts" Value="1"><![CDATA[PREVIOUSVERSIONSINSTALLED="" AND REMOVE="ALL"]]></SetProperty>
-		<SetProperty Id="_CHANGE"    After="FindRelatedProducts" Value="1"><![CDATA[Installed<>"" AND REINSTALL="" AND PREVIOUSVERSIONSINSTALLED<>"" AND REMOVE=""]]></SetProperty>
+		<SetProperty Id="_INSTALL"   After="FindRelatedProducts" Value="1"><![CDATA[Installed="" AND UPGRADINGPRODUCTCODE=""]]></SetProperty>
+		<SetProperty Id="_UNINSTALL" After="FindRelatedProducts" Value="1"><![CDATA[UPGRADINGPRODUCTCODE="" AND REMOVE="ALL"]]></SetProperty>
+		<SetProperty Id="_CHANGE"    After="FindRelatedProducts" Value="1"><![CDATA[Installed<>"" AND REINSTALL="" AND UPGRADINGPRODUCTCODE<>"" AND REMOVE=""]]></SetProperty>
 		<SetProperty Id="_REPAIR"    After="FindRelatedProducts" Value="1"><![CDATA[REINSTALL<>""]]></SetProperty>
-		<SetProperty Id="_UPGRADE"   After="FindRelatedProducts" Value="1"><![CDATA[PREVIOUSVERSIONSINSTALLED<>"" ]]></SetProperty>
+		<SetProperty Id="_UPGRADE"   After="FindRelatedProducts" Value="1"><![CDATA[UPGRADINGPRODUCTCODE<>"" ]]></SetProperty>
 
 		<SetProperty Id="RunCertGeneratorScript"
 		             Before="RunCertGeneratorScript"
