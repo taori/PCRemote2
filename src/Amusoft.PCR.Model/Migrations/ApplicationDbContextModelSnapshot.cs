@@ -87,6 +87,41 @@ namespace Amusoft.PCR.Model.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Amusoft.PCR.Model.Entities.AudioFeed", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AudioFeeds");
+                });
+
+            modelBuilder.Entity("Amusoft.PCR.Model.Entities.AudioFeedAlias", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FeedId")
+                        .HasColumnType("nvarchar(45)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedId");
+
+                    b.ToTable("AudioFeedAliases");
+                });
+
             modelBuilder.Entity("Amusoft.PCR.Model.Entities.HostCommand", b =>
                 {
                     b.Property<string>("Id")
@@ -109,6 +144,19 @@ namespace Amusoft.PCR.Model.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("HostCommands");
+                });
+
+            modelBuilder.Entity("Amusoft.PCR.Model.Entities.KeyValueSetting", b =>
+                {
+                    b.Property<int>("Key")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("KeyValueSettings");
                 });
 
             modelBuilder.Entity("Amusoft.PCR.Model.Entities.Permission", b =>
@@ -283,6 +331,15 @@ namespace Amusoft.PCR.Model.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Amusoft.PCR.Model.Entities.AudioFeedAlias", b =>
+                {
+                    b.HasOne("Amusoft.PCR.Model.Entities.AudioFeed", "Feed")
+                        .WithMany("Aliases")
+                        .HasForeignKey("FeedId");
+
+                    b.Navigation("Feed");
+                });
+
             modelBuilder.Entity("Amusoft.PCR.Model.Entities.Permission", b =>
                 {
                     b.HasOne("Amusoft.PCR.Model.Entities.ApplicationUser", "User")
@@ -354,6 +411,11 @@ namespace Amusoft.PCR.Model.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Amusoft.PCR.Model.Entities.AudioFeed", b =>
+                {
+                    b.Navigation("Aliases");
                 });
 #pragma warning restore 612, 618
         }

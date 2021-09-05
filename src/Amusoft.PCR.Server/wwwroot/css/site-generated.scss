@@ -1,7 +1,6 @@
 ﻿$primary-bg-dark : #222;
 $primary-bg-light: #444;
 
-
 html, body {
 	height: 100%;
 	margin: 0;
@@ -17,6 +16,11 @@ body {
 
 h1, h2, h3, h4, h5, h6, div, p {
 	color: #ddd;
+}
+
+.content {
+	height: calc(100% - 3.5rem);
+	overflow: auto;
 }
 
 .main {
@@ -58,4 +62,27 @@ h1, h2, h3, h4, h5, h6, div, p {
 
 form > .container {
 	margin : 0;
+}
+
+.navbar-brand {
+	> img {
+		width: 2rem;
+		height: 2rem;
+		margin-right: 0.5rem;
+	}
+}
+
+
+@media (max-width: 768px) {
+	.navbar {
+		padding-right: 1.5rem;
+	}
+
+	.top-row.auth {
+		height: 3rem;
+	}
+
+	.content {
+		height: calc(100% - 3.0rem)
+	}
 }

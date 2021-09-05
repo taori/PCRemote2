@@ -3,6 +3,10 @@ Remote controller for your own PC
 
 ## Features
   - Wake on LAN
+  
+### Voice commands
+  - Toggle mute on master volume
+  - Toggle mute on application sound sources
 
 ### Volume Control 
   - Toggle mute on master volume

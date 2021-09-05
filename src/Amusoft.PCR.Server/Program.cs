@@ -87,6 +87,7 @@ namespace Amusoft.PCR.Server
 					services.AddHostedService<ClientDiscoveryService>();
 					services.AddHostedService<SeedService>();
 					services.AddHostedService<DbCleanupService>();
+					services.AddHostedService<VoiceRecognitionUpdateService>();
 				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
