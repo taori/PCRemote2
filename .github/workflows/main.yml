@@ -132,6 +132,19 @@ jobs:
           base64 --decode "$WS\android.keystore.encoded" > "$WS\android.keystore"            
         env:
           ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+             
+      - shell: pwsh
+        name: Update android manifest
+        run: |
+          $manifestPath = "src/Amusoft.PCR.Mobile.Droid/Properties/AndroidManifest.xml"
+          $oldVersion = "1.0"
+          $newVersion = "$env:PRODUCTVERSION"
+          Write-Host "Updating $oldVersion to $newVersion"
+          $replacedContent = [System.IO.File]::ReadAllText($manifestPath).Replace("android:versionName=`"$oldVersion`"", "android:versionName=`"$newVersion`"")
+          [System.IO.File]::WriteAllText($manifestPath, $replacedContent)
+          
+        env:      
+          PRODUCTVERSION : ${{needs.Environment.outputs.productVersion}}    
           
       - shell: pwsh
         name: Build APK
