@@ -64,3 +64,4 @@
 
 src/**/*.css linguist-vendored
 src/**/*.scss linguist-vendored
+src/**/Areas/Identity/**/*.cshtml linguist-vendored
