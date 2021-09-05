@@ -66,7 +66,7 @@
 		<SetProperty Id="RunCertGeneratorScript"
 		             Before="RunCertGeneratorScript"
 		             Sequence="execute"
-		             Value="&quot;[POWERSHELLEXE]&quot; -Version 3.0 -NoProfile -NonInteractive -InputFormat None -ExecutionPolicy Bypass -Command &quot;&amp; '[#SELFSIGNCERT.PS1]' '[DEPLOYMENT]\server.pfx' ; exit $$($Error.Count)&quot;" />
+		             Value="&quot;[POWERSHELLEXE]&quot; -Version 3.0 -NoProfile -NonInteractive -InputFormat None -ExecutionPolicy Bypass -Command &quot;&amp; '[#SELFSIGNCERT.PS1]' '[DEPLOYMENT]server.pfx' ; exit $$($Error.Count)&quot;" />
  
 		<CustomAction Id="RunCertGeneratorScript" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no" />
 
@@ -108,7 +108,7 @@
 
 		<!-- https://codingbee.net/wix/wix-the-installation-sequence -->
 		<InstallExecuteSequence>
-			<Custom Action="RunCertGeneratorScript" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
+			<Custom Action="RunCertGeneratorScript" After="InstallFiles"><![CDATA[_INSTALL="1" AND NOT _UPGRADE]]></Custom>
 
 			<Custom Action='UpdateAppSettingsAction_SetProperties' Before='UpdateAppSettingsAction'><![CDATA[_INSTALL="1" AND NOT _UPGRADE]]></Custom>
 			<Custom Action='UpdateAppSettingsAction' Before='RunCertGeneratorScript'><![CDATA[_INSTALL="1" AND NOT _UPGRADE]]></Custom>
