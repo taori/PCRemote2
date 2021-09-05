@@ -140,7 +140,7 @@ jobs:
           $oldVersion = "1.0"
           $newVersion = "$env:PRODUCTVERSION"
           Write-Host "Updating $oldVersion to $newVersion"
-          $replacedContent = [System.IO.File]::ReadAllText($manifestPath).Replace("android:versionName=\"$oldVersion\"", "android:versionName=\"$newVersion\"")
+          $replacedContent = [System.IO.File]::ReadAllText($manifestPath).Replace("android:versionName=`"$oldVersion`"", "android:versionName=`"$newVersion`"")
           [System.IO.File]::WriteAllText($manifestPath, $replacedContent)
           
         env:      
