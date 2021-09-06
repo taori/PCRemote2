@@ -11,6 +11,7 @@
 @using System.Collections.ObjectModel
 @using Amusoft.PCR.Grpc.Common
 @using GrpcDotNetNamedPipes
+@using Microsoft.Extensions.Logging
 @attribute [Authorize(Roles = RoleNames.Permissions)]
 
 <Title Headline="Application settings" WindowTitle="Application settings"></Title>
@@ -116,6 +117,9 @@
 
 	[Inject]
 	public IJSRuntime JsRuntime { get; set; }
+
+	[Inject]
+	public ILogger<ApplicationSettings> Log { get; set; }
 
 	private class AliasValue
 	{
@@ -230,32 +234,84 @@
 
 	private async Task OnSave()
 	{
-		var results = new List<bool>();
-		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionEnabled, _model.VoiceRecognitionEnabled ? bool.TrueString : bool.FalseString));
-		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionConfirmMessage, _model.ConfirmMessage));
-		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionErrorMessage, _model.ErrorMessage));
-		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordOnAliases, CreateAliasList(_model.OnAliases)));
-		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordOffAliases, CreateAliasList(_model.OffAliases)));
-		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWord, _model.VoiceRecognitionTriggerWord));
-		results.Add(await KeyValueSettingsManager.UpdateSingleAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordAudio, _model.AudioTriggerWord));
+		Log.LogInformation("Saving application settings");
 
-		results.Add(await UpdateAudioProcessAliasListAsync());
-
-		using var scope = ServiceScopeFactory.CreateScope();
-		var channel = scope.ServiceProvider.GetRequiredService<NamedPipeChannel>();
-		var client = new VoiceCommandService.VoiceCommandServiceClient(channel);
-		if (_model.VoiceRecognitionEnabled)
+		var keyValueUpdates = new (KeyValueKind kind, string value)[]
 		{
-			await client.StartVoiceRecognitionAsync(new DefaultRequest());
+			(KeyValueKind.VoiceRecognitionEnabled, _model.VoiceRecognitionEnabled ? bool.TrueString : bool.FalseString),
+			(KeyValueKind.VoiceRecognitionConfirmMessage, _model.ConfirmMessage),
+			(KeyValueKind.VoiceRecognitionErrorMessage, _model.ErrorMessage),
+			(KeyValueKind.VoiceRecognitionTriggerWordOnAliases, CreateAliasList(_model.OnAliases)),
+			(KeyValueKind.VoiceRecognitionTriggerWordOffAliases, CreateAliasList(_model.OffAliases)),
+			(KeyValueKind.VoiceRecognitionTriggerWord, _model.VoiceRecognitionTriggerWord),
+			(KeyValueKind.VoiceRecognitionTriggerWordAudio, _model.AudioTriggerWord),
+		};
+
+		bool errors = false;
+		var updateResult = await KeyValueSettingsManager.UpdateAsync(CancellationToken.None, keyValueUpdates);
+		if (!updateResult)
+		{
+			errors = true;
+			await JsRuntime.UI().Alert("Failed to update Voice recognition properties");
+			Log.LogError("Failed to update Voice recognition properties");
+		}
+		if (!await UpdateAudioProcessAliasListAsync())
+		{
+			errors = true;
+			await JsRuntime.UI().Alert("Failed to update alias list");
+			Log.LogError("Failed to update alias list");
+		}
+		if (!await UpdateVoiceRecognitionEnabledStateAsync())
+		{
+			errors = true;
+			await JsRuntime.UI().Alert("Failed to update enabledState");
+			Log.LogError("Failed to update enabledState");
+		}
+
+		if (errors)
+		{
+			Log.LogError("Saving failed with errors");
 		}
 		else
 		{
-			await client.StopVoiceRecognitionAsync(new DefaultRequest());
+			Log.LogInformation("Save successful");
 		}
 
-		if (results.Any(d => !d))
-			await JsRuntime.UI().Alert("One or more errors occured while saving your changes.");
 	}
+
+	private async Task<bool> UpdateVoiceRecognitionEnabledStateAsync()
+	{
+		try
+		{
+			var enabledCurrently = await KeyValueSettingsManager.GetByKindAsBoolAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionEnabled, false);
+
+			using var scope = ServiceScopeFactory.CreateScope();
+			var channel = scope.ServiceProvider.GetRequiredService<NamedPipeChannel>();
+			var client = new VoiceCommandService.VoiceCommandServiceClient(channel);
+			if (_model.VoiceRecognitionEnabled)
+			{
+				if (enabledCurrently)
+					return true;
+
+				await client.StartVoiceRecognitionAsync(new DefaultRequest());
+			}
+			else
+			{
+				if (!enabledCurrently)
+					return true;
+
+				await client.StopVoiceRecognitionAsync(new DefaultRequest());
+			}
+
+			return true;
+		}
+		catch (Exception e)
+		{
+			Log.LogError(e, nameof(UpdateVoiceRecognitionEnabledStateAsync));
+			return false;
+		}
+	}
+
 
 	private string CreateAliasList(List<AliasValue> aliases)
 	{

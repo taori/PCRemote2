@@ -267,16 +267,41 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 			}
 		}
 
+		private bool _recognitionRunning;
 		public void StartVoiceRecognition()
 		{
-			Log.Info("Enabling voice recognition");
-			_speechRecognition.RecognizeAsync(RecognizeMode.Multiple);
+			try
+			{
+				if (_recognitionRunning)
+				{
+					Log.Info("Voice recognition already running");
+					return;
+				}
+
+				Log.Info("Enabling voice recognition");
+				_speechRecognition.RecognizeAsync(RecognizeMode.Multiple);
+			}
+			catch (Exception e)
+			{
+				_recognitionRunning = true;
+				Log.Error(e);
+				throw;
+			}
 		}
 
 		public void StopVoiceRecognition()
 		{
-			Log.Info("Disabling voice recognition");
-			_speechRecognition.RecognizeAsyncStop();
+			try
+			{
+				Log.Info("Disabling voice recognition");
+				_speechRecognition.RecognizeAsyncStop();
+			}
+			catch (Exception e)
+			{
+				_recognitionRunning = false;
+				Log.Error(e);
+				throw;
+			}
 		}
 	}
 }
