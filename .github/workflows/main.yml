@@ -297,7 +297,7 @@ jobs:
       - name: Download artifact server
         uses: actions/download-artifact@v2.0.10
         with:
-          name: server
+          name: windows-installer
           #path: artifacts/msi/web/wwwroot/downloads/   
           path: artifacts/msi/
 
