@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 namespace Amusoft.PCR.Model.Entities
@@ -14,6 +15,7 @@ namespace Amusoft.PCR.Model.Entities
 		VoiceRecognitionErrorMessage,
 	}
 	
+	[DebuggerDisplay("{Key} => {Value}")]
 	public class KeyValueSetting
 	{
 		[Key]

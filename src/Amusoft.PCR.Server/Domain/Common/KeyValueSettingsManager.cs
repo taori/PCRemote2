@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Amusoft.PCR.Model;
@@ -59,6 +60,26 @@ namespace Amusoft.PCR.Server.Domain.Common
 
 				return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
 			}
+		}
+
+		public async Task<bool> UpdateAsync(CancellationToken cancellationToken, params (KeyValueKind kind, string content)[] items)
+		{
+			var keyList = items.Select(d => d.kind).ToArray();
+			var matchingValues = await _dbContext.KeyValueSettings.Where(d => keyList.Contains(d.Key)).ToListAsync(cancellationToken);
+			var matchingLookup = matchingValues.ToDictionary(d => d.Key);
+			foreach (var tuple in items)
+			{
+				if(matchingLookup.TryGetValue(tuple.kind, out var setting))
+				{
+					setting.Value = tuple.content;
+					_dbContext.KeyValueSettings.Update(setting);
+				} else
+				{
+					_dbContext.KeyValueSettings.Add(new KeyValueSetting() {Key = tuple.kind, Value = tuple.content});
+				}
+			}
+
+			return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
 		}
 	}
 }
