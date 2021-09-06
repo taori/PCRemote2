@@ -223,7 +223,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 			{
 				var toValue = offCommand ? "muted" : "unmuted";
 				Log.Info("Setting master to {Value}", toValue);
-				SimpleAudioManager.SetMasterVolumeMute(onCommand);
+				SimpleAudioManager.SetMasterVolumeMute(offCommand);
 			}
 			else
 			{
