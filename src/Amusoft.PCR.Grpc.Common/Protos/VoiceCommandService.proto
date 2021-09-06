@@ -18,6 +18,8 @@ message UpdateVoiceRecognitionRequest {
 	repeated string offAliases = 5;
 	string synthesizerConfirmMessage = 6;
 	string synthesizerErrorMessage = 7;
+	int32 recognitionThreshold = 8;
+	string masterPhrase = 9;
 }
 
 message AudioRecognitionItem {

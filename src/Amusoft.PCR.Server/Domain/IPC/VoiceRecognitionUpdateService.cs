@@ -131,6 +131,16 @@ namespace Amusoft.PCR.Server.Domain.IPC
 					? errorMessage
 					: "Error";
 
+			var thresholdText =
+				settings.TryGetValue(KeyValueKind.VoiceRecognitionThreshold, out var threshold)
+					? threshold
+					: "25";
+
+			var masterText =
+				settings.TryGetValue(KeyValueKind.VoiceRecognitionTriggerWordAudioMaster, out var master)
+					? master
+					: "master";
+
 			var feedAliases = await dbContext.AudioFeedAliases
 				.Select(d => new ValueTuple<string, string>(d.Feed.Name, d.Alias)).ToListAsync(cancellationToken);
 
@@ -141,6 +151,8 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			request.OffAliases.AddRange(offAliasList.Split('|'));
 			request.OnAliases.AddRange(onAliasList.Split('|'));
 			request.AudioRecognitionItems.AddRange(BuildPhraseList(audioFeedResponse, feedAliasDictionary));
+			request.RecognitionThreshold = int.TryParse(thresholdText, out var parsedThreshold) ? parsedThreshold : 25;
+			request.MasterPhrase = masterText;
 
 			return request;
 		}

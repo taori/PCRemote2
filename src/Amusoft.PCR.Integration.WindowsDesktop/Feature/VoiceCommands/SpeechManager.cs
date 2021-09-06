@@ -27,6 +27,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 		private readonly VoiceCommandRegister _voiceCommandRegister;
 		private readonly CompositeKeyValueSource _expanderAliasSource;
 
+		private float _confidenceThreshold;
 		private readonly List<(string key, string value)> _phraseValues = new();
 		private Dictionary<string, string> _aliasToOriginalLookup;
 
@@ -54,7 +55,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 
 		private IEnumerable<(string key, string value)> GetPhraseValues(UpdateVoiceRecognitionRequest request)
 		{
-			yield return ("{Master}", "master");
+			yield return ("{Master}", request.MasterPhrase);
 
 			foreach (var offAlias in request.OffAliases)
 			{
@@ -91,8 +92,13 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 		}
 
 		private void SpeechRecognitionOnSpeechRecognitionRejected(object sender, SpeechRecognitionRejectedEventArgs e)
-		{
+		{	  
 			Log.Debug("Speech rejected: {Text} - confidence: {Value}", e.Result.Text, e.Result.Confidence);
+			if (e.Result.Confidence > _confidenceThreshold)
+			{
+				Log.Debug("Command {Text} was rejected but is above threshold {Threshold} - executing command anyway", e.Result.Text, _confidenceThreshold);
+				TryExecuteVoiceCommand(e.Result.Text);
+			}
 		}
 
 		private void SpeechRecognitionOnSpeechHypothesized(object sender, SpeechHypothesizedEventArgs e)
@@ -102,19 +108,27 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 
 		private void SpeechRecognitionOnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
 		{
-			if (_voiceCommandRunner.TryExecute(e.Result.Text, _voiceCommandRegister))
+			TryExecuteVoiceCommand(e.Result.Text);
+		}
+
+		private bool TryExecuteVoiceCommand(string text)
+		{
+			if (_voiceCommandRunner.TryExecute(text, _voiceCommandRegister))
 			{
 				_synthesizer.SpeakAsync(_synthesizerConfirmMessage);
+				return true;
 			}
 			else
 			{
 				_synthesizer.SpeakAsync(_synthesizerErrorMessage);
+				return false;
 			}
 		}
 
 		public void UpdateGrammar(UpdateVoiceRecognitionRequest voiceRecognitionRequest)
 		{
 			var phraseValues = GetPhraseValues(voiceRecognitionRequest).ToArray();
+			_confidenceThreshold = voiceRecognitionRequest.RecognitionThreshold / 100f;
 			if (phraseValues.SequenceEqual(_phraseValues))
 			{
 				Log.Debug("Same phrases as last update - skipping update");
@@ -164,6 +178,8 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Feature.VoiceCommands
 
 			var rootBuilder = new GrammarBuilder();
 			AppendChoices(rootBuilder, commandSplits, splitLengths, 0);
+
+			Log.Info("Generated grammar: {Grammar}", rootBuilder.DebugShowPhrases);
 
 			return new Grammar(rootBuilder);
 		}

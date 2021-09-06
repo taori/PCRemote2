@@ -1,6 +1,6 @@
-﻿<div class="form-range">
-	<label for="@LabelId" class="form-label">@ChildContent</label>
-	<input type="range" class="form-range" id="@LabelId" min="@MinValueInternal" max="@MaxValueInternal" @bind="@ValueInternal" step="@StepInternal" >
+﻿<div class="form-group" title="@ValueInternal">
+	<label for="@LabelId" class="form-label" title="@Title">@ChildContent</label>
+	<input type="range" class="form-range" id="@LabelId" min="@MinValueInternal" max="@MaxValueInternal" @bind="@ValueInternal" step="@StepInternal">
 </div>
 
 @code {
@@ -15,8 +15,11 @@
 	}
 
 	[Parameter]
+	public string Title { get; set; }
+
+	[Parameter]
 	public RenderFragment ChildContent { get; set; }
-	
+
 	[Parameter]
 	public bool Enabled
 	{

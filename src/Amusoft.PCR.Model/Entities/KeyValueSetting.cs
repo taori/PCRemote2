@@ -6,13 +6,15 @@ namespace Amusoft.PCR.Model.Entities
 {
 	public enum KeyValueKind
 	{
-		VoiceRecognitionEnabled,
-		VoiceRecognitionTriggerWord,
-		VoiceRecognitionTriggerWordAudio,
-		VoiceRecognitionTriggerWordOnAliases,
-		VoiceRecognitionTriggerWordOffAliases,
-		VoiceRecognitionConfirmMessage,
-		VoiceRecognitionErrorMessage,
+		VoiceRecognitionEnabled = 0,
+		VoiceRecognitionTriggerWord = 1,
+		VoiceRecognitionTriggerWordAudio = 2,
+		VoiceRecognitionTriggerWordOnAliases = 3,
+		VoiceRecognitionTriggerWordOffAliases = 4,
+		VoiceRecognitionConfirmMessage = 5,
+		VoiceRecognitionErrorMessage = 6,
+		VoiceRecognitionThreshold = 7,
+		VoiceRecognitionTriggerWordAudioMaster = 8,
 	}
 	
 	[DebuggerDisplay("{Key} => {Value}")]
