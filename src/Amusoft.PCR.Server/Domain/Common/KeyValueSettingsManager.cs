@@ -42,6 +42,24 @@ namespace Amusoft.PCR.Server.Domain.Common
 			return value?.Value ?? defaultValue;
 		}
 
+		public async Task<float> GetByKindAsFloatAsync(CancellationToken cancellationToken, KeyValueKind kind, float defaultValue)
+		{
+			var value = await _dbContext.KeyValueSettings.FirstOrDefaultAsync(d => d.Key == kind, cancellationToken);
+			if (value?.Value == null)
+				return defaultValue;
+
+			return float.TryParse(value.Value, out var parsed) ? parsed : defaultValue;
+		}
+
+		public async Task<int> GetByKindAsIntAsync(CancellationToken cancellationToken, KeyValueKind kind, int defaultValue)
+		{
+			var value = await _dbContext.KeyValueSettings.FirstOrDefaultAsync(d => d.Key == kind, cancellationToken);
+			if (value?.Value == null)
+				return defaultValue;
+
+			return int.TryParse(value.Value, out var parsed) ? parsed : defaultValue;
+		}
+
 		public async Task<bool> UpdateSingleAsync(CancellationToken cancellationToken, KeyValueKind kind, string content)
 		{
 			var value = await _dbContext.KeyValueSettings.FirstOrDefaultAsync(d => d.Key == kind, cancellationToken);

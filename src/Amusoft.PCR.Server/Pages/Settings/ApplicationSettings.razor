@@ -21,11 +21,17 @@
 	<h1 class="mb-2 text-primary">Voice recognition commands</h1>
 	<div class="p-2">
 		<LabeledCheckbox @bind-Checked="@_model.VoiceRecognitionEnabled">enabled</LabeledCheckbox>
+		
+		<LabeledRange Step="1" MinValue="0" MaxValue="100" Title="A lower value will trigger on less accurate detection results" @bind-Value="@_model.ConfidenceThreshold">
+			Recognition threshold
+		</LabeledRange>
 
-		<label class="mb-2 mt-4 text-primary">Trigger phrases</label>
+		<label class="mb-2 mt-3 text-primary">Trigger phrases</label>
 		<TextBox Placeholder="Voice recognition trigger word" @bind-Value="@_model.VoiceRecognitionTriggerWord"></TextBox>
 
 		<TextBox Placeholder="Audio trigger word" @bind-Value="@_model.AudioTriggerWord" WrapperClasses="mt-2"></TextBox>
+
+		<TextBox Placeholder="Audio trigger word" @bind-Value="@_model.AudioTriggerMasterWord" WrapperClasses="mt-2"></TextBox>
 
 		<label class="mb-2 mt-4 text-primary">Voice messages</label>
 		<TextBox Placeholder="Confirm message" @bind-Value="@_model.ConfirmMessage"></TextBox>
@@ -139,9 +145,13 @@
 
 		public string AudioTriggerWord { get; set; }
 
+		public string AudioTriggerMasterWord { get; set; }
+
 		public string ConfirmMessage { get; set; }
 
 		public string ErrorMessage { get; set; }
+
+		public int ConfidenceThreshold { get; set; }
 
 		public bool VoiceRecognitionEnabled { get; set; }
 
@@ -161,6 +171,8 @@
 		_model.OffAliases = AliasListFromString(await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordOffAliases, "Off"));
 		_model.AudioTriggerWord = await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordAudio, "Audio");
 		_model.VoiceRecognitionTriggerWord = await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWord, "Computer");
+		_model.ConfidenceThreshold = await KeyValueSettingsManager.GetByKindAsIntAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionThreshold, 25);
+		_model.AudioTriggerMasterWord = await KeyValueSettingsManager.GetByKindAsStringAsync(CancellationToken.None, KeyValueKind.VoiceRecognitionTriggerWordAudioMaster, "Master");
 
 		using var serviceScope = ServiceScopeFactory.CreateScope();
 		using var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -245,6 +257,8 @@
 			(KeyValueKind.VoiceRecognitionTriggerWordOffAliases, CreateAliasList(_model.OffAliases)),
 			(KeyValueKind.VoiceRecognitionTriggerWord, _model.VoiceRecognitionTriggerWord),
 			(KeyValueKind.VoiceRecognitionTriggerWordAudio, _model.AudioTriggerWord),
+			(KeyValueKind.VoiceRecognitionThreshold, _model.ConfidenceThreshold.ToString()),
+			(KeyValueKind.VoiceRecognitionTriggerWordAudioMaster, _model.AudioTriggerMasterWord),
 		};
 
 		bool errors = false;
