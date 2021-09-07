@@ -18,11 +18,33 @@ namespace Amusoft.PCR.Installer.Custom
 
 			session.Log("UpdateAppSettings Enter");
 
-			session.Log("Checking if upgrade");
+			if (!session.CustomActionData.TryGetValue("AppSettingsPath", out var serverRootDirectory))
+				return ActionResult.Failure;
+
+			var productionConfigFile = Path.Combine(serverRootDirectory, "appsettings.Production.json");
+			var originalConfigFile = Path.Combine(serverRootDirectory, "appsettings.json");
+
 			if (
-				session.CustomActionData.TryGetValue("InstallActionUpgrade", out var isUpgrade)
-				&& int.TryParse(isUpgrade, out var isUpgradeParsed)
-				&& isUpgradeParsed == 1)
+				session.CustomActionData.TryGetValue("Uninstall", out var uninstall)
+				&& int.TryParse(uninstall, out var uninstallNumber)
+				&& uninstallNumber > 0)
+			{
+				session.Log($"Deleting file {productionConfigFile}: {File.Exists(productionConfigFile)}");
+				if (File.Exists(productionConfigFile))
+					File.Delete(productionConfigFile);
+
+				session.Log($"Deleting file {originalConfigFile}: {File.Exists(originalConfigFile)}");
+				if (File.Exists(originalConfigFile))
+					File.Delete(originalConfigFile);
+
+				return ActionResult.Success;
+			}
+
+			session.Log("Checking skip cases");
+			if (
+				session.CustomActionData.TryGetValue("IgnoreFile", out var ignoreFile)
+				&& int.TryParse(ignoreFile, out var ignoreFileNumber)
+				&& ignoreFileNumber > 0)
 			{
 				session.Log("Upgrade cases do not need to alter the appsettings, but this message should never be visible because the workflow disallows this case");
 				return ActionResult.Success;
@@ -35,16 +57,22 @@ namespace Amusoft.PCR.Installer.Custom
 			session.Log("Parsing int value");
 			if (!int.TryParse(port, out var parsedPort))
 				return ActionResult.Failure;
-
-			if (!session.CustomActionData.TryGetValue("AppSettingsPath", out var appsettingsPath))
-				return ActionResult.Failure;
-
+			
 			try
 			{
-				var content = File.ReadAllText(appsettingsPath, Encoding.UTF8);
+				session.Log($"Deleting file {productionConfigFile}: {File.Exists(productionConfigFile)}");
+				if (File.Exists(productionConfigFile))
+					File.Delete(productionConfigFile);
+
+				session.Log($"Moving {originalConfigFile} to {productionConfigFile}");
+				if (File.Exists(originalConfigFile))
+					File.Move(originalConfigFile, productionConfigFile);
+				
+				var content = File.ReadAllText(productionConfigFile, Encoding.UTF8);
 				var stringBuilder = new StringBuilder(content);
+				session.Log($"Replacing port 5001 with {parsedPort}");
 				stringBuilder.Replace("5001", parsedPort.ToString());
-				File.WriteAllText(appsettingsPath, stringBuilder.ToString());
+				File.WriteAllText(productionConfigFile, stringBuilder.ToString());
 			}
 			catch (Exception e)
 			{

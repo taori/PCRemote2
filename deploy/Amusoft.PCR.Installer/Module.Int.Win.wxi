@@ -8,6 +8,11 @@
 			<Component Id="INT_WIN_NLOG_COMPONENT" Win64="yes" NeverOverwrite="yes" Permanent="yes" Guid="*">
 				<File Source="$(var.SolutionDir)Amusoft.PCR.Integration.WindowsDesktop\nlog.config" Name="nlog.config" Id="INT_WIN_NLOG"></File>
 			</Component>
+
+			<Component Win64="yes" Id="INT_WIN_NLOG_COMPONENT_REMOVE" Guid="F638615E158E456FBF9F2D96927C4C2C">
+				<RemoveFile On="uninstall" Id="INT_WIN_NLOG_REMOVE" Name="nlog.config"></RemoveFile>
+				<Condition><![CDATA[_UNINSTALL = "1"]]></Condition>
+			</Component>
 		</ComponentGroup>
 	</Fragment>
 
