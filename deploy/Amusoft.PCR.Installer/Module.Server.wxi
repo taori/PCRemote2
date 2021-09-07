@@ -12,16 +12,6 @@
 			<Component Win64="yes" NeverOverwrite="yes" Permanent="yes" Guid="*" Id="SERVER_NLOG_COMPONENT">
 				<File Source="$(var.SolutionDir)Amusoft.PCR.Server\nlog.config" Name="nlog.config" KeyPath="yes" Id="SERVER_NLOG"></File>
 			</Component>
-
-			<Component Win64="yes" Id="SERVER_APPSETTINGS_COMPONENT_REMOVE" Guid="F13BC5A39E334FF59329D5E936B561B4">
-				<RemoveFile On="uninstall" Id="SERVER_APPSETTINGS_REMOVE" Name="appsettings.Production.json"></RemoveFile>
-				<Condition><![CDATA[_UNINSTALL = "1"]]></Condition>
-			</Component>
-
-			<Component Win64="yes" Id="SERVER_NLOG_COMPONENT_REMOVE" Guid="BCB6378A68194C5E9F368A8F700BD977">
-				<RemoveFile On="uninstall" Id="SERVER_NLOG_REMOVE" Name="nlog.config"></RemoveFile>
-				<Condition><![CDATA[_UNINSTALL = "1"]]></Condition>
-			</Component>
 		</ComponentGroup>
 	</Fragment>
 
