@@ -6,6 +6,7 @@ using System.IO;
 using System.ServiceProcess;
 using System.Text;
 using System.Windows.Forms;
+using Amusoft.PCR.Installer.Custom.Extensions;
 
 namespace Amusoft.PCR.Installer.Custom
 {
@@ -17,39 +18,61 @@ namespace Amusoft.PCR.Installer.Custom
 			SetBreakpoint(nameof(UpdateAppSettings));
 
 			session.Log("UpdateAppSettings Enter");
+			
+			if (!session.CustomActionData.TryGetValue("WebApplicationDirectory", out var serverRootDirectory))
+				return ActionResult.Failure;
 
-			session.Log("Checking if upgrade");
-			if (
-				session.CustomActionData.TryGetValue("InstallActionUpgrade", out var isUpgrade)
-				&& int.TryParse(isUpgrade, out var isUpgradeParsed)
-				&& isUpgradeParsed == 1)
+			var isUpgrade = session.TryGetIntOrDefault("IsUpgrade", 0, out var upgradeValue) && upgradeValue > 0;
+			var isInstall = session.TryGetIntOrDefault("IsInstall", 0, out var installValue) && installValue > 0;
+			var isChange = session.TryGetIntOrDefault("IsChange", 0, out var changeValue) && changeValue > 0;
+			var isUninstall = session.TryGetIntOrDefault("IsUninstall", 0, out var uninstallValue) && uninstallValue > 0;
+			var isRepair = session.TryGetIntOrDefault("IsRepair", 0, out var repairValue) && repairValue > 0;
+
+			if (isUpgrade || isChange || isRepair)
 			{
-				session.Log("Upgrade cases do not need to alter the appsettings, but this message should never be visible because the workflow disallows this case");
+				session.Log($"This scenario is not covered by {nameof(UpdateAppSettings)}.");
 				return ActionResult.Success;
 			}
 
-			session.Log("Accessing Port");
-			if (!session.CustomActionData.TryGetValue("Port", out var port))
-				return ActionResult.Failure;
+			var productionConfigFile = Path.Combine(serverRootDirectory, "appsettings.Production.json");
+			var originalConfigFile = Path.Combine(serverRootDirectory, "appsettings.json");
 
-			session.Log("Parsing int value");
-			if (!int.TryParse(port, out var parsedPort))
-				return ActionResult.Failure;
-
-			if (!session.CustomActionData.TryGetValue("AppSettingsPath", out var appsettingsPath))
-				return ActionResult.Failure;
-
-			try
+			if (isUninstall)
 			{
-				var content = File.ReadAllText(appsettingsPath, Encoding.UTF8);
-				var stringBuilder = new StringBuilder(content);
-				stringBuilder.Replace("5001", parsedPort.ToString());
-				File.WriteAllText(appsettingsPath, stringBuilder.ToString());
+				session.Log($"Deleting file {productionConfigFile}: {File.Exists(productionConfigFile)}");
+				if (File.Exists(productionConfigFile))
+					File.Delete(productionConfigFile);
+
+				session.Log($"Deleting file {originalConfigFile}: {File.Exists(originalConfigFile)}");
+				if (File.Exists(originalConfigFile))
+					File.Delete(originalConfigFile);
+
+				return ActionResult.Success;
 			}
-			catch (Exception e)
-			{
-				session.Log(e.ToString());
+			
+			if (!session.TryGetIntOrDefault("Port", 0, out var port))
 				return ActionResult.Failure;
+
+			if (isInstall)
+			{
+				try
+				{
+					session.Log($"Moving file from {originalConfigFile} to {productionConfigFile}");
+					File.Move(originalConfigFile, productionConfigFile);
+
+					var content = File.ReadAllText(productionConfigFile, Encoding.UTF8);
+					var stringBuilder = new StringBuilder(content);
+					session.Log($"Replacing port 5001 with {port}");
+					stringBuilder.Replace("5001", port.ToString());
+					session.Log("Updating production file");
+					File.WriteAllText(productionConfigFile, stringBuilder.ToString());
+					session.Log("Update complete");
+				}
+				catch (Exception e)
+				{
+					session.Log(e.ToString());
+					return ActionResult.Failure;
+				}
 			}
 			
 			return ActionResult.Success;
