@@ -73,4 +73,5 @@ You can also list the host processes and kill processes, in case task manager is
 
 # Screenshots
 
-[Android](SCREENSHOTS-ANDROID.MD)
+- [Android](SCREENSHOTS-ANDROID.MD)
+- [Browser](SCREENSHOTS-SERVER.MD)
