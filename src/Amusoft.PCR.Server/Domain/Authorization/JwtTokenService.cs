@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Amusoft.PCR.Grpc.Common;
 using Amusoft.PCR.Model.Entities;
+using Amusoft.PCR.Server.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -28,20 +29,20 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 		private readonly IRefreshTokenManager _refreshTokenManager;
 		private readonly TokenValidationParameters _tokenValidationParameters;
 		private readonly ILogger<JwtTokenService> _logger;
-		private readonly IOptions<JwtSettings> _options;
+		private readonly JwtSettings _options;
 		private readonly UserManager<ApplicationUser> _userManager;
 
 		public JwtTokenService(
 			IRefreshTokenManager refreshTokenManager,
 			TokenValidationParameters tokenValidationParameters,
 			ILogger<JwtTokenService> logger,
-			IOptions<JwtSettings> options, 
+			IOptions<ApplicationSettings> options, 
 			UserManager<ApplicationUser> userManager)
 		{
 			_refreshTokenManager = refreshTokenManager;
 			_tokenValidationParameters = tokenValidationParameters;
 			_logger = logger;
-			_options = options;
+			_options = options.Value.Jwt;
 			_userManager = userManager;
 		}
 
@@ -69,17 +70,17 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 			claims.Add(new Claim(JwtRegisteredClaimNames.Aud, _tokenValidationParameters.ValidAudience));
 			claims.AddRange(roles.Select(d => new Claim(ClaimTypes.Role, d)));
 
-			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.Key));
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
 			var securityToken = new JwtSecurityToken(
-				_options.Value.Issuer,
+				_options.Issuer,
 				claims: claims,
 				signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512),
-				expires: DateTime.UtcNow.Add(_options.Value.AccessTokenValidDuration));
+				expires: DateTime.UtcNow.Add(_options.AccessTokenValidDuration));
 
 			var outputToken = handler.WriteToken(securityToken);
 			var refreshToken = GenerateRefreshToken();
 			
-			await _refreshTokenManager.AddRefreshTokenAsync(user, refreshToken, DateTime.UtcNow.Add(_options.Value.RefreshTokenValidDuration));
+			await _refreshTokenManager.AddRefreshTokenAsync(user, refreshToken, DateTime.UtcNow.Add(_options.RefreshTokenValidDuration));
 
 			return new JwtAuthenticationResult()
 			{
@@ -152,9 +153,9 @@ namespace Amusoft.PCR.Server.Domain.Authorization
 			tokenValidationParameters.ValidateAudience = true;
 			tokenValidationParameters.ValidateLifetime = false;
 			tokenValidationParameters.ValidateIssuerSigningKey = true;
-			tokenValidationParameters.ValidIssuer = _options.Value.Issuer;
-			tokenValidationParameters.ValidAudience = _options.Value.Issuer;
-			tokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Value.Key));
+			tokenValidationParameters.ValidIssuer = _options.Issuer;
+			tokenValidationParameters.ValidAudience = _options.Issuer;
+			tokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
 			var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
 
 			userName = principal.Identity?.Name;

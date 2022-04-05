@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.30523.141
+VisualStudioVersion = 16.0.31829.152
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Server", "Amusoft.PCR.Server\Amusoft.PCR.Server.csproj", "{0C77C2C2-0FA4-4881-B5DC-A01EC835A0B8}"
 EndProject
@@ -42,11 +42,11 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Amusoft.PCR.Installer", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.PCR.Installer.Custom", "..\deploy\Amusoft.PCR.Installer.Custom\Amusoft.PCR.Installer.Custom.csproj", "{57E8F255-C0F3-4910-A310-9C25EB9125E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.PCR.Domain", "Amusoft.PCR.Domain\Amusoft.PCR.Domain.csproj", "{5B9F2673-B98B-497F-A086-7195C770836F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Domain", "Amusoft.PCR.Domain\Amusoft.PCR.Domain.csproj", "{5B9F2673-B98B-497F-A086-7195C770836F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{07DA93E1-D861-4D8A-87F3-69177A5E8D12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amusoft.PCR.Domain.UnitTests", "..\tests\Amusoft.PCR.Domain.UnitTests\Amusoft.PCR.Domain.UnitTests.csproj", "{CB08157D-6968-4D76-93FF-DC7AE60C3631}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amusoft.PCR.Domain.UnitTests", "..\tests\Amusoft.PCR.Domain.UnitTests\Amusoft.PCR.Domain.UnitTests.csproj", "{CB08157D-6968-4D76-93FF-DC7AE60C3631}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

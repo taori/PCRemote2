@@ -184,6 +184,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 		public override async Task<GetClipboardResponse> GetClipboard(GetClipboardRequest request, ServerCallContext context)
 		{
 			Log.Info("Executing [{Name}]", nameof(GetClipboard));
+            System.Windows.Application.Current.MainWindow?.Focus();
 			if (MessageBox.Show($"Send clipboard content to {request.Requestee}?", "PC Remote 2", MessageBoxButtons.YesNo) == DialogResult.Yes)
 			{
 				try
@@ -209,6 +210,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 		public override async Task<SetClipboardResponse> SetClipboard(SetClipboardRequest request, ServerCallContext context)
 		{
 			Log.Info("Executing [{Name}]", nameof(GetClipboard));
+            System.Windows.Application.Current.MainWindow?.Focus();
 			if (MessageBox.Show($"Allow {request.Requestee} to set clipboard?", "PC Remote 2", MessageBoxButtons.YesNo) == DialogResult.Yes)
 			{
 				try
@@ -289,5 +291,10 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 
 			return Task.FromResult(new DefaultResponse() {Success = result});
 		}
-	}
+
+        public override Task<StringResponse> SetUserPassword(ChangeUserPasswordRequest request, ServerCallContext context)
+        {
+            return base.SetUserPassword(request, context);
+        }
+    }
 }

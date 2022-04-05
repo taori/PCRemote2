@@ -36,6 +36,7 @@ service DesktopIntegrationService {
 	rpc SendRightMouseButtonClick (.Amusoft.PCR.Grpc.Common.DefaultRequest) returns (.Amusoft.PCR.Grpc.Common.DefaultResponse) {}
 	rpc GetAudioFeeds (.Amusoft.PCR.Grpc.Common.AudioFeedRequest) returns (.Amusoft.PCR.Grpc.Common.AudioFeedResponse) {}
 	rpc UpdateAudioFeed (.Amusoft.PCR.Grpc.Common.UpdateAudioFeedRequest) returns (.Amusoft.PCR.Grpc.Common.DefaultResponse) {}
+	rpc SetUserPassword (.Amusoft.PCR.Grpc.Common.ChangeUserPasswordRequest) returns (.Amusoft.PCR.Grpc.Common.StringResponse) {}
 }
 
 message UpdateAudioFeedRequest {
@@ -239,4 +240,7 @@ message InvokeHostCommandRequest {
 }
 message InvokeHostCommandResponse {
 	bool success = 1;
+}
+message ChangeUserPasswordRequest {
+	string userName = 1;
 }
