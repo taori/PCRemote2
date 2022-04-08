@@ -4,10 +4,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Interop;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Integration.WindowsDesktop.Events;
 using Amusoft.PCR.Integration.WindowsDesktop.Helpers;
 using Amusoft.PCR.Integration.WindowsDesktop.Interop;
 using Amusoft.PCR.Integration.WindowsDesktop.Managers;
+using Amusoft.PCR.Integration.WindowsDesktop.Windows;
 using Amusoft.Toolkit.Impersonation;
+using CommunityToolkit.Mvvm.Messaging;
 using Google.Protobuf.Collections;
 using Grpc.Core;
 using NLog;
@@ -292,9 +295,17 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 			return Task.FromResult(new DefaultResponse() {Success = result});
 		}
 
-        public override Task<StringResponse> SetUserPassword(ChangeUserPasswordRequest request, ServerCallContext context)
+        public override async Task<StringResponse> SetUserPassword(ChangeUserPasswordRequest request, ServerCallContext context)
         {
-            return base.SetUserPassword(request, context);
+
+            var promptRequest = new GetPromptTextRequest("Prompt", "Please select a password", "Password");
+            var response = await ViewModelSpawner.GetResponseAsync<PromptWindow, PromptWindowModel, GetPromptTextRequest, PromptCompleted>(promptRequest);
+			
+            return new StringResponse()
+            {
+                Content = response.Content,
+                Success = !response.Cancelled
+            };
         }
     }
 }
