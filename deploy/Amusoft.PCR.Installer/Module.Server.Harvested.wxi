@@ -8,6 +8,12 @@
             <Component Id="cmp7F119CD0934D7F3334C8D10884720879" Guid="*">
                 <File Id="filDBCFD66580C139D83F2D41AF1CA8C778" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Blazor.pdb" />
             </Component>
+            <Component Id="cmp1E11BC199E156E493FEA11CF500BE1C9" Guid="*">
+                <File Id="filC39B2729DDAA3FD5FB96BF9F05BD38D5" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Domain.dll" />
+            </Component>
+            <Component Id="cmpCAA5EE774B08AA8F85AD1BEBE519879A" Guid="*">
+                <File Id="filBCA62AA6849369D99A0316BD6D828541" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Domain.pdb" />
+            </Component>
             <Component Id="cmp9C9463CD774B710ADFF7A6F0B048CC7F" Guid="*">
                 <File Id="fil46055F6F32D14CFC37E8E4666AF22F02" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Grpc.Common.dll" />
             </Component>
@@ -31,12 +37,6 @@
             </Component>
             <Component Id="cmp4F7E19FFBC57984E487C3DAF5DC6A18A" Guid="*">
                 <File Id="fil7D6F9EED2679A1E3BD38E5367A770BA5" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.runtimeconfig.json" />
-            </Component>
-            <Component Id="cmp13DCAC84E7679FB6183B1A56CEE70F11" Guid="*">
-                <File Id="filF6523B44E76CE031E3B9ACB4E1AAAAA8" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.Views.dll" />
-            </Component>
-            <Component Id="cmpDD3AFB63160C437E091848006525480F" Guid="*">
-                <File Id="filF20DD62B519D05E50FD44F789D5B980C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.PCR.Server.Views.pdb" />
             </Component>
             <Component Id="cmp47AB8B737EC499CF79E4F13D518D7B4A" Guid="*">
                 <File Id="fil8106375AC5F59FA06C3F6F052E78CCE9" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Amusoft.Toolkit.Impersonation.dll" />
@@ -98,14 +98,11 @@
             <Component Id="cmp5A17BE39FCE935ED3FC355B9F7F1094E" Guid="*">
                 <File Id="fil2AE702C1AFAB166AFB2B7BE3FD2A2E9F" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Humanizer.dll" />
             </Component>
+            <Component Id="cmpAFC13349802CFB9365C290A0C582A0E3" Guid="*">
+                <File Id="filF7E3A05365E3BE5BFBD9DF2C9613E27F" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\libman.json" />
+            </Component>
             <Component Id="cmp7C0ECA28B56271C527B1ADB8C28BD4F1" Guid="*">
                 <File Id="fil42C36C63C673101446EF493E3C939BA8" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.AspNetCore.Authentication.JwtBearer.dll" />
-            </Component>
-            <Component Id="cmp1E55ACEDE5F14AC9C4D25BF5ECDD78F9" Guid="*">
-                <File Id="filD43930509A551E1980380F0C89F75C7D" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.AspNetCore.Cryptography.Internal.dll" />
-            </Component>
-            <Component Id="cmpD3A57B2EE52904DACC211C56FFC5497A" Guid="*">
-                <File Id="fil0D98AB96A6FCA1A6C921B456DEBB6E57" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll" />
             </Component>
             <Component Id="cmp617B14E887E5C06BDF8FF0041ACE8DB6" Guid="*">
                 <File Id="filC8E9F0F6679C3D538D4CB3A61B019096" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll" />
@@ -161,20 +158,8 @@
             <Component Id="cmpF8A3AE1745742ABB24352436166749CC" Guid="*">
                 <File Id="fil9C1DFA2492C8B330BDBD740730C1A775" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.EntityFrameworkCore.SqlServer.dll" />
             </Component>
-            <Component Id="cmp4CE8D56E8DA137577BB7FB1F135E5CA8" Guid="*">
-                <File Id="fil88625A6D6D03052F782EA0D19B5F1ADF" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.Extensions.DependencyInjection.dll" />
-            </Component>
-            <Component Id="cmpBAC617B80BA82A7B54B8D15C7443D292" Guid="*">
-                <File Id="filF41B528F466AA6B17746AA240CACF31D" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.Extensions.FileProviders.Embedded.dll" />
-            </Component>
             <Component Id="cmp0E0CA08B2CB7BF019CCA15175147A4D0" Guid="*">
                 <File Id="fil8666DC60BEAA3870EC0ED5E84069610A" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.Extensions.Hosting.WindowsServices.dll" />
-            </Component>
-            <Component Id="cmp0D645EBC05B139EDD46B3C075112BD5C" Guid="*">
-                <File Id="fil730E0463D4EE042CD72205717AFB48B4" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.Extensions.Identity.Core.dll" />
-            </Component>
-            <Component Id="cmp4C1C48BE97FFE1B07CFD68D66B610908" Guid="*">
-                <File Id="fil9D6CD5FE9DDB22E89B5A637A1D392584" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.Extensions.Identity.Stores.dll" />
             </Component>
             <Component Id="cmpCCC042F7E5B23E0867EC0E708A71E2DF" Guid="*">
                 <File Id="fil335D4E0ED4D4B554B5607995A01162C2" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.Identity.Client.dll" />
@@ -218,6 +203,9 @@
             <Component Id="cmp4E73A55D906C8B2F36529D3A11F2C1B7" Guid="*">
                 <File Id="fil972A56B524A94AA0BC6B99B3FC73CC79" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll" />
             </Component>
+            <Component Id="cmpB197310492F9504675D06AD64F1A479F" Guid="*">
+                <File Id="fil0122CD09D4BCE04DE36E6C1C76A5CA0E" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Microsoft.Win32.SystemEvents.dll" />
+            </Component>
             <Component Id="cmp4E08B400EBB062523B2018986D6AC884" Guid="*">
                 <File Id="filA811B629056C7A364A0D53A40BC1B656" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\Newtonsoft.Json.dll" />
             </Component>
@@ -257,8 +245,8 @@
             <Component Id="cmp41B559AE4DAEC84BB1789E704E0A904A" Guid="*">
                 <File Id="filAAA1A79900DE1D7784817ED404BD352C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.Configuration.ConfigurationManager.dll" />
             </Component>
-            <Component Id="cmpDEC7F3DBA30CFFBBE55DD9950CFA2FA4" Guid="*">
-                <File Id="fil8C4D55BE75C4285518AD40848CEEBFDE" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.Diagnostics.DiagnosticSource.dll" />
+            <Component Id="cmpDB22D3FE9AE9B6D61B08ED6CCFCF6246" Guid="*">
+                <File Id="filB11242AF5DD7087E4B42FB8C464F0FF9" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.Drawing.Common.dll" />
             </Component>
             <Component Id="cmpAE782068842FC402849855F2EA6E5A76" Guid="*">
                 <File Id="fil03F30775CF1636086CB3C66339235935" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.IdentityModel.Tokens.Jwt.dll" />
@@ -272,8 +260,14 @@
             <Component Id="cmpC53121E57D02A091E388B1FE2BAE7E94" Guid="*">
                 <File Id="fil60320F065D5B4D73652B2FD8245BB7A9" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.Security.Cryptography.ProtectedData.dll" />
             </Component>
+            <Component Id="cmp9CCC9CD95ADBAA7F512991B58D0F2851" Guid="*">
+                <File Id="fil27C89E93C52E82FB21C78A7ABDBA6E71" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.Security.Permissions.dll" />
+            </Component>
             <Component Id="cmp367D8F5193B50F0847584F7072A0D231" Guid="*">
                 <File Id="fil5F1A7DB115A7EAED8B9659C4CA28E76F" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.ServiceProcess.ServiceController.dll" />
+            </Component>
+            <Component Id="cmpBC9EAAA1071E84B4D0F4215F53C558A8" Guid="*">
+                <File Id="fil3EC66D01C89B89E81C33722CE06D1B41" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\System.Windows.Extensions.dll" />
             </Component>
             <Directory Id="dirD4C8A1974C15162000B8C2B5EB4C4943" Name="cs">
                 <Component Id="cmp2084D4C5668DB13F8632188C7946CFD2" Guid="*">
@@ -433,7 +427,283 @@
                 <Component Id="cmp6835CE04C11A4097DD90334ADF00419B" Guid="*">
                     <File Id="filB3E5403F376631D69FD415BF16F7ABED" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\favicon.ico" />
                 </Component>
+                <Directory Id="dir2514A8B9C3CDD1DC8BE94883A082664C" Name="bootstrap">
+                    <Component Id="cmp2AFFA2936E8C0DB80EA1100287291298" Guid="*">
+                        <File Id="fil8284D8B2DEBBED6E97AA2BD719342CE9" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\bootstrap-grid.scss" />
+                    </Component>
+                    <Component Id="cmpC13489A6DA5F51C77C65314E96B069E1" Guid="*">
+                        <File Id="fil2033FF6F3DCFC4D1C812F7B1FA7CAF45" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\bootstrap-reboot.scss" />
+                    </Component>
+                    <Component Id="cmp5ABA4AA990E97E2C80E4DE936741C11C" Guid="*">
+                        <File Id="fil3BEF543A2B6EF9A102AD6171F59F07E8" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\bootstrap-utilities.scss" />
+                    </Component>
+                    <Component Id="cmp2C362898E86CA6C22B9163E7BA1D2F5E" Guid="*">
+                        <File Id="fil7DAB873ADD72E910424F5A97F16954B3" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\bootstrap.scss" />
+                    </Component>
+                    <Component Id="cmp9AA794651FB1AA9FAB6BEE7B753D79B3" Guid="*">
+                        <File Id="fil815990204AFAA28B25627AB5DE60565F" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_accordion.scss" />
+                    </Component>
+                    <Component Id="cmpCB90CA944E0A5B41B0EF97A6D8D84999" Guid="*">
+                        <File Id="fil404F97C91601487FFC39F5C304AB566D" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_alert.scss" />
+                    </Component>
+                    <Component Id="cmp8E24E4C28CF05A65A76EE39A431DE04B" Guid="*">
+                        <File Id="fil8A02F3D17D6C9F431AE73287A2E95E70" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_badge.scss" />
+                    </Component>
+                    <Component Id="cmp849E130DE962AD810310CD852B8DFF92" Guid="*">
+                        <File Id="filF7B6AD2ABB735E5012CE7F33FC7013C6" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_breadcrumb.scss" />
+                    </Component>
+                    <Component Id="cmp86267AC46D08DA4FDCDB0E6B53F9897E" Guid="*">
+                        <File Id="filF12B7D6A248A1239419BD592595085D3" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_button-group.scss" />
+                    </Component>
+                    <Component Id="cmp0F2BA97136EEB34A5D08459F68C03C65" Guid="*">
+                        <File Id="fil82BA1D4EB6A416690EFE6783A3BD3FB7" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_buttons.scss" />
+                    </Component>
+                    <Component Id="cmp19E35FB4BEA0F993C515EE39ADFB0ACA" Guid="*">
+                        <File Id="fil8D1F39F853D805A1EA283AEEBE2B04FB" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_card.scss" />
+                    </Component>
+                    <Component Id="cmp01EAB84A423F8F1FC7F6F04D62A5729B" Guid="*">
+                        <File Id="filB206EA95DE3FAD23B90386558DF87FF3" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_carousel.scss" />
+                    </Component>
+                    <Component Id="cmp46C36F94B06EA4714ABE0811239DE64A" Guid="*">
+                        <File Id="fil2DB38E5600B34D73F4B782C999426E9C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_close.scss" />
+                    </Component>
+                    <Component Id="cmpB9DAA53BA602AC5627C93D645F77FA54" Guid="*">
+                        <File Id="filDAA36B5B28B034BD4A148C3A65370D86" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_containers.scss" />
+                    </Component>
+                    <Component Id="cmpF800AC53CD7E691922EC4428F12F79BE" Guid="*">
+                        <File Id="filAF4DB82D4E000AE64D4B0E0E0B44996B" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_dropdown.scss" />
+                    </Component>
+                    <Component Id="cmp9D421F823E405B63A2232B41A3A40473" Guid="*">
+                        <File Id="fil7B30455A2037B71460AEA71F24185C25" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_forms.scss" />
+                    </Component>
+                    <Component Id="cmp6EA4FF74A2F877288AF38F5C6C3C3BE7" Guid="*">
+                        <File Id="filB521F9F19A92A817B83687C96AE8E337" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_functions.scss" />
+                    </Component>
+                    <Component Id="cmpE149155234A0301BCE12E60F408B04FF" Guid="*">
+                        <File Id="fil18EC8CBA1AFED5FED794F31B3C4A1F5A" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_grid.scss" />
+                    </Component>
+                    <Component Id="cmp086AF1BAD1DD2B4890EA153E3F377065" Guid="*">
+                        <File Id="filB1F013C9C0AA012C6E7DC5CEAC3C287E" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_helpers.scss" />
+                    </Component>
+                    <Component Id="cmpDDC8CD166DB9B983A8616FB35682D07A" Guid="*">
+                        <File Id="filF59A7180313A59DE388537D23A5F06D0" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_images.scss" />
+                    </Component>
+                    <Component Id="cmp7A1FC77C8CD5C0519B594043012CFC87" Guid="*">
+                        <File Id="fil47720C236273F6E5F3F6C2A83A222110" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_list-group.scss" />
+                    </Component>
+                    <Component Id="cmpDBD4C78EEE693BD0DFE1C298D03C76F5" Guid="*">
+                        <File Id="fil3C1C5F6726DE802F889C1606DDA2347B" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_mixins.scss" />
+                    </Component>
+                    <Component Id="cmpC6523878D9365C8FF91998435592E823" Guid="*">
+                        <File Id="fil9BF067B2D191D32341BC04F832FEB18F" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_modal.scss" />
+                    </Component>
+                    <Component Id="cmp212909BED1FFABC509C2CE74F3252C23" Guid="*">
+                        <File Id="fil176086BF4558749866F0E4C85F447491" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_nav.scss" />
+                    </Component>
+                    <Component Id="cmp9C75123A6553F9352B2F04507B7C12E7" Guid="*">
+                        <File Id="fil774AFC7FCCC03ED2D3BBB9352611C45D" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_navbar.scss" />
+                    </Component>
+                    <Component Id="cmp81E8410C11B52551FDED332564AFAFB3" Guid="*">
+                        <File Id="fil3EC6024E4BDB45CABBC2713440107F41" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_offcanvas.scss" />
+                    </Component>
+                    <Component Id="cmpED961FCC92DD4B31630E95750A5F6645" Guid="*">
+                        <File Id="fil0421C4648BC6CD169301E01D15EFF851" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_pagination.scss" />
+                    </Component>
+                    <Component Id="cmpB1F94500A1FD53DAE6930FC50B44FCEA" Guid="*">
+                        <File Id="filE5F68DAD4D0ACE3E8C778590C789836F" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_placeholders.scss" />
+                    </Component>
+                    <Component Id="cmp51AC9D715F62E2E63A56DF61BE667E76" Guid="*">
+                        <File Id="fil4FDB77767772E9E9DECD2893C4D33AFF" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_popover.scss" />
+                    </Component>
+                    <Component Id="cmp058F426C1B369448148B71226A9AECA0" Guid="*">
+                        <File Id="filB9FFF3997EB43BBB43EEAAE9F2383545" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_progress.scss" />
+                    </Component>
+                    <Component Id="cmpFE0E331EE4F68F86FFE57F3A6CBAF717" Guid="*">
+                        <File Id="fil8F8A18A05FDCEAB947795500F9D2F64C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_reboot.scss" />
+                    </Component>
+                    <Component Id="cmp4F9C91134FAB696108462E022F07608D" Guid="*">
+                        <File Id="fil837685E7A5B97CD741B791AC24B94729" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_root.scss" />
+                    </Component>
+                    <Component Id="cmpDA8AECDEB59A8E6BCEB96BA78E4DB342" Guid="*">
+                        <File Id="fil05BAE08E2964AB2D4491375B1C671194" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_spinners.scss" />
+                    </Component>
+                    <Component Id="cmpE246A14657552E67D96922C7D1DEB6F7" Guid="*">
+                        <File Id="fil468C02B57793F34CD4780E886B28D948" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_tables.scss" />
+                    </Component>
+                    <Component Id="cmpACD9ABCF82D9659738F9C40BE3E58DB9" Guid="*">
+                        <File Id="fil2FDD8300A08A7BE1734CF3F84EC82AE1" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_toasts.scss" />
+                    </Component>
+                    <Component Id="cmp2494F2EDF89AAE1A779FB1AA1D0154AE" Guid="*">
+                        <File Id="filAF5AF67E217A21E3990B7244CC203BB4" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_tooltip.scss" />
+                    </Component>
+                    <Component Id="cmpF8EB3D91124B43211E0F5F870C181D99" Guid="*">
+                        <File Id="fil787C862B75C5AF4400568433662B86BE" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_transitions.scss" />
+                    </Component>
+                    <Component Id="cmpF8929B1B7AAAE8D98EE12036D2B800B9" Guid="*">
+                        <File Id="fil844C7D8CCA84BB42EBD625C81153E62D" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_type.scss" />
+                    </Component>
+                    <Component Id="cmpCEE0496FFE96734AAD85D1A05CD07E48" Guid="*">
+                        <File Id="fil04BAFD01B66F9E3E1DB53ABAF26DC65F" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_utilities.scss" />
+                    </Component>
+                    <Component Id="cmpCFF7345654564BC039760CA6EAE818CF" Guid="*">
+                        <File Id="fil9E94997C47A85FCA331B8DD7918191EF" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\_variables.scss" />
+                    </Component>
+                    <Directory Id="dirA24A539EE23432CEC2D6E8AC383D124C" Name="forms">
+                        <Component Id="cmpDFE3FFE12B7427FE8D399AA838D90EE8" Guid="*">
+                            <File Id="fil0697F791234948C54326439FABCF573C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\forms\_floating-labels.scss" />
+                        </Component>
+                        <Component Id="cmp200916E6DD0B4F7155895139D20BBFE3" Guid="*">
+                            <File Id="fil10FF9576F473420008AA3780A31C9835" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\forms\_form-check.scss" />
+                        </Component>
+                        <Component Id="cmp8A78B8FEC4374E765AFA52D862EE061B" Guid="*">
+                            <File Id="filA15A58CF645AD8276D46CB93F50F8F3A" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\forms\_form-control.scss" />
+                        </Component>
+                        <Component Id="cmp6CDB73762DE2B979334958CFCC61D94C" Guid="*">
+                            <File Id="fil2C0032B15C510CDE2097C3B0C47B6D3F" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\forms\_form-range.scss" />
+                        </Component>
+                        <Component Id="cmpAC3C5D2C391B599F4435EFD06E5EAB6B" Guid="*">
+                            <File Id="filF2231CC37A516CCCA42D864073C3AD3C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\forms\_form-select.scss" />
+                        </Component>
+                        <Component Id="cmp01758828A9F2A592C83A52170E8A7D36" Guid="*">
+                            <File Id="fil57D7C58836B8459E46C71C1558D022CA" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\forms\_form-text.scss" />
+                        </Component>
+                        <Component Id="cmp384B5AC760C3069D66219814E1067991" Guid="*">
+                            <File Id="filBAE78D2FCA4AF31DE2D676F9940B0425" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\forms\_input-group.scss" />
+                        </Component>
+                        <Component Id="cmp1B45FA53DCDAF6B1044416A4D950CC48" Guid="*">
+                            <File Id="fil494C87AEBE38BF2D345CBB470E9EF3EF" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\forms\_labels.scss" />
+                        </Component>
+                        <Component Id="cmpF4B0A36722EE5C2D50B6907F03BBCE8B" Guid="*">
+                            <File Id="filE114EC03BC7668BE6A94E4A7674285F0" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\forms\_validation.scss" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dirA9C624D82B5AB2B1DB2AFDD33554AE6D" Name="helpers">
+                        <Component Id="cmp9A10F0C1AC545BA8C36B45F0B5D888D1" Guid="*">
+                            <File Id="fil333072E21664D8C7B330CE9FB0E23C48" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\helpers\_clearfix.scss" />
+                        </Component>
+                        <Component Id="cmp3FDCB6E31CA12CE91C74FF3EB42FC12E" Guid="*">
+                            <File Id="fil1A070A553EF2C20E3B2AA3E775D05869" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\helpers\_colored-links.scss" />
+                        </Component>
+                        <Component Id="cmpD774FE5DA51C24C77F5131436F2E188B" Guid="*">
+                            <File Id="filFEB13D7FFD5E8080CB7B21C68E3C222D" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\helpers\_position.scss" />
+                        </Component>
+                        <Component Id="cmpF7F6158D1F4F052A6AD257FC15A39ACA" Guid="*">
+                            <File Id="filE8410D4A018B884CDCEED9B6E0339BE1" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\helpers\_ratio.scss" />
+                        </Component>
+                        <Component Id="cmp77EA5D9515434B27CA35AD784E0D40C7" Guid="*">
+                            <File Id="fil4E36B8CA371F28DBD375029F2DE267C3" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\helpers\_stacks.scss" />
+                        </Component>
+                        <Component Id="cmp10D78134DB5FE3725F5EA018C8C78EC5" Guid="*">
+                            <File Id="filCFDE32AA9F394A5A672A18154E400B25" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\helpers\_stretched-link.scss" />
+                        </Component>
+                        <Component Id="cmp3140E98EA0B7974AB5502AB253909A66" Guid="*">
+                            <File Id="filEECD2A26E61DE42DC3A193A115A0E929" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\helpers\_text-truncation.scss" />
+                        </Component>
+                        <Component Id="cmp17715C939040CFC3FF45DE3A5D55F61A" Guid="*">
+                            <File Id="fil5631696C3AA4261433ECC7A41CFC6F21" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\helpers\_visually-hidden.scss" />
+                        </Component>
+                        <Component Id="cmp321D2B346089899CA10E5601F946F78A" Guid="*">
+                            <File Id="filE3AEC794251375030E0CAAF40F3EAA05" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\helpers\_vr.scss" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dirEDEF08898B3ABBF07069B40ACB63F1DF" Name="mixins">
+                        <Component Id="cmp05655C6BDA0A07A97C9C0B54905A080C" Guid="*">
+                            <File Id="fil81C0C5815AC5DEDA0FD5AA428AD9E365" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_alert.scss" />
+                        </Component>
+                        <Component Id="cmp246EC3E55B1BDACD3E1444C85B493386" Guid="*">
+                            <File Id="fil9601382EE3FB3FC1BB8297ABC3383A05" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_backdrop.scss" />
+                        </Component>
+                        <Component Id="cmp884BDA27A4BF23F731E2BB798EE49775" Guid="*">
+                            <File Id="filF6591D212AF0022FAC3C918ADAD53B7C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_border-radius.scss" />
+                        </Component>
+                        <Component Id="cmpDD341CDEB3180DC8615736910B2479B4" Guid="*">
+                            <File Id="fil21F0F1418A577BDB933A7A9C1DB0C630" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_box-shadow.scss" />
+                        </Component>
+                        <Component Id="cmpCFD25896418B91814926F2075891A884" Guid="*">
+                            <File Id="filC3D9864EF2B605C422FDE89CB501A4B4" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_breakpoints.scss" />
+                        </Component>
+                        <Component Id="cmpB1DD16537CE716706BD8166C050CAD32" Guid="*">
+                            <File Id="fil653F84BAE99A6CE2C45FE44645BED86A" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_buttons.scss" />
+                        </Component>
+                        <Component Id="cmpD86B317830F841B0257E1D127957E43C" Guid="*">
+                            <File Id="fil52BF5AC3C0F8397957C7A4843624720C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_caret.scss" />
+                        </Component>
+                        <Component Id="cmpE77103B7C97479268B213ACFF936F9C4" Guid="*">
+                            <File Id="fil24477AF30FFEAEC1028E99ABC2781556" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_clearfix.scss" />
+                        </Component>
+                        <Component Id="cmpACD836456F4C528E58F808DCE6797265" Guid="*">
+                            <File Id="fil5FB3FD8F50CADE1DE49ACE7A2B5084AF" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_color-scheme.scss" />
+                        </Component>
+                        <Component Id="cmpD18248A3A557C59D492CFFB283980E8D" Guid="*">
+                            <File Id="filD5553B448807D3A9D61984513AEC0002" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_container.scss" />
+                        </Component>
+                        <Component Id="cmp66A2E5D96F4C433CD602B64CC0750F76" Guid="*">
+                            <File Id="fil3350C0E2075EA4542AD4B293BBA07F77" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_deprecate.scss" />
+                        </Component>
+                        <Component Id="cmpD4FDD428F6B43C967FEA4F2E49BE3496" Guid="*">
+                            <File Id="fil75D846984398016160C4C49DBF18ECD9" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_forms.scss" />
+                        </Component>
+                        <Component Id="cmp88F5EE446E7CA3F11F3FABABAECEA0B1" Guid="*">
+                            <File Id="fil03C2989184D2D84E4127C399156D3E20" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_gradients.scss" />
+                        </Component>
+                        <Component Id="cmpDFE524FF2B4748C1877A7AB14F26CFA4" Guid="*">
+                            <File Id="filFEB53AD82BF1A9B4F0806F054E912866" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_grid.scss" />
+                        </Component>
+                        <Component Id="cmp35EC228C9F3CE845AE484695F480B158" Guid="*">
+                            <File Id="fil805088B3DFFF26E2CDF77A94166F153A" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_image.scss" />
+                        </Component>
+                        <Component Id="cmpCA64462A5FAE929AB068FD1B6B9CF22E" Guid="*">
+                            <File Id="fil87E124AE80F92592F58A00DBB73BB0A4" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_list-group.scss" />
+                        </Component>
+                        <Component Id="cmp74146919B4B079C6502CC5496009B935" Guid="*">
+                            <File Id="fil78A63E8519D9BDCD95D65A331372522C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_lists.scss" />
+                        </Component>
+                        <Component Id="cmpB110B1ABE0586CF8E9724324D433B443" Guid="*">
+                            <File Id="filC795C0B2BDDC328FA32C92C1CE6D5B81" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_pagination.scss" />
+                        </Component>
+                        <Component Id="cmp08F9F2CCA478959CA42779158016D851" Guid="*">
+                            <File Id="fil97619423583346C82A1069CC2388DA26" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_reset-text.scss" />
+                        </Component>
+                        <Component Id="cmpFF83584C22C89C3FD940E5D2E20DFED7" Guid="*">
+                            <File Id="filA6768BC1D417A27B7955F06933C15C95" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_resize.scss" />
+                        </Component>
+                        <Component Id="cmp37085E54A4CC11F6C8A3574D31092E71" Guid="*">
+                            <File Id="fil38E6538007813DAD1750CA970C37FBEC" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_table-variants.scss" />
+                        </Component>
+                        <Component Id="cmp157DAF5CC5341179D313568F0A9AD554" Guid="*">
+                            <File Id="fil6C18494F35505DAE999CC3385491F53E" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_text-truncate.scss" />
+                        </Component>
+                        <Component Id="cmp669E2586A945A3D1B1D1920DBE6F0956" Guid="*">
+                            <File Id="fil56165E46F06708111C173C7F92E2F76A" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_transition.scss" />
+                        </Component>
+                        <Component Id="cmpD4C0FACCF01CFFCCEFCF3D400166167D" Guid="*">
+                            <File Id="fil73CD4B9940EEE6A62A2E1B5C40D97301" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_utilities.scss" />
+                        </Component>
+                        <Component Id="cmp776658B8BE4DB762C5A21D7EBEB5DE0C" Guid="*">
+                            <File Id="filB84CA91ABE3C06EC46E7106DA3EAF656" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\mixins\_visually-hidden.scss" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dir3B40883D29DB4DD932521305F8D35DCF" Name="utilities">
+                        <Component Id="cmpFF16A9D2A64B7EF721056BA6EF476E1D" Guid="*">
+                            <File Id="filA8FCD4D4F93EE59111F67166F1CF1C4B" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\utilities\_api.scss" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dir37101A45FAB9C6D9D055D9C267BE35E7" Name="vendor">
+                        <Component Id="cmp2EA69119E268462B054C4AF75B1C14D6" Guid="*">
+                            <File Id="fil8FBCBE5139CD8553D52C9F85E108BA7C" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\bootstrap\vendor\_rfs.scss" />
+                        </Component>
+                    </Directory>
+                </Directory>
                 <Directory Id="dir3C9AC41344D466EA482E0E055E9F0307" Name="css">
+                    <Component Id="cmp8768179003F34C1E3E10E2B64751819C" Guid="*">
+                        <File Id="fil4FF2BA01347D87E0432739AA3948558E" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\css\custom-bootstrap.css" />
+                    </Component>
+                    <Component Id="cmp8870F2AC8424F9EFB29AEBE5ABE8E373" Guid="*">
+                        <File Id="fil4B1E7A47F1527DAF620B31B23AB31048" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\css\custom-bootstrap.min.css" />
+                    </Component>
+                    <Component Id="cmp662C056D01A8C181A443485F195F0031" Guid="*">
+                        <File Id="filF09C7CAE9C8CBD0ED77BE7BF5F7364FC" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\css\custom-bootstrap.scss" />
+                    </Component>
                     <Component Id="cmp522B72B89BA9EBA01FCB2E5FCB306093" Guid="*">
                         <File Id="filA9FA21EACE21CE18B59F568102BBBDCF" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\css\site-generated.css" />
                     </Component>
@@ -626,6 +896,24 @@
                         </Directory>
                     </Directory>
                 </Directory>
+                <Directory Id="dir4DF5BA5BCF644EAF52D95F0471949F14" Name="js">
+                    <Component Id="cmp5B39B4D7F02111DAD71A3173D488DA72" Guid="*">
+                        <File Id="fil4E4566DB77D99541EC1468E5FF44A6BB" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\js\bootstrap.min.js" />
+                    </Component>
+                    <Component Id="cmp5C01DD01FF0C0C561C6260DFA4464C2D" Guid="*">
+                        <File Id="fil98D224AEEE708B2AF59DBF4D9C1E49E8" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\js\bootstrap.min.js.map" />
+                    </Component>
+                </Directory>
+                <Directory Id="dir67B2A40827E52348C3AEFB4C39D928C2" Name="modules">
+                    <Directory Id="dir6BA42C327098136314EE6ED75757EF26" Name="signalr">
+                        <Component Id="cmp85BE07A456F63B8989691A263113B254" Guid="*">
+                            <File Id="fil9B65A9057F70E5C58B218EE641FABCB3" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\modules\signalr\signalr.min.js" />
+                        </Component>
+                        <Component Id="cmp1310A41878EA53A838456F060453DD75" Guid="*">
+                            <File Id="filE6FCC53DFE524CF6D343A5C972088BFE" KeyPath="yes" Source="$(var.SolutionDir)..\artifacts\msi\web\wwwroot\modules\signalr\signalr.min.js.map" />
+                        </Component>
+                    </Directory>
+                </Directory>
                 <Directory Id="dirB040405F64D995344BF7AF66A85E3F4E" Name="_content">
                     <Directory Id="dir2AB52818A7AE9DD6C10A55F8F54C3389" Name="Amusoft.PCR.Blazor">
                         <Component Id="cmpEF585D1747E41ED0B81DF3FD186EDB8B" Guid="*">
@@ -686,6 +974,8 @@
         <ComponentGroup Id="WebComponentsGenerated">
             <ComponentRef Id="cmp323ACF6A8167350C0672FBD1800E2783" />
             <ComponentRef Id="cmp7F119CD0934D7F3334C8D10884720879" />
+            <ComponentRef Id="cmp1E11BC199E156E493FEA11CF500BE1C9" />
+            <ComponentRef Id="cmpCAA5EE774B08AA8F85AD1BEBE519879A" />
             <ComponentRef Id="cmp9C9463CD774B710ADFF7A6F0B048CC7F" />
             <ComponentRef Id="cmp34829A03271810FD722209C7504C2C78" />
             <ComponentRef Id="cmpFF1264F05C7FBED26F083A4882403E9D" />
@@ -694,8 +984,6 @@
             <ComponentRef Id="cmp42A6BCAB5DF17DA67C1FC1E36975FA64" />
             <ComponentRef Id="cmpFE0D53DD31D23568BF4C57BCCA5B481F" />
             <ComponentRef Id="cmp4F7E19FFBC57984E487C3DAF5DC6A18A" />
-            <ComponentRef Id="cmp13DCAC84E7679FB6183B1A56CEE70F11" />
-            <ComponentRef Id="cmpDD3AFB63160C437E091848006525480F" />
             <ComponentRef Id="cmp47AB8B737EC499CF79E4F13D518D7B4A" />
             <ComponentRef Id="cmp056EDBA8DFF1021B44264F60560CA51E" />
             <ComponentRef Id="cmp7757970FB49149DFAA0BAABAEBFF881D" />
@@ -716,9 +1004,8 @@
             <ComponentRef Id="cmpAF80AAD49D18D39250F98B7173BB3C2B" />
             <ComponentRef Id="cmp97ED88A18575898F4C5F3E511EDC5F37" />
             <ComponentRef Id="cmp5A17BE39FCE935ED3FC355B9F7F1094E" />
+            <ComponentRef Id="cmpAFC13349802CFB9365C290A0C582A0E3" />
             <ComponentRef Id="cmp7C0ECA28B56271C527B1ADB8C28BD4F1" />
-            <ComponentRef Id="cmp1E55ACEDE5F14AC9C4D25BF5ECDD78F9" />
-            <ComponentRef Id="cmpD3A57B2EE52904DACC211C56FFC5497A" />
             <ComponentRef Id="cmp617B14E887E5C06BDF8FF0041ACE8DB6" />
             <ComponentRef Id="cmp5E8D6D9908E6A35736CACBF7512CDA7B" />
             <ComponentRef Id="cmp43BF64BA3ECAD655D04CB2FAA4EF7E4B" />
@@ -737,11 +1024,7 @@
             <ComponentRef Id="cmp161628E10E04865A524586CEAA2DAA8F" />
             <ComponentRef Id="cmp759D6A911762940AE7AAEE2EF6544963" />
             <ComponentRef Id="cmpF8A3AE1745742ABB24352436166749CC" />
-            <ComponentRef Id="cmp4CE8D56E8DA137577BB7FB1F135E5CA8" />
-            <ComponentRef Id="cmpBAC617B80BA82A7B54B8D15C7443D292" />
             <ComponentRef Id="cmp0E0CA08B2CB7BF019CCA15175147A4D0" />
-            <ComponentRef Id="cmp0D645EBC05B139EDD46B3C075112BD5C" />
-            <ComponentRef Id="cmp4C1C48BE97FFE1B07CFD68D66B610908" />
             <ComponentRef Id="cmpCCC042F7E5B23E0867EC0E708A71E2DF" />
             <ComponentRef Id="cmpA843532B09669E9EF0AD15BE39E0CCD5" />
             <ComponentRef Id="cmp0B659D2A9E330523D57478B2EF696E4A" />
@@ -756,6 +1039,7 @@
             <ComponentRef Id="cmpD271B0D2227750EC12EF865F04B5CF27" />
             <ComponentRef Id="cmpA86895A39158F6CB2F49154F276F6D75" />
             <ComponentRef Id="cmp4E73A55D906C8B2F36529D3A11F2C1B7" />
+            <ComponentRef Id="cmpB197310492F9504675D06AD64F1A479F" />
             <ComponentRef Id="cmp4E08B400EBB062523B2018986D6AC884" />
             <ComponentRef Id="cmp69E33D06D6C1607FEBC15E0AAFC32304" />
             <ComponentRef Id="cmp6CF1C758D194B91D4C1496E3FCFF5AAE" />
@@ -769,12 +1053,14 @@
             <ComponentRef Id="cmp5D3B642BB9C658051254EA99BAA86C76" />
             <ComponentRef Id="cmpA9DBEFAEA6C2D642837FEA454FDA6544" />
             <ComponentRef Id="cmp41B559AE4DAEC84BB1789E704E0A904A" />
-            <ComponentRef Id="cmpDEC7F3DBA30CFFBBE55DD9950CFA2FA4" />
+            <ComponentRef Id="cmpDB22D3FE9AE9B6D61B08ED6CCFCF6246" />
             <ComponentRef Id="cmpAE782068842FC402849855F2EA6E5A76" />
             <ComponentRef Id="cmp02EC4702DCCC19017EB431C9CBE4E7D5" />
             <ComponentRef Id="cmp1D6AEDD77481D34C6DE71F44FE69C556" />
             <ComponentRef Id="cmpC53121E57D02A091E388B1FE2BAE7E94" />
+            <ComponentRef Id="cmp9CCC9CD95ADBAA7F512991B58D0F2851" />
             <ComponentRef Id="cmp367D8F5193B50F0847584F7072A0D231" />
+            <ComponentRef Id="cmpBC9EAAA1071E84B4D0F4215F53C558A8" />
             <ComponentRef Id="cmp2084D4C5668DB13F8632188C7946CFD2" />
             <ComponentRef Id="cmp81E9B8012F3FF87B7548B0D1294E2024" />
             <ComponentRef Id="cmp90695D2C86518A762D05F74D9EA37CCD" />
@@ -820,6 +1106,94 @@
             <ComponentRef Id="cmpD6260E32F5CDB59D16D2E35DFB4D88CB" />
             <ComponentRef Id="cmp92453E8442D93AA82A754D132F84EA1C" />
             <ComponentRef Id="cmp6835CE04C11A4097DD90334ADF00419B" />
+            <ComponentRef Id="cmp2AFFA2936E8C0DB80EA1100287291298" />
+            <ComponentRef Id="cmpC13489A6DA5F51C77C65314E96B069E1" />
+            <ComponentRef Id="cmp5ABA4AA990E97E2C80E4DE936741C11C" />
+            <ComponentRef Id="cmp2C362898E86CA6C22B9163E7BA1D2F5E" />
+            <ComponentRef Id="cmp9AA794651FB1AA9FAB6BEE7B753D79B3" />
+            <ComponentRef Id="cmpCB90CA944E0A5B41B0EF97A6D8D84999" />
+            <ComponentRef Id="cmp8E24E4C28CF05A65A76EE39A431DE04B" />
+            <ComponentRef Id="cmp849E130DE962AD810310CD852B8DFF92" />
+            <ComponentRef Id="cmp86267AC46D08DA4FDCDB0E6B53F9897E" />
+            <ComponentRef Id="cmp0F2BA97136EEB34A5D08459F68C03C65" />
+            <ComponentRef Id="cmp19E35FB4BEA0F993C515EE39ADFB0ACA" />
+            <ComponentRef Id="cmp01EAB84A423F8F1FC7F6F04D62A5729B" />
+            <ComponentRef Id="cmp46C36F94B06EA4714ABE0811239DE64A" />
+            <ComponentRef Id="cmpB9DAA53BA602AC5627C93D645F77FA54" />
+            <ComponentRef Id="cmpF800AC53CD7E691922EC4428F12F79BE" />
+            <ComponentRef Id="cmp9D421F823E405B63A2232B41A3A40473" />
+            <ComponentRef Id="cmp6EA4FF74A2F877288AF38F5C6C3C3BE7" />
+            <ComponentRef Id="cmpE149155234A0301BCE12E60F408B04FF" />
+            <ComponentRef Id="cmp086AF1BAD1DD2B4890EA153E3F377065" />
+            <ComponentRef Id="cmpDDC8CD166DB9B983A8616FB35682D07A" />
+            <ComponentRef Id="cmp7A1FC77C8CD5C0519B594043012CFC87" />
+            <ComponentRef Id="cmpDBD4C78EEE693BD0DFE1C298D03C76F5" />
+            <ComponentRef Id="cmpC6523878D9365C8FF91998435592E823" />
+            <ComponentRef Id="cmp212909BED1FFABC509C2CE74F3252C23" />
+            <ComponentRef Id="cmp9C75123A6553F9352B2F04507B7C12E7" />
+            <ComponentRef Id="cmp81E8410C11B52551FDED332564AFAFB3" />
+            <ComponentRef Id="cmpED961FCC92DD4B31630E95750A5F6645" />
+            <ComponentRef Id="cmpB1F94500A1FD53DAE6930FC50B44FCEA" />
+            <ComponentRef Id="cmp51AC9D715F62E2E63A56DF61BE667E76" />
+            <ComponentRef Id="cmp058F426C1B369448148B71226A9AECA0" />
+            <ComponentRef Id="cmpFE0E331EE4F68F86FFE57F3A6CBAF717" />
+            <ComponentRef Id="cmp4F9C91134FAB696108462E022F07608D" />
+            <ComponentRef Id="cmpDA8AECDEB59A8E6BCEB96BA78E4DB342" />
+            <ComponentRef Id="cmpE246A14657552E67D96922C7D1DEB6F7" />
+            <ComponentRef Id="cmpACD9ABCF82D9659738F9C40BE3E58DB9" />
+            <ComponentRef Id="cmp2494F2EDF89AAE1A779FB1AA1D0154AE" />
+            <ComponentRef Id="cmpF8EB3D91124B43211E0F5F870C181D99" />
+            <ComponentRef Id="cmpF8929B1B7AAAE8D98EE12036D2B800B9" />
+            <ComponentRef Id="cmpCEE0496FFE96734AAD85D1A05CD07E48" />
+            <ComponentRef Id="cmpCFF7345654564BC039760CA6EAE818CF" />
+            <ComponentRef Id="cmpDFE3FFE12B7427FE8D399AA838D90EE8" />
+            <ComponentRef Id="cmp200916E6DD0B4F7155895139D20BBFE3" />
+            <ComponentRef Id="cmp8A78B8FEC4374E765AFA52D862EE061B" />
+            <ComponentRef Id="cmp6CDB73762DE2B979334958CFCC61D94C" />
+            <ComponentRef Id="cmpAC3C5D2C391B599F4435EFD06E5EAB6B" />
+            <ComponentRef Id="cmp01758828A9F2A592C83A52170E8A7D36" />
+            <ComponentRef Id="cmp384B5AC760C3069D66219814E1067991" />
+            <ComponentRef Id="cmp1B45FA53DCDAF6B1044416A4D950CC48" />
+            <ComponentRef Id="cmpF4B0A36722EE5C2D50B6907F03BBCE8B" />
+            <ComponentRef Id="cmp9A10F0C1AC545BA8C36B45F0B5D888D1" />
+            <ComponentRef Id="cmp3FDCB6E31CA12CE91C74FF3EB42FC12E" />
+            <ComponentRef Id="cmpD774FE5DA51C24C77F5131436F2E188B" />
+            <ComponentRef Id="cmpF7F6158D1F4F052A6AD257FC15A39ACA" />
+            <ComponentRef Id="cmp77EA5D9515434B27CA35AD784E0D40C7" />
+            <ComponentRef Id="cmp10D78134DB5FE3725F5EA018C8C78EC5" />
+            <ComponentRef Id="cmp3140E98EA0B7974AB5502AB253909A66" />
+            <ComponentRef Id="cmp17715C939040CFC3FF45DE3A5D55F61A" />
+            <ComponentRef Id="cmp321D2B346089899CA10E5601F946F78A" />
+            <ComponentRef Id="cmp05655C6BDA0A07A97C9C0B54905A080C" />
+            <ComponentRef Id="cmp246EC3E55B1BDACD3E1444C85B493386" />
+            <ComponentRef Id="cmp884BDA27A4BF23F731E2BB798EE49775" />
+            <ComponentRef Id="cmpDD341CDEB3180DC8615736910B2479B4" />
+            <ComponentRef Id="cmpCFD25896418B91814926F2075891A884" />
+            <ComponentRef Id="cmpB1DD16537CE716706BD8166C050CAD32" />
+            <ComponentRef Id="cmpD86B317830F841B0257E1D127957E43C" />
+            <ComponentRef Id="cmpE77103B7C97479268B213ACFF936F9C4" />
+            <ComponentRef Id="cmpACD836456F4C528E58F808DCE6797265" />
+            <ComponentRef Id="cmpD18248A3A557C59D492CFFB283980E8D" />
+            <ComponentRef Id="cmp66A2E5D96F4C433CD602B64CC0750F76" />
+            <ComponentRef Id="cmpD4FDD428F6B43C967FEA4F2E49BE3496" />
+            <ComponentRef Id="cmp88F5EE446E7CA3F11F3FABABAECEA0B1" />
+            <ComponentRef Id="cmpDFE524FF2B4748C1877A7AB14F26CFA4" />
+            <ComponentRef Id="cmp35EC228C9F3CE845AE484695F480B158" />
+            <ComponentRef Id="cmpCA64462A5FAE929AB068FD1B6B9CF22E" />
+            <ComponentRef Id="cmp74146919B4B079C6502CC5496009B935" />
+            <ComponentRef Id="cmpB110B1ABE0586CF8E9724324D433B443" />
+            <ComponentRef Id="cmp08F9F2CCA478959CA42779158016D851" />
+            <ComponentRef Id="cmpFF83584C22C89C3FD940E5D2E20DFED7" />
+            <ComponentRef Id="cmp37085E54A4CC11F6C8A3574D31092E71" />
+            <ComponentRef Id="cmp157DAF5CC5341179D313568F0A9AD554" />
+            <ComponentRef Id="cmp669E2586A945A3D1B1D1920DBE6F0956" />
+            <ComponentRef Id="cmpD4C0FACCF01CFFCCEFCF3D400166167D" />
+            <ComponentRef Id="cmp776658B8BE4DB762C5A21D7EBEB5DE0C" />
+            <ComponentRef Id="cmpFF16A9D2A64B7EF721056BA6EF476E1D" />
+            <ComponentRef Id="cmp2EA69119E268462B054C4AF75B1C14D6" />
+            <ComponentRef Id="cmp8768179003F34C1E3E10E2B64751819C" />
+            <ComponentRef Id="cmp8870F2AC8424F9EFB29AEBE5ABE8E373" />
+            <ComponentRef Id="cmp662C056D01A8C181A443485F195F0031" />
             <ComponentRef Id="cmp522B72B89BA9EBA01FCB2E5FCB306093" />
             <ComponentRef Id="cmp1AF5A4303FBD1B422EA1A24F8EC683AA" />
             <ComponentRef Id="cmpC0EE65D1DE2BD06137B3B368C4243C11" />
@@ -871,6 +1245,10 @@
             <ComponentRef Id="cmp43FFCE02390F9A435B9156E26A9D1439" />
             <ComponentRef Id="cmpC356CB4006E322C74F12C40962E1A0ED" />
             <ComponentRef Id="cmp448A993EC760E6AD65CB5E0A7B716CC5" />
+            <ComponentRef Id="cmp5B39B4D7F02111DAD71A3173D488DA72" />
+            <ComponentRef Id="cmp5C01DD01FF0C0C561C6260DFA4464C2D" />
+            <ComponentRef Id="cmp85BE07A456F63B8989691A263113B254" />
+            <ComponentRef Id="cmp1310A41878EA53A838456F060453DD75" />
             <ComponentRef Id="cmpEF585D1747E41ED0B81DF3FD186EDB8B" />
             <ComponentRef Id="cmp27D4B60B94C91DC89B7A61672F1EF6FF" />
             <ComponentRef Id="cmp2BF257AC51349CEB2AC3610C23C6E834" />
