@@ -41,6 +41,7 @@ namespace Amusoft.PCR.Server.Dependencies
 		Task<bool> SendRightMouseClickAsync();
 		Task<AudioFeedResponse> GetAudioFeedsResponse();
 		Task<DefaultResponse> UpdateAudioFeed(UpdateAudioFeedRequest request);
+		Task<StringResponse> SetUserPassword(ChangeUserPasswordRequest request);
 	}
 
 	public class UserContextChannel : IUserContextChannel
@@ -421,5 +422,20 @@ namespace Amusoft.PCR.Server.Dependencies
 				return default;
 			}
 		}
-	}
+
+        public async Task<StringResponse> SetUserPassword(ChangeUserPasswordRequest request)
+		{
+			try
+            {
+                _logger.LogInformation("Calling method {Method}", nameof(SetUserPassword));
+                var result = await _service.SetUserPasswordAsync(request);
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Exception occured while calling [{Name}]", nameof(SetUserPassword));
+                return default;
+            }
+		}
+    }
 }

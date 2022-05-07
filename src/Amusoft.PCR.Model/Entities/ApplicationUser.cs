@@ -12,6 +12,8 @@ namespace Amusoft.PCR.Model.Entities
 	public class ApplicationUser : IdentityUser
 	{
 		public UserType UserType { get; set; }
+
+        public DateTime? LastSignIn { get; set; }
 	}
 
 	public class UserSettings

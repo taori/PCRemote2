@@ -2,6 +2,7 @@
 @using System.Net.NetworkInformation
 @using System.Net.Sockets
 @using System.Threading
+@using Amusoft.PCR.Server.Configuration
 @using Amusoft.PCR.Server.Domain.Common
 @using Amusoft.PCR.Server.Domain.IPC
 @using Microsoft.Extensions.Configuration
@@ -38,7 +39,7 @@
 @code {
 	
 	[Inject]
-	private IOptions<ClientDiscoverySettings> DiscoverySettings { get; set; }
+	private IOptions<ApplicationSettings> DiscoverySettings { get; set; }
 
 	[Inject]
 	private IHttpClientFactory HttpClientFactory { get; set; }
@@ -80,7 +81,7 @@
 
 	private string FormatAddress(string address)
 	{
-		return $"https://{address}:{DiscoverySettings.Value.PublicHttpsPorts[0]}";
+		return $"https://{address}:{DiscoverySettings.Value.ServerUrlTransmitter.PublicHttpsPorts[0]}";
 	}
 
 	private static IEnumerable<NetworkInterface> GetOperationalInterfaces()

@@ -7,11 +7,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using Amusoft.PCR.Grpc.Common;
+using Amusoft.PCR.Integration.WindowsDesktop.Events;
 using Amusoft.PCR.Integration.WindowsDesktop.Managers;
 using Amusoft.PCR.Integration.WindowsDesktop.Services;
+using Amusoft.PCR.Integration.WindowsDesktop.Windows;
+using CommunityToolkit.Mvvm.Messaging;
 using GrpcDotNetNamedPipes;
+using MahApps.Metro.Controls;
+using MahApps.Metro.SimpleChildWindow;
 using NLog;
+using DispatcherPriority = System.Windows.Threading.DispatcherPriority;
 
 namespace Amusoft.PCR.Integration.WindowsDesktop
 {
@@ -40,6 +47,8 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 				Shutdown();
 			}
 #endif
+            EventSetup.Initialize();
+            EventSetup.Debug();
 
 			VerifySimpleAudioManager();
 			if (!TryLaunchInteropChannel())
@@ -49,7 +58,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 			}
 		}
 
-		private void VerifySimpleAudioManager()
+        private void VerifySimpleAudioManager()
 		{
 			return;
 			Task.Run(() =>
@@ -107,7 +116,8 @@ namespace Amusoft.PCR.Integration.WindowsDesktop
 		}
 
 		private bool TryLaunchInteropChannel()
-		{
+        {
+
 			_namedPipeServer = new NamedPipeServer(Globals.NamedPipeChannel);
 			DesktopIntegrationService.BindService(_namedPipeServer.ServiceBinder, new DesktopIntegrationServiceImplementation());
 			VoiceCommandService.BindService(_namedPipeServer.ServiceBinder, new VoiceCommandServiceImplementation());

@@ -73,7 +73,7 @@
   <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
   </Target>
-  <Target Name="BuildMsiArtifacts" BeforeTargets="Invalid">
+  <Target Name="BuildMsiArtifacts" BeforeTargets="Rebuild;BeforeBuild">
     <Exec Command="dotnet publish $(SolutionDir)Amusoft.PCR.Server\Amusoft.PCR.Server.csproj -c Release -o $(SolutionDir)..\artifacts\msi\web">
     </Exec>
     <Exec Command="dotnet publish $(SolutionDir)Amusoft.PCR.Integration.WindowsDesktop\Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o $(SolutionDir)..\artifacts\msi\win-integration">

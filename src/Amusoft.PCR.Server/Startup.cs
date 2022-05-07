@@ -21,6 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Amusoft.PCR.Server.Areas.Identity;
+using Amusoft.PCR.Server.Configuration;
 using Amusoft.PCR.Server.Dependencies;
 using Amusoft.PCR.Server.Domain.Authorization;
 using Amusoft.PCR.Server.Domain.Common;
@@ -58,10 +59,8 @@ namespace Amusoft.PCR.Server
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
-		{
-			services.Configure<JwtSettings>(Configuration.GetSection("ApplicationSettings:Jwt"));
-			services.Configure<DesktopIntegrationSettings>(Configuration.GetSection("ApplicationSettings:DesktopIntegration"));
-			services.Configure<ClientDiscoverySettings>(Configuration.GetSection("ApplicationSettings:ServerUrlTransmitter"));
+        {
+            services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
 			services.Configure<StaticFileOptions>(options =>
 			{
 				var contentTypeProvider = new FileExtensionContentTypeProvider();
@@ -78,6 +77,7 @@ namespace Amusoft.PCR.Server
 				ServerCertificateCustomValidationCallback =
 					HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
 			});
+            services.AddSignalR();
 			services.AddHealthChecks();
 			services.AddGrpc();
 			services.AddDatabaseDeveloperPageExceptionFilter();
@@ -115,7 +115,7 @@ namespace Amusoft.PCR.Server
 			tokenValidationParameters.ValidAudience = Configuration["ApplicationSettings:Jwt:Issuer"];
 			tokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:Jwt:Key"]));
 			services.AddSingleton(tokenValidationParameters);
-
+			
 			services
 				.AddAuthentication();
 
@@ -205,26 +205,25 @@ namespace Amusoft.PCR.Server
 			app.UseGrpcWeb();
 
 			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapHealthChecks("/health");
+            {
+                endpoints.MapHealthChecks("/health");
 				endpoints.MapGrpcService<BackendIntegrationService>().EnableGrpcWeb();
 				endpoints.MapControllers();
 				endpoints.MapBlazorHub();
 				endpoints.MapFallbackToPage("/_Host");
 				endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 			});
-			
 
-			using (var serviceScope = serviceScopeFactory.CreateScope())
+            using (var serviceScope = serviceScopeFactory.CreateScope())
 			{
-				var jwtSettings = serviceScope.ServiceProvider.GetRequiredService<IOptions<JwtSettings>>();
+				var jwtSettings = serviceScope.ServiceProvider.GetRequiredService<IOptions<ApplicationSettings>>();
 
 				logger.LogDebug("Authentication settings: SignIn valid: [{AccessTokenValid}] RefreshToken valid: [{RefreshTokenValid}] Refresh every: [{RefreshInterval}]", 
-					jwtSettings.Value.AccessTokenValidDuration,
-					jwtSettings.Value.RefreshTokenValidDuration,
-					jwtSettings.Value.RefreshAccessTokenInterval);
+					jwtSettings.Value.Jwt.AccessTokenValidDuration,
+					jwtSettings.Value.Jwt.RefreshTokenValidDuration,
+					jwtSettings.Value.Jwt.RefreshAccessTokenInterval);
 
-				VerifyAuthenticationSettings(logger, jwtSettings.Value);
+				VerifyAuthenticationSettings(logger, jwtSettings.Value.Jwt);
 
 				using (var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
 				{
@@ -268,11 +267,11 @@ namespace Amusoft.PCR.Server
 			logger.LogInformation("Configuration done");
 		}
 
-		private void VerifyAuthenticationSettings(ILogger<Startup> logger, JwtSettings jwtSettings)
+		private void VerifyAuthenticationSettings(ILogger<Startup> logger, JwtSettings jwtSettingsSettings)
 		{
-			if(jwtSettings.RefreshTokenValidDuration < jwtSettings.AccessTokenValidDuration)
+			if(jwtSettingsSettings.RefreshTokenValidDuration < jwtSettingsSettings.AccessTokenValidDuration)
 				logger.LogError("Access tokens have to be valid for a shorter duration than refresh tokens");
-			if(jwtSettings.AccessTokenValidDuration.Add(jwtSettings.RefreshAccessTokenInterval) > jwtSettings.RefreshTokenValidDuration)
+			if(jwtSettingsSettings.AccessTokenValidDuration.Add(jwtSettingsSettings.RefreshAccessTokenInterval) > jwtSettingsSettings.RefreshTokenValidDuration)
 				logger.LogError("AccessTokenValidDuration + RefreshAccessTokenInterval must be smaller than RefreshTokenValidDuration");
 		}
 	}

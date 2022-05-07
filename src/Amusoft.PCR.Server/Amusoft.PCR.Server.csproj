@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<UserSecretsId>aspnet-Amusoft.PCR.Server-54B5EC41-7268-4100-A59B-8C51A5C6FD62</UserSecretsId>
 		<RuntimeIdentifier>win7-x64</RuntimeIdentifier>
 		<UseAppHost>true</UseAppHost>
@@ -34,6 +34,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Watch Remove="Configuration\ApplicationSettings.cs" />
+	  <Watch Remove="Hubs\AuthorizationHub.cs" />
 	  <Watch Remove="wwwroot\css\custom-colors.scss" />
 	</ItemGroup>
 
@@ -92,5 +94,7 @@
 	  <TypeScriptMapRoot />
 	  <TypeScriptSourceRoot />
 	</PropertyGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties libman_1json__JsonSchema="https://unpkg.com/graphql-config/config-schema.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

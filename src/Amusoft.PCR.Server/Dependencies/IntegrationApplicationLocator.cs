@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Amusoft.PCR.Server.Configuration;
 using Amusoft.PCR.Server.Domain.IPC;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,12 +23,12 @@ namespace Amusoft.PCR.Server.Dependencies
 	public class IntegrationApplicationLocator : IIntegrationApplicationLocator
 	{
 		private readonly ILogger<IntegrationApplicationLocator> _logger;
-		private readonly IOptions<DesktopIntegrationSettings> _settings;
+		private readonly DesktopIntegrationSettings _settings;
 
-		public IntegrationApplicationLocator(ILogger<IntegrationApplicationLocator> logger, IOptions<DesktopIntegrationSettings> settings)
+		public IntegrationApplicationLocator(ILogger<IntegrationApplicationLocator> logger, IOptions<ApplicationSettings> settings)
 		{
 			_logger = logger;
-			_settings = settings;
+			_settings = settings.Value.DesktopIntegration;
 		}
 
 		private string GetInferredAbsolutePath(string exePath)
@@ -45,13 +46,13 @@ namespace Amusoft.PCR.Server.Dependencies
 
 		private bool IsConfigurationOperational()
 		{
-			if (_settings.Value == null)
+			if (_settings == null)
 			{
 				_logger.LogError("Settings for IntegrationRunner are not present");
 				return false;
 			}
 
-			if (string.IsNullOrEmpty(_settings.Value.ExePath))
+			if (string.IsNullOrEmpty(_settings.ExePath))
 			{
 				_logger.LogError("IntegrationRunner settings ExePath is null or empty");
 				return false;
@@ -74,7 +75,7 @@ namespace Amusoft.PCR.Server.Dependencies
 			var result = IsConfigurationOperational();
 			if (result)
 			{
-				var fullPath = GetInferredAbsolutePath(_settings.Value.ExePath);
+				var fullPath = GetInferredAbsolutePath(_settings.ExePath);
 				result = File.Exists(fullPath);
 
 				if (!result)
@@ -98,7 +99,7 @@ namespace Amusoft.PCR.Server.Dependencies
 
 		public string GetAbsolutePath()
 		{
-			return GetInferredAbsolutePath(_settings.Value.ExePath);
+			return GetInferredAbsolutePath(_settings.ExePath);
 		}
 
 		public IEnumerable<(int processId, string path)> GetIntegrationProcesses()
