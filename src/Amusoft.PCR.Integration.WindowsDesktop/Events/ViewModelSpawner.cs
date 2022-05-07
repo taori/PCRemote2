@@ -11,7 +11,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Events;
 
 public static class ViewModelSpawner
 {
-    public static Task<TResponse> GetResponseAsync<TWindow, TModel, TRequest, TResponse>(TRequest request)
+    public static Task<TResponse> GetWindowResponseAsync<TWindow, TModel, TRequest, TResponse>(TRequest request)
         where TWindow : Window, new()
         where TModel : IRecipient<TRequest>, new()
         where TRequest : AsyncRequestMessage<TResponse>

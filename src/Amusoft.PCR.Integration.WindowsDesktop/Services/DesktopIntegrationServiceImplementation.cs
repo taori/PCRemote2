@@ -297,9 +297,8 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Services
 
         public override async Task<StringResponse> SetUserPassword(ChangeUserPasswordRequest request, ServerCallContext context)
         {
-
-            var promptRequest = new GetPromptTextRequest("Prompt", "Please select a password", "Password");
-            var response = await ViewModelSpawner.GetResponseAsync<PromptWindow, PromptWindowModel, GetPromptTextRequest, PromptCompleted>(promptRequest);
+	        var promptRequest = new GetPromptTextRequest("Prompt", $"Please select a password for user {request.UserName}", "Password");
+            var response = await ViewModelSpawner.GetWindowResponseAsync<PromptWindow, PromptWindowModel, GetPromptTextRequest, PromptCompleted>(promptRequest);
 			
             return new StringResponse()
             {

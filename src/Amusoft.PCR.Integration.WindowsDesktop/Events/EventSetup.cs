@@ -18,6 +18,6 @@ public static class EventSetup
     {
         // todo refactoring. Knowing all related types would be bad design to get a reply for a request
         var request = new GetPromptTextRequest("Prompt", "Please enter a valid value", "Password");
-        var response = await ViewModelSpawner.GetResponseAsync<PromptWindow, PromptWindowModel, GetPromptTextRequest, PromptCompleted>(request);
+        var response = await ViewModelSpawner.GetWindowResponseAsync<PromptWindow, PromptWindowModel, GetPromptTextRequest, PromptCompleted>(request);
     }
 }

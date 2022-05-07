@@ -25,7 +25,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Windows
         }
     }
 
-    public class PromptCompleted : AsyncRequestMessage<string>
+    public class PromptCompleted
     {
         public bool Cancelled { get; init; }
         public string Content { get; init; }
@@ -36,6 +36,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Windows
         public PromptWindowModel()
         {
             WeakReferenceMessenger.Default.RegisterAll(this);
+            ValidateAllProperties();
         }
 
         [ObservableProperty]
@@ -46,8 +47,9 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Windows
         
         [ObservableProperty]
         [Required]
-        [MinLength(2)]
-        private string _value;
+        [MinLength(3)]
+        [AlsoNotifyCanExecuteFor(nameof(ConfirmAsyncCommand))]
+        private string _value = string.Empty;
 
         [ObservableProperty]
         private string _description;
@@ -59,14 +61,10 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Windows
 
         private bool CanConfirm() => !GetErrors(nameof(Value)).Any();
 
-        partial void OnValueChanged(string value)
-        {
-            CommandManager.InvalidateRequerySuggested();
-        }
-
         [ICommand(CanExecute = nameof(CanConfirm))]
         public void ConfirmAsync()
         {
+	        WeakReferenceMessenger.Default.UnregisterAll(this);
             _completion.TrySetResult(new PromptCompleted()
             {
                 Cancelled = false,
@@ -79,6 +77,7 @@ namespace Amusoft.PCR.Integration.WindowsDesktop.Windows
         [ICommand]
         public void CancelAsync()
         {
+	        WeakReferenceMessenger.Default.UnregisterAll(this);
             _completion.TrySetResult(new PromptCompleted()
             {
                 Cancelled = true,

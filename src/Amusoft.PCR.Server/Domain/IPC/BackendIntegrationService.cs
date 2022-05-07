@@ -25,8 +25,8 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		private readonly IJwtTokenService _jwtTokenService;
 		private readonly ApplicationDbContext _dbContext;
 		private readonly IAuthorizationService _authorizationService;
-		public IUserContextChannel InteropService { get; }
-		public ILogger<BackendIntegrationService> Logger { get; }
+		private readonly IUserContextChannel _interopService;
+		private readonly ILogger<BackendIntegrationService> _logger;
 
 		public BackendIntegrationService(IUserContextChannel interopService, 
 			IJwtTokenService jwtTokenService,
@@ -37,36 +37,36 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			_jwtTokenService = jwtTokenService;
 			_dbContext = dbContext;
 			_authorizationService = authorizationService;
-			InteropService = interopService;
-			Logger = logger;
+			_interopService = interopService;
+			_logger = logger;
 		}
 
 
 		[Authorize(Roles = RoleNames.FunctionMouseControl)]
 		public override async Task<SendMouseMoveResponse> SendMouseMove(IAsyncStreamReader<SendMouseMoveRequestItem> requestStream, ServerCallContext context)
 		{
-			await InteropService.SendMouseMoveAsync(requestStream, context.CancellationToken);
+			await _interopService.SendMouseMoveAsync(requestStream, context.CancellationToken);
 			return new SendMouseMoveResponse();
 		}
 
 		[Authorize(Roles = RoleNames.FunctionMouseControl)]
 		public override async Task<DefaultResponse> SendLeftMouseButtonClick(DefaultRequest request, ServerCallContext context)
 		{
-			var result = await InteropService.SendLeftMouseClickAsync();
+			var result = await _interopService.SendLeftMouseClickAsync();
 			return new DefaultResponse() { Success = result };
 		}
 
 		[Authorize(Roles = RoleNames.FunctionMouseControl)]
 		public override async Task<DefaultResponse> SendRightMouseButtonClick(DefaultRequest request, ServerCallContext context)
 		{
-			var result = await InteropService.SendRightMouseClickAsync();
+			var result = await _interopService.SendRightMouseClickAsync();
 			return new DefaultResponse() { Success = result };
 		}
 
 		[Authorize(Roles = RoleNames.FunctionReadClipboard)]
 		public override async Task<GetClipboardResponse> GetClipboard(GetClipboardRequest request, ServerCallContext context)
 		{
-			var result = await InteropService.GetClipboardAsync(request.Requestee);
+			var result = await _interopService.GetClipboardAsync(request.Requestee);
 			return new GetClipboardResponse()
 			{
 				Content = result
@@ -76,7 +76,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionWriteClipboard)]
 		public override async Task<SetClipboardResponse> SetClipboard(SetClipboardRequest request, ServerCallContext context)
 		{
-			var result = await InteropService.SetClipboardAsync(request.Requestee, request.Content);
+			var result = await _interopService.SetClipboardAsync(request.Requestee, request.Content);
 			return new SetClipboardResponse()
 			{
 				Success = result
@@ -116,7 +116,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionToggleMute)]
 		public override async Task<ToggleMuteReply> ToggleMute(ToggleMuteRequest request, ServerCallContext context)
 		{
-			var result = await InteropService.ToggleMute();
+			var result = await _interopService.ToggleMute();
 			return new ToggleMuteReply()
 			{
 				Muted = result
@@ -126,7 +126,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionMonitorControl)]
 		public override async Task<MonitorOnReply> MonitorOn(MonitorOnRequest request, ServerCallContext context)
 		{
-			var result = await InteropService.MonitorOn();
+			var result = await _interopService.MonitorOn();
 			return new MonitorOnReply()
 			{
 				Success = result
@@ -136,7 +136,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionMonitorControl)]
 		public override async Task<MonitorOffReply> MonitorOff(MonitorOffRequest request, ServerCallContext context)
 		{
-			var result = await InteropService.MonitorOff();
+			var result = await _interopService.MonitorOff();
 			return new MonitorOffReply()
 			{
 				Success = result
@@ -146,7 +146,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionShutdownCancel)]
 		public override async Task<AbortShutdownReply> AbortShutDown(AbortShutdownRequest request, ServerCallContext context)
 		{
-			var success = await InteropService.AbortShutdown();
+			var success = await _interopService.AbortShutdown();
 			return new AbortShutdownReply()
 			{
 				Success = success
@@ -156,7 +156,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionShutdown)]
 		public override async Task<ShutdownDelayedReply> ShutDownDelayed(ShutdownDelayedRequest request, ServerCallContext context)
 		{
-			var success = await InteropService.Shutdown(TimeSpan.FromSeconds(request.Seconds), request.Force);
+			var success = await _interopService.Shutdown(TimeSpan.FromSeconds(request.Seconds), request.Force);
 			return new ShutdownDelayedReply()
 			{
 				Success = success
@@ -166,7 +166,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionRestart)]
 		public override async Task<RestartReply> Restart(RestartRequest request, ServerCallContext context)
 		{
-			var success = await InteropService.Restart(TimeSpan.FromSeconds(request.Delay), request.Force);
+			var success = await _interopService.Restart(TimeSpan.FromSeconds(request.Delay), request.Force);
 			return new RestartReply()
 			{
 				Success = success
@@ -176,7 +176,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionHibernate)]
 		public override async Task<HibernateReply> Hibernate(HibernateRequest request, ServerCallContext context)
 		{
-			var success = await InteropService.Hibernate();
+			var success = await _interopService.Hibernate();
 			return new HibernateReply()
 			{
 				Success = success
@@ -186,7 +186,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionMasterVolumeControl)]
 		public override async Task<SetMasterVolumeReply> SetMasterVolume(SetMasterVolumeRequest request, ServerCallContext context)
 		{
-			var value = await InteropService.SetMasterVolume(request.Value);
+			var value = await _interopService.SetMasterVolume(request.Value);
 			return new SetMasterVolumeReply()
 			{
 				Value = value
@@ -196,7 +196,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionMasterVolumeControl)]
 		public override async Task<GetMasterVolumeReply> GetMasterVolume(GetMasterVolumeRequest request, ServerCallContext context)
 		{
-			var value = await InteropService.GetMasterVolume();
+			var value = await _interopService.GetMasterVolume();
 			return new GetMasterVolumeReply()
 			{
 				Value = value
@@ -206,20 +206,20 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionMasterVolumeControl)]
 		public override async Task<AudioFeedResponse> GetAudioFeeds(AudioFeedRequest request, ServerCallContext context)
 		{
-			var value = await InteropService.GetAudioFeedsResponse();
+			var value = await _interopService.GetAudioFeedsResponse();
 			return value;
 		}
 
 		public override async Task<DefaultResponse> UpdateAudioFeed(UpdateAudioFeedRequest request, ServerCallContext context)
 		{
-			var value = await InteropService.UpdateAudioFeed(request);
+			var value = await _interopService.UpdateAudioFeed(request);
 			return value;
 		}
 
 		[Authorize(Roles = RoleNames.FunctionSendInput)]
 		public override async Task<SendKeysReply> SendKeys(SendKeysRequest request, ServerCallContext context)
 		{
-			var success = await InteropService.SendKeys(request.Message);
+			var success = await _interopService.SendKeys(request.Message);
 			return new SendKeysReply()
 			{
 				Success = success
@@ -229,7 +229,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionSendInput)]
 		public override async Task<SendMediaKeysReply> SendMediaKeys(SendMediaKeysRequest request, ServerCallContext context)
 		{
-			var success = await InteropService.SendMediaKey(request.KeyCode);
+			var success = await _interopService.SendMediaKey(request.KeyCode);
 			return new SendMediaKeysReply()
 			{
 				Success = success
@@ -239,7 +239,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionLockWorkstation)]
 		public override async Task<LockWorkStationReply> LockWorkStation(LockWorkStationRequest request, ServerCallContext context)
 		{
-			var success = await InteropService.LockWorkStation();
+			var success = await _interopService.LockWorkStation();
 			return new LockWorkStationReply()
 			{
 				Success = success
@@ -249,7 +249,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionGetProcessList)]
 		public override async Task<ProcessListResponse> GetProcessList(ProcessListRequest request, ServerCallContext context)
 		{
-			var results = await InteropService.GetProcessList();
+			var results = await _interopService.GetProcessList();
 			var processListResponse = new ProcessListResponse();
 			processListResponse.Results.AddRange(results);
 			return processListResponse;
@@ -258,7 +258,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionKillProcessById)]
 		public override async Task<KillProcessResponse> KillProcessById(KillProcessRequest request, ServerCallContext context)
 		{
-			var success = await InteropService.KillProcessById(request.ProcessId);
+			var success = await _interopService.KillProcessById(request.ProcessId);
 			return new KillProcessResponse()
 			{
 				Success = success
@@ -268,7 +268,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		[Authorize(Roles = RoleNames.FunctionFocusWindow)]
 		public override async Task<FocusWindowResponse> FocusWindow(FocusWindowRequest request, ServerCallContext context)
 		{
-			var success = await InteropService.FocusProcessWindow(request.ProcessId);
+			var success = await _interopService.FocusProcessWindow(request.ProcessId);
 			return new FocusWindowResponse()
 			{
 				Success = success
@@ -280,7 +280,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 		{
 			if (request.Arguments == null)
 			{
-				var success = await InteropService.LaunchProgram(request.ProgramName);
+				var success = await _interopService.LaunchProgram(request.ProgramName);
 				return new LaunchProgramResponse()
 				{
 					Success = success
@@ -288,7 +288,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			}
 			else
 			{
-				var success = await InteropService.LaunchProgram(request.ProgramName, request.Arguments);
+				var success = await _interopService.LaunchProgram(request.ProgramName, request.Arguments);
 				return new LaunchProgramResponse()
 				{
 					Success = success
@@ -305,7 +305,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			foreach (var command in commands)
 			{
 				var authorizeResult = await _authorizationService.AuthorizeAsync(context.GetHttpContext().User, command, PolicyNames.ApplicationPermissionPolicy);
-				Logger.LogDebug("User {User} authorization status for command {Id} is {Status}", context.GetHttpContext().User, command.Id, authorizeResult.Succeeded);
+				_logger.LogDebug("User {User} authorization status for command {Id} is {Status}", context.GetHttpContext().User, command.Id, authorizeResult.Succeeded);
 				if (authorizeResult.Succeeded)
 				{
 					response.Results.Add(new GetHostCommandResponseItem()
@@ -328,7 +328,7 @@ namespace Amusoft.PCR.Server.Domain.IPC
 				throw new RpcException(new Status(StatusCode.NotFound, $"Command {request.Id} not found"));
 			}
 
-			var success = await InteropService.LaunchProgram(command.ProgramPath, command.Arguments);
+			var success = await _interopService.LaunchProgram(command.ProgramPath, command.Arguments);
 
 			return new InvokeHostCommandResponse()
 			{
@@ -352,6 +352,16 @@ namespace Amusoft.PCR.Server.Domain.IPC
 			response.Results.AddRange(interfaces.Select(d => d.GetPhysicalAddress().ToString()).Select(d => new GetNetworkMacAddressesResponseItem(){ MacAddress = d}));
 
 			return Task.FromResult(response);
+		}
+
+		[AllowAnonymous]
+		public override async Task<StringResponse> SetUserPassword(ChangeUserPasswordRequest request, ServerCallContext context)
+		{
+			var result = await _interopService.SetUserPassword(request);
+			if (result.Success)
+				return new StringResponse() { Content = string.Empty, Success = false };
+
+			return result;
 		}
 	}
 }
