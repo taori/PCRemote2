@@ -8,6 +8,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>Amusoft PC Remote 2</OutputName>
     <OutputType>Package</OutputType>
+	<XRunHeat>false</XRunHeat>
+	<XRunPublish>false</XRunPublish>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\artifacts\msi-compiled\$(Configuration)\</OutputPath>
@@ -73,14 +75,16 @@
   <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
   </Target>
-  <Target Name="BuildMsiArtifacts" BeforeTargets="Rebuild;BeforeBuild">
+  <Target Name="BuildMsiArtifacts" BeforeTargets="BeforeBuild" Condition="'$(XRunPublish)' != 'false'">
+    <Message Importance="High" Text="Running publish on Server project." />
     <Exec Command="dotnet publish $(SolutionDir)Amusoft.PCR.Server\Amusoft.PCR.Server.csproj -c Release -o $(SolutionDir)..\artifacts\msi\web">
     </Exec>
+    <Message Importance="High" Text="Running publish on Windows Desktop Integration project." />
     <Exec Command="dotnet publish $(SolutionDir)Amusoft.PCR.Integration.WindowsDesktop\Amusoft.PCR.Integration.WindowsDesktop.csproj -c Release -o $(SolutionDir)..\artifacts\msi\win-integration">
     </Exec>
   </Target>
-  <Target Name="BeforeBuild">
-    <Message Importance="High" Text="Running HEAT" />
+  <Target Name="BeforeBuild" Condition="'$(XRunHeat)' != 'false'">
+    <Message Importance="High" Text="Harvesting wxi files using HeatDirectory." />
     <HeatDirectory NoLogo="True" SuppressAllWarnings="False" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="True" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Server.Harvested.wxi" SuppressFragments="True" SuppressUniqueIds="False" Directory="$(SolutionDir)..\artifacts\msi\web\" ComponentGroupName="WebComponentsGenerated" KeepEmptyDirectories="True" PreprocessorVariable="var.SolutionDir" SuppressCom="False" SuppressRootDirectory="True" Transforms="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Server.Harvested.xslt" SuppressRegistry="True" DirectoryRefId="WEBFOLDER" />
     <HeatDirectory NoLogo="True" SuppressAllWarnings="False" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="True" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Int.Win.Harvested.wxi" SuppressFragments="True" SuppressUniqueIds="False" Directory="$(SolutionDir)..\artifacts\msi\win-integration\" ComponentGroupName="WinIntegrationComponentsGenerated" KeepEmptyDirectories="True" PreprocessorVariable="var.SolutionDir" SuppressCom="False" SuppressRootDirectory="True" Transforms="$(SolutionDir)..\deploy\Amusoft.PCR.Installer\Module.Int.Win.Harvested.xslt" SuppressRegistry="True" DirectoryRefId="WININTEGRATIONFOLDER" />
   </Target>

@@ -60,24 +60,23 @@
 				/>
 			</ServiceInstall>
 
-
-			<ServiceControl Id="PCR2.Control.Start"
-			                Name="$(var.ServiceName)"
-			                Start="install"
-			                Wait="yes" />
-			<ServiceControl Id="PCR2.Control.Stop"
-			                Name="$(var.ServiceName)"
-			                Stop="uninstall"
-			                Remove="uninstall"
-			                Wait="yes" />
-
-			<!-- https://stackoverflow.com/questions/20956595/wix-installer-verify-that-you-have-sufficient-privileges-to-start-system-servic -->
+			<!-- <ServiceControl Id="PCR2.Control.Start" -->
+			<!--                 Name="$(var.ServiceName)" -->
+			<!--                 Start="install" -->
+			<!--                 Wait="yes" /> -->
 			<!-- <ServiceControl Id="PCR2.Control.Stop" -->
 			<!--                 Name="$(var.ServiceName)" -->
-			<!-- 				Start="install" -->
-			<!--                 Stop="both" -->
-			<!--                 Remove="both" -->
+			<!--                 Stop="uninstall" -->
+			<!--                 Remove="uninstall" -->
 			<!--                 Wait="yes" /> -->
+
+			<!-- https://stackoverflow.com/questions/20956595/wix-installer-verify-that-you-have-sufficient-privileges-to-start-system-servic -->
+			<ServiceControl Id="PCR2.Control.Stop"
+			                Name="$(var.ServiceName)"
+							Start="install"
+			                Stop="both"
+			                Remove="both"
+			                Wait="yes" />
 		</Component>
 	</Fragment>
 

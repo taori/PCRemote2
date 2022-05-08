@@ -57,6 +57,10 @@ namespace Amusoft.PCR.Installer.Custom
 			{
 				try
 				{
+					session.Log($"Deleting file {productionConfigFile}: {File.Exists(productionConfigFile)}");
+					if (File.Exists(productionConfigFile))
+						File.Delete(productionConfigFile);
+					
 					session.Log($"Moving file from {originalConfigFile} to {productionConfigFile}");
 					File.Move(originalConfigFile, productionConfigFile);
 
