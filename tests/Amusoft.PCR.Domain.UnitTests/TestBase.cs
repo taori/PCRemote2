@@ -1,4 +1,5 @@
 ﻿
+using Amusoft.PCR.Domain.UnitTests.Common;
 using Xunit.Abstractions;
 
 namespace Amusoft.PCR.Domain.UnitTests

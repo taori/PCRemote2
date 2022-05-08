@@ -2,7 +2,7 @@
 using NLog.Targets;
 using Xunit.Abstractions;
 
-namespace Amusoft.PCR.Domain.UnitTests
+namespace Amusoft.PCR.Domain.UnitTests.Common
 {
 	[Target("XUnitOutputTarget")]
 	public class XUnitOutputTarget : TargetWithLayout

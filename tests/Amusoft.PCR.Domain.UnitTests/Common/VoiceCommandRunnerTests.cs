@@ -1,14 +1,12 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Amusoft.PCR.Domain.VoiceRecognition;
 using FluentAssertions;
 using Moq;
-using NLog;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Amusoft.PCR.Domain.UnitTests
+namespace Amusoft.PCR.Domain.UnitTests.Common
 {
 	public class VoiceCommandRunnerTests : TestBase
 	{

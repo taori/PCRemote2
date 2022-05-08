@@ -29,7 +29,7 @@ namespace Amusoft.Toolkit.Impersonation
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct StartupInfo
+	internal struct StartupInfo
 	{
 		public uint cb;
 		public string lpReserved;

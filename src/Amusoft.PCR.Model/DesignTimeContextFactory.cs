@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Amusoft.PCR.Model
 {
-
 	public class DesignTimeContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 	{
 		public ApplicationDbContext CreateDbContext(string[] args)
