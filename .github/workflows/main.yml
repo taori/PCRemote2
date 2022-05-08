@@ -190,8 +190,8 @@ jobs:
       - shell: pwsh
         name: Build server
         run: |
-          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/web /property:Version=$env:PRODUCT_VERSION
-          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/win-integration /property:Version=$env:PRODUCT_VERSION
+          dotnet publish src/Amusoft.PCR.Server/Amusoft.PCR.Server.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/web /property:Version=$env:PRODUCT_VERSION --sc -r win-x64
+          dotnet publish src/Amusoft.PCR.Integration.WindowsDesktop/Amusoft.PCR.Integration.WindowsDesktop.csproj -c $env:BUILDCONFIGURATION -o artifacts/server/win-integration /property:Version=$env:PRODUCT_VERSION --sc -r win-x64
         env:
           BUILDCONFIGURATION : ${{needs.Environment.outputs.buildConfiguration}}
           PRODUCT_VERSION : ${{needs.Environment.outputs.productVersion}}
@@ -258,7 +258,7 @@ jobs:
         name: Compile MSI using WiX Installer
         run: |
           $newProductContent = (Get-Content -path deploy\Amusoft.PCR.Installer\Product.wxs -Raw) -replace 'ProductVersion = "1.0.1"',"ProductVersion = `"$env:PRODUCT_VERSION`"" | Set-Content -Path deploy\Amusoft.PCR.Installer\Product.wxs        
-          msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln /p:AssemblyVersion=${{ github.event.inputs.productVersion }} /p:XRunPublishHeat=true
+          msbuild /verbosity:normal /t:"Build" /bl /p:Configuration=$env:BUILDCONFIGURATION src/WixBuild.sln /p:AssemblyVersion=${{ github.event.inputs.productVersion }} /p:XRunHeat=true
         env:          
           PRODUCT_VERSION : ${{needs.Environment.outputs.productVersion}}
           BUILDCONFIGURATION : ${{needs.Environment.outputs.buildConfiguration}}
