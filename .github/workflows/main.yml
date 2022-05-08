@@ -73,8 +73,9 @@ jobs:
         shell: pwsh
         if: ${{ !( github.event_name == 'workflow_dispatch' && github.event.inputs.productVersion != '1.0.0') }}
         run: |          
-          $sha = ([string]"${{ github.sha }}").Substring(0,26)
-          $version = "beta-$sha"
+          $sha = ([string]"${{ github.sha }}").Substring(0,12)
+          $date = Get-Date -Format "yyMMdd-HHmmss"
+          $version = "beta-$date-$sha"
           echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV   
                   
       - name: Environment Workflow Dispatch Build
@@ -339,8 +340,9 @@ jobs:
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RN: ${{ needs.Environment.outputs.releaseVersion }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: artifacts/msi/Amusoft PC Remote 2.msi
-          asset_name: Amusoft PC Remote 2.msi
+          asset_name: Amusoft PC Remote 2 - ${{ env.RN }}.msi
           asset_content_type: application/octet-stream
