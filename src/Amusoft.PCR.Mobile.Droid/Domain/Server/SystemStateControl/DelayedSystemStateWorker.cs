@@ -64,7 +64,7 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 				var progressDataBuilder = new Data.Builder();
 
 				UpdateProgress(progressDataBuilder, 0, false);
-				if (!HostEndpointAddress.TryParse(_agentAddress, out var address))
+				if (!HostEndpointAddress.TryParse(GetPatchedAddress(_agentAddress), out var address))
 				{
 					Log.Warn("Address {Address} could not be parsed - aborting process", _agentAddress);
 					return Data.Empty;
@@ -130,6 +130,14 @@ namespace Amusoft.PCR.Mobile.Droid.Domain.Server.SystemStateControl
 			}
 
 			return Data.Empty;
+		}
+
+		private static string GetPatchedAddress(string agentAddress)
+		{
+			if (agentAddress.StartsWith("http://") || agentAddress.StartsWith("https://"))
+				return agentAddress;
+
+			return $"https://{agentAddress}";
 		}
 
 		private void UpdateProgress(Data.Builder progressDataBuilder, double progress, bool visible)
