@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<declare-styleable name="LoaderPanel">
-		<attr name="is_panel_visible" format="boolean"/>
-	</declare-styleable>
-</resources>
